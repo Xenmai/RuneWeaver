@@ -7,6 +7,7 @@ using FreneticGameCore.EntitySystem.PhysicsHelpers;
 using RuneWeaver.GameProperties;
 using RuneWeaver.GameProperties.GameControllers;
 using RuneWeaver.GameProperties.GameEntities;
+using RuneWeaver.GameProperties.GameEntities.UnitActions;
 
 namespace RuneWeaver.MainGame
 {
@@ -34,12 +35,16 @@ namespace RuneWeaver.MainGame
         }
 
         /// <summary>
+        /// The main hitbox renderable entity.
+        /// </summary>
+        public ClientEntity HitboxRenderable;
+
+        /// <summary>
         /// Called by the engine when it loads up.
         /// </summary>
         public void Engine_WindowLoad()
         {
             Client.Window.KeyDown += Window_KeyDown;
-            SysConsole.OutputCustom("info", "width: " + Client.Window.Width + " & height: " + Client.Window.Height);
             Client.Engine2D.PhysicsWorld.Gravity = new Location(0, 0, -9.81);
             // Ground
             Client.Engine2D.SpawnEntity(new EntitySimple2DRenderableBoxProperty()
@@ -55,21 +60,13 @@ namespace RuneWeaver.MainGame
                 Mass = 0
             });
             // Entity 1
-            Client.Engine2D.SpawnEntity(new EntitySimple2DRenderableBoxProperty(), new ClientEntityPhysicsProperty()
+            Client.Engine2D.SpawnEntity(new GoblinUnitProperty()
             {
-                Mass = 10
-            }, new UnitEntityProperty()
-            {
-                Size = 10f,
                 Position = new Vector2(75, 75)
             });
             // Entity 2
-            Client.Engine2D.SpawnEntity(new EntitySimple2DRenderableBoxProperty(), new ClientEntityPhysicsProperty()
+            Client.Engine2D.SpawnEntity(new WolfUnitProperty()
             {
-                Mass = 20
-            }, new UnitEntityProperty()
-            {
-                Size = 15f,
                 Position = new Vector2(20, 35)
             });
             // Controller (Camera + Unit Selector + Unit Action Handler)
@@ -82,24 +79,6 @@ namespace RuneWeaver.MainGame
                 LightStrength = 128f,
                 IsSkyLight = true
             });
-            /* UI3DSubEngine subeng = new UI3DSubEngine(new UIPositionHelper(Client.MainUI).Anchor(UIAnchor.TOP_LEFT).ConstantXY(0, 0).ConstantWidthHeight(350, 350));
-            Client.MainUI.DefaultScreen.AddChild(subeng);
-            // Ground
-            subeng.SubEngine.SpawnEntity(new EntitySimple3DRenderableModelProperty()
-            {
-                EntityModel = Client.Models.Cube,
-                Scale = new Location(10, 10, 10),
-                RenderAt = new Location(0, 0, -10),
-                DiffuseTexture = Client.Textures.White
-            });
-            // Light
-            subeng.SubEngine.SpawnEntity(new EntityPointLight3DProperty()
-            {
-                LightPosition = new Location(0, 0, 1),
-                LightStrength = 15f
-            });
-            subeng.SubEngine.MainCamera.Position = new Location(0, 0, 0);
-            subeng.SubEngine.MainCamera.Direction = new Location(0.1, -0.1, -1).Normalize(); */
         }
 
         /// <summary>

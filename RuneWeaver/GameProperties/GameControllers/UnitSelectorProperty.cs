@@ -8,6 +8,7 @@ using RuneWeaver.GameProperties.GameInterfaces;
 using RuneWeaver.GameProperties.GameRenderables;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 namespace RuneWeaver.GameProperties.GameControllers
 {
@@ -64,7 +65,7 @@ namespace RuneWeaver.GameProperties.GameControllers
         {
             if (e.Button == MouseButton.Left)
             {
-                if (Selected != null && !ActionHandler.UsingAction)
+                if (Selected != null && (ActionHandler.Action == null || !ActionHandler.Action.Preparing))
                 {
                     Selected.OnPositionChanged -= PositionChanged;
                     Renderable.IsVisible = false;
@@ -96,9 +97,9 @@ namespace RuneWeaver.GameProperties.GameControllers
                     {
                         Selected = results.First<ClientEntity>();
                         Selected?.SignalAllInterfacedProperties<ISelectable>((p) => p.Select());
-                        Renderable.Radius = Selected.GetProperty<UnitEntityProperty>().Size * 0.75f;
+                        Renderable.Radius = Selected.GetAllSubTypes<BasicUnitProperty>().First<BasicUnitProperty>().Size * 0.75f;
                         Renderable.IsVisible = true;
-                        Renderable.RenderAt = Selected.LastKnownPosition - new Location(0, 0, 5);
+                        Renderable.Center = new Vector2((float)Selected.LastKnownPosition.X, (float)Selected.LastKnownPosition.Y);
                         Selected.OnPositionChanged += PositionChanged;
                         Renderable.Entity.SetPosition(Selected.LastKnownPosition - new Location(0, 0, 5));
                     }

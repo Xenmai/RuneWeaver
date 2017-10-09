@@ -68,10 +68,15 @@
   <ItemGroup>
     <Compile Include="GameProperties\GameControllers\CameraControllerProperty.cs" />
     <Compile Include="GameProperties\CustomClientEntityProperty.cs" />
+    <Compile Include="GameProperties\GameEntities\GoblinUnitProperty.cs" />
+    <Compile Include="GameProperties\GameEntities\UnitActions\BasicActionProperty.cs" />
+    <Compile Include="GameProperties\GameEntities\UnitActions\MoveActionProperty.cs" />
+    <Compile Include="GameProperties\GameEntities\WolfUnitProperty.cs" />
+    <Compile Include="GameProperties\GameInterfaces\IExecutable.cs" />
     <Compile Include="GameProperties\GameRenderables\ArrowHitboxRenderableProperty.cs" />
     <Compile Include="GameProperties\GameRenderables\SelectedEntityRenderableProperty.cs" />
     <Compile Include="GameProperties\GameInterfaces\ISelectable.cs" />
-    <Compile Include="GameProperties\GameEntities\UnitEntityProperty.cs" />
+    <Compile Include="GameProperties\GameEntities\BasicUnitProperty.cs" />
     <Compile Include="GameProperties\GameControllers\UnitActionHandlerProperty.cs" />
     <Compile Include="GameProperties\GameControllers\UnitSelectorProperty.cs" />
     <Compile Include="MainGame\Game.cs" />

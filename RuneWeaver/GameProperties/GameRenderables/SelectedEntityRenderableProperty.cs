@@ -2,6 +2,7 @@
 using FreneticGameGraphics.ClientSystem;
 using FreneticGameGraphics.ClientSystem.EntitySystem;
 using FreneticGameGraphics.GraphicsHelpers;
+using OpenTK;
 
 namespace RuneWeaver.GameProperties.GameRenderables
 {
@@ -10,6 +11,21 @@ namespace RuneWeaver.GameProperties.GameRenderables
     /// </summary>
     public class SelectedEntityRenderableProperty : Entity2DRenderableProperty
     {
+        /// <summary>
+        /// The circle's center.
+        /// </summary>
+        public Vector2 Center
+        {
+            get
+            {
+                return new Vector2((float)RenderAt.X, (float)RenderAt.Y);
+            }
+            set
+            {
+                RenderAt = new Location(value.X, value.Y, -5);
+            }
+        }
+
         /// <summary>
         /// The circle radius.
         /// </summary>
@@ -28,8 +44,9 @@ namespace RuneWeaver.GameProperties.GameRenderables
         {
             context.Engine.Textures.White.Bind();
             context.Engine.RenderHelper.SetColor(Color);
-            context.Engine.RenderHelper.RenderRectangle(context, (float)RenderAt.X - Radius, (float)RenderAt.Y + Radius,
-                (float)RenderAt.X + Radius, (float)RenderAt.Y - Radius);
+            Vector2 center = Center;
+            context.Engine.RenderHelper.RenderRectangle(context, center.X - Radius, center.Y + Radius,
+                center.X + Radius, center.Y - Radius);
         }
     }
 }

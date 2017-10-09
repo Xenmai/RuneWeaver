@@ -1,22 +1,27 @@
 ﻿using FreneticGameCore;
 using FreneticGameGraphics.ClientSystem;
 using FreneticGameGraphics.ClientSystem.EntitySystem;
-using FreneticGameGraphics.GraphicsHelpers;
 using OpenTK;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RuneWeaver.GameProperties.GameRenderables
 {
     class ArrowHitboxRenderableProperty : Entity2DRenderableProperty
     {
         /// <summary>
-        /// The start point.
+        /// The arrow's start point.
         /// </summary>
-        public Vector2 Start;
+        public Vector2 Start
+        {
+            get
+            {
+                return new Vector2((float)RenderAt.X, (float)RenderAt.Y);
+            }
+            set
+            {
+                RenderAt = new Location(value.X, value.Y, 5);
+            }
+        }
 
         /// <summary>
         /// The arrow's length.

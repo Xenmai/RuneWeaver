@@ -1,10 +1,7 @@
-﻿using FreneticGameCore;
-using FreneticGameGraphics.ClientSystem.EntitySystem;
-using OpenTK;
-using OpenTK.Input;
-using RuneWeaver.GameProperties.GameEntities;
-using RuneWeaver.GameProperties.GameRenderables;
+﻿using OpenTK.Input;
+using RuneWeaver.GameProperties.GameEntities.UnitActions;
 using System;
+using System.Linq;
 
 namespace RuneWeaver.GameProperties.GameControllers
 {
@@ -17,14 +14,7 @@ namespace RuneWeaver.GameProperties.GameControllers
         {
             Engine.Window.MouseDown += Window_MouseDown;
             Engine.Window.KeyDown += Window_KeyDown;
-            Entity.OnTick += Tick;
-            Renderable = new ArrowHitboxRenderableProperty()
-            {
-                IsVisible = false,
-                CastShadows = false,
-                Color = new Color4F(0.4f, 0.4f, 0.4f, 0.25f)
-            };
-            Engine.SpawnEntity(Renderable);
+            Game.HitboxRenderable = Engine.SpawnEntity();
             Selector = Entity.GetProperty<UnitSelectorProperty>();
         }
 
@@ -35,34 +25,18 @@ namespace RuneWeaver.GameProperties.GameControllers
         {
             Engine.Window.MouseDown -= Window_MouseDown;
             Engine.Window.KeyDown -= Window_KeyDown;
-            Entity.OnTick -= Tick;
         }
-
-        /// <summary>
-        /// The hitbox renderable property.
-        /// </summary>
-        public ArrowHitboxRenderableProperty Renderable;
-
+        
         /// <summary>
         /// The main selector.
         /// </summary>
         public UnitSelectorProperty Selector;
-
+        
         /// <summary>
-        /// Whether the entity is using an action.
+        /// The current unit action.
         /// </summary>
-        public Boolean UsingAction = false;
-
-        /// <summary>
-        /// The hitbox current length.
-        /// </summary>
-        public float Length;
-
-        /// <summary>
-        /// the hitbox current angle.
-        /// </summary>
-        public float Angle;
-
+        public BasicActionProperty Action;
+                
         /// <summary>
         /// Tracks mouse presses.
         /// </summary>
@@ -72,19 +46,16 @@ namespace RuneWeaver.GameProperties.GameControllers
         {
             if (e.Button == MouseButton.Left)
             {
-                if (UsingAction)
+                if (Action != null && Action.Preparing)
                 {
-                    UsingAction = false;
-                    Renderable.IsVisible = false;
-                    Selector.Selected.MoveRelative(Length * Math.Cos(Angle), Length * Math.Sin(Angle));
+                    Action.Execute();
                 }
             }
             else if (e.Button == MouseButton.Right)
             {
-                if (UsingAction)
+                if (Action != null && Action.Preparing)
                 {
-                    UsingAction = false;
-                    Renderable.IsVisible = false;
+                    Action.Cancel();
                 }
             }
         }
@@ -95,25 +66,12 @@ namespace RuneWeaver.GameProperties.GameControllers
             {
                 if (Selector.Selected != null)
                 {
-                    UsingAction = true;
-                    ClientEntity selected = Selector.Selected;
-                    Renderable.Start = new Vector2((float)selected.LastKnownPosition.X, (float)selected.LastKnownPosition.Y);
-                    Renderable.RenderingPriorityOrder = 5;
-                    Renderable.Width = selected.GetProperty<UnitEntityProperty>().Size;
-                    Renderable.IsVisible = true;
+                    Action = Selector.Selected.GetAllSubTypes<BasicActionProperty>().First<BasicActionProperty>();
+                    if (Action is MoveActionProperty)
+                    {
+                        Action.Prepare();
+                    }
                 }
-            }
-        }
-
-        private void Tick()
-        {
-            if (UsingAction)
-            {
-                Vector2 distance = (Engine2D.MouseCoords - Renderable.Start);
-                Length = Math.Min(distance.Length, 50f);
-                Angle = (float)Math.Atan2(distance.Y, distance.X);
-                Renderable.Length = Length;
-                Renderable.Angle = Angle;
             }
         }
     }
