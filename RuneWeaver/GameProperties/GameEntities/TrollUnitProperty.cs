@@ -1,24 +1,19 @@
 ﻿using RuneWeaver.GameProperties.GameEntities.UnitActions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RuneWeaver.GameProperties.GameEntities
 {
-    class WolfUnitProperty : BasicUnitProperty
+    class TrollUnitProperty : BasicUnitProperty
     {
         /// <summary>
         /// Fired when entity is spawned.
         /// </summary>
         public override void OnSpawn()
         {
-            Size = 32;
-            MaxHealth = 40;
-            Resistance = 18;
-            Stability = 10;
-            MaxEnergy = 4;
+            Size = 48;
+            MaxHealth = 75;
+            Resistance = 30;
+            Stability = 20;
+            MaxEnergy = 5;
             base.OnSpawn();
             AddActions();
         }
@@ -28,10 +23,11 @@ namespace RuneWeaver.GameProperties.GameEntities
         /// </summary>
         private void AddActions()
         {
-            Entity.AddProperty(new MoveActionProperty()
+            Entity.AddProperty(new ChargeActionProperty()
             {
-                MaxDistance = 5.5f,
-                Cost = 2
+                Cost = 1,
+                MaxDistance = 3,
+                Force = 1.2f
             });
         }
     }

@@ -22,7 +22,7 @@ namespace RuneWeaver.GameProperties.GameRenderables
             }
             set
             {
-                RenderAt = new Location(value.X, value.Y, -5);
+                Entity.SetPosition(new Location(value.X, value.Y, -5));
             }
         }
 

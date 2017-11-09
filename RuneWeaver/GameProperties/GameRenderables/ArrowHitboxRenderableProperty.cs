@@ -19,7 +19,7 @@ namespace RuneWeaver.GameProperties.GameRenderables
             }
             set
             {
-                RenderAt = new Location(value.X, value.Y, 5);
+                Entity.SetPosition(new Location(value.X, value.Y, 3));
             }
         }
 
@@ -41,7 +41,7 @@ namespace RuneWeaver.GameProperties.GameRenderables
         /// <summary>
         /// What color to render the arrow as.
         /// </summary>
-        public Color4F Color = Color4F.White;
+        public Color4F Color = Color4F.Black;
 
         /// <summary>
         /// Render the entity as seen normally, in 2D.
@@ -49,7 +49,7 @@ namespace RuneWeaver.GameProperties.GameRenderables
         /// <param name="context">The render context.</param>
         public override void RenderStandard2D(RenderContext2D context)
         {
-            context.Engine.Textures.White.Bind();
+            context.Engine.Textures.GetTexture("5arrows").Bind();
             context.Engine.RenderHelper.SetColor(Color);
             float halfWidth = Width * 0.5f;
             Vector2 corner = Start + new Vector2((float)Math.Sin(Angle) * halfWidth, (float)-Math.Cos(Angle) * halfWidth);

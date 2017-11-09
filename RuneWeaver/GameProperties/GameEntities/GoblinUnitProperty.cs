@@ -9,9 +9,10 @@ namespace RuneWeaver.GameProperties.GameEntities
         /// </summary>
         public override void OnSpawn()
         {
+            Size = 24;
             MaxHealth = 25;
             Resistance = 12;
-            Size = 8;
+            Stability = 8;
             MaxEnergy = 5;
             base.OnSpawn();
             AddActions();
@@ -24,7 +25,8 @@ namespace RuneWeaver.GameProperties.GameEntities
         {
             Entity.AddProperty(new MoveActionProperty()
             {
-                MaxDistance = 30
+                MaxDistance = 3,
+                Cost = 1
             });
         }
     }

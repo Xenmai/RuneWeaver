@@ -34,28 +34,28 @@ namespace RuneWeaver.GameProperties.GameControllers
         {
             if (KeyZoomIn)
             {
-                Engine2D.Zoom -= 0.001f;
+                Engine2D.Zoom *= 0.975f;
             }
             if (KeyZoomOut)
             {
-                Engine2D.Zoom += 0.001f;
+                Engine2D.Zoom *= 1.025f;
             }
             OpenTK.Vector2 motion = OpenTK.Vector2.Zero;
             if (Engine2D.Window.Mouse.X < 50)
             {
-                motion.X = Engine2D.Window.Mouse.X / 50f - 1;
+                motion.X = Engine2D.Window.Mouse.X * 0.002f - 0.1f;
             }
             if (Engine2D.Window.Mouse.X > Engine2D.Window.Width - 50)
             {
-                motion.X = 1 - (Engine2D.Window.Width - Engine2D.Window.Mouse.X) / 50f;
+                motion.X = 0.1f - (Engine2D.Window.Width - Engine2D.Window.Mouse.X) * 0.002f;
             }
             if (Engine2D.Window.Mouse.Y < 50)
             {
-                motion.Y = 1- Engine2D.Window.Mouse.Y / 50f;
+                motion.Y = 0.1f - Engine2D.Window.Mouse.Y * 0.002f;
             }
             if (Engine2D.Window.Mouse.Y > Engine2D.Window.Height - 50)
             {
-                motion.Y = (Engine2D.Window.Height - Engine2D.Window.Mouse.Y) / 50f - 1;
+                motion.Y = (Engine2D.Window.Height - Engine2D.Window.Mouse.Y) * 0.002f - 0.1f;
             }
             Engine2D.ViewCenter += motion;
         }

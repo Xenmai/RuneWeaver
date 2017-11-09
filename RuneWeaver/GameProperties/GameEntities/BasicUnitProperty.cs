@@ -3,15 +3,16 @@ using FreneticGameCore.EntitySystem.PhysicsHelpers;
 using FreneticGameGraphics.ClientSystem.EntitySystem;
 using OpenTK;
 using RuneWeaver.GameProperties.GameInterfaces;
+using RuneWeaver.GameProperties.PhysicProperties;
 
 namespace RuneWeaver.GameProperties.GameEntities
 {
     class BasicUnitProperty : CustomClientEntityProperty, ISelectable
     {
         /// <summary>
-        /// The unit's renderable.
+        /// The unit's renderable circle base.
         /// </summary>
-        public EntitySimple2DRenderableBoxProperty Renderable;
+        public EntitySimple2DRenderableBoxProperty Circle;
 
         /// <summary>
         /// The unit's physics body.
@@ -34,6 +35,11 @@ namespace RuneWeaver.GameProperties.GameEntities
         public float Resistance;
 
         /// <summary>
+        /// The unit's stability.
+        /// </summary>
+        public float Stability;
+
+        /// <summary>
         /// The unit's current energy.
         /// </summary>
         public int Energy;
@@ -54,11 +60,20 @@ namespace RuneWeaver.GameProperties.GameEntities
         public Vector2 Position;
 
         /// <summary>
+        /// The unit's looking direction.
+        /// </summary>
+        public double Direction;
+
+        /// <summary>
         /// Fired when entity is spawned.
         /// </summary>
         public override void OnSpawn()
         {
-            Renderable = new EntitySimple2DRenderableBoxProperty()
+            Size *= 2048 * Engine2D.Zoom / 800f;
+            Direction = 0;
+            Health = MaxHealth;
+            Energy = MaxEnergy;
+            Circle = new EntitySimple2DRenderableBoxProperty()
             {
                 BoxColor = Color4F.Red,
                 BoxSize = new Vector2(Size, Size),
@@ -66,10 +81,20 @@ namespace RuneWeaver.GameProperties.GameEntities
             };
             Body = new ClientEntityPhysicsProperty()
             {
+                Shape = new EntityCylinderShape()
+                {
+                    Radius = Size * 0.5,
+                    Height = 2
+                },
                 Position = new Location(Position.X, Position.Y, 0),
-                Shape = new EntityBoxShape() { Size = new Location(Size, Size, 10) }
+                Mass = Stability,
+                Friction = 0.5
             };
-            Entity.AddProperties(Renderable, Body);   
+            Entity.AddProperties(Circle, Body, new ClientEntityPhysics2DLimitProperty()
+            {
+                ForcePosition = false
+            }, new Entity2DForceOrientationProperty() { });
+            Game.Units.Add(Entity);
         }
 
         /// <summary>
@@ -77,7 +102,7 @@ namespace RuneWeaver.GameProperties.GameEntities
         /// </summary>
         public void Select()
         {
-            Renderable.BoxColor = Color4F.Blue;
+            Circle.BoxColor = Color4F.Blue;
         }
 
         /// <summary>
@@ -85,7 +110,7 @@ namespace RuneWeaver.GameProperties.GameEntities
         /// </summary>
         public void Deselect()
         {
-            Renderable.BoxColor = Color4F.Red;
+            Circle.BoxColor = Color4F.Red;
         }
     }
 }

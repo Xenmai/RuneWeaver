@@ -1,14 +1,10 @@
 ﻿using FreneticGameCore;
-using FreneticGameCore.Collision;
 using FreneticGameGraphics.ClientSystem.EntitySystem;
 using OpenTK;
 using OpenTK.Input;
 using RuneWeaver.GameProperties.GameEntities;
 using RuneWeaver.GameProperties.GameInterfaces;
-using RuneWeaver.GameProperties.GameRenderables;
-using System.Collections.Generic;
 using System.Linq;
-using System;
 
 namespace RuneWeaver.GameProperties.GameControllers
 {
@@ -22,12 +18,6 @@ namespace RuneWeaver.GameProperties.GameControllers
             Engine.Window.MouseDown += Window_MouseDown;
             Engine.Window.MouseUp += Window_MouseUp;
             Engine.Window.KeyDown += Window_KeyDown;
-            Renderable = new SelectedEntityRenderableProperty()
-            {
-                IsVisible = false,
-                CastShadows = false,
-            };
-            Engine.SpawnEntity(Renderable);
             ActionHandler = Entity.GetProperty<UnitActionHandlerProperty>();
         }
 
@@ -40,11 +30,6 @@ namespace RuneWeaver.GameProperties.GameControllers
             Engine.Window.MouseUp -= Window_MouseUp;
             Engine.Window.KeyDown -= Window_KeyDown;
         }
-
-        /// <summary>
-        /// The selected entity renderable.
-        /// </summary>
-        public SelectedEntityRenderableProperty Renderable;
 
         /// <summary>
         /// The main action handler.
@@ -67,8 +52,6 @@ namespace RuneWeaver.GameProperties.GameControllers
             {
                 if (Selected != null && (ActionHandler.Action == null || !ActionHandler.Action.Preparing))
                 {
-                    Selected.OnPositionChanged -= PositionChanged;
-                    Renderable.IsVisible = false;
                     Selected?.SignalAllInterfacedProperties<ISelectable>((p) => p.Deselect());
                     Selected = null;
                 }
@@ -86,22 +69,15 @@ namespace RuneWeaver.GameProperties.GameControllers
             {
                 if (Selected == null)
                 {
-                    Location loc = new Location(Engine2D.MouseCoords.X, Engine2D.MouseCoords.Y, 0);
-                    AABB box = new AABB()
+                    foreach (ClientEntity ent in Game.Units)
                     {
-                        Min = loc,
-                        Max = loc
-                    };
-                    List<ClientEntity> results = Engine2D.PhysicsWorld.GetEntitiesInBox(box).Where((ent) => ent.GetAllInterfacedProperties<ISelectable>().Count() > 0).ToList<ClientEntity>();
-                    if (results.Count > 0)
-                    {
-                        Selected = results.First<ClientEntity>();
-                        Selected?.SignalAllInterfacedProperties<ISelectable>((p) => p.Select());
-                        Renderable.Radius = Selected.GetAllSubTypes<BasicUnitProperty>().First<BasicUnitProperty>().Size * 0.75f;
-                        Renderable.IsVisible = true;
-                        Renderable.Center = new Vector2((float)Selected.LastKnownPosition.X, (float)Selected.LastKnownPosition.Y);
-                        Selected.OnPositionChanged += PositionChanged;
-                        Renderable.Entity.SetPosition(Selected.LastKnownPosition - new Location(0, 0, 5));
+                        BasicUnitProperty unit = ent.GetAllSubTypes<BasicUnitProperty>().First();
+                        double radius = unit.Size * 0.5;
+                        if (ent.LastKnownPosition.DistanceSquared_Flat(new Location(Engine2D.MouseCoords.X, Engine2D.MouseCoords.Y, 0)) < radius * radius)
+                        {
+                            Selected = ent;
+                            Selected?.SignalAllInterfacedProperties<ISelectable>((p) => p.Select());
+                        }
                     }
                 }
             }
@@ -116,11 +92,6 @@ namespace RuneWeaver.GameProperties.GameControllers
                     Engine2D.ViewCenter = new Vector2((float)Selected.LastKnownPosition.X, (float)Selected.LastKnownPosition.Y);
                 }
             }
-        }
-
-        private void PositionChanged(Location loc)
-        {
-            Renderable.Entity.SetPosition(loc - new Location(0, 0, 5));
         }
     }
 }

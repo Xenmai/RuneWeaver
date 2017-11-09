@@ -1,6 +1,5 @@
 ﻿using OpenTK.Input;
 using RuneWeaver.GameProperties.GameEntities.UnitActions;
-using System;
 using System.Linq;
 
 namespace RuneWeaver.GameProperties.GameControllers
@@ -66,8 +65,8 @@ namespace RuneWeaver.GameProperties.GameControllers
             {
                 if (Selector.Selected != null)
                 {
-                    Action = Selector.Selected.GetAllSubTypes<BasicActionProperty>().First<BasicActionProperty>();
-                    if (Action is MoveActionProperty)
+                    Action = Selector.Selected.GetAllSubTypes<BasicActionProperty>().First();
+                    if (!Action.Executing)
                     {
                         Action.Prepare();
                     }
