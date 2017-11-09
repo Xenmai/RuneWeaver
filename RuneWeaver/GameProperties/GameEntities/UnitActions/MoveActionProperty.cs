@@ -8,7 +8,7 @@ using System.Linq;
 namespace RuneWeaver.GameProperties.GameEntities.UnitActions
 {
     /// <summary>
-    /// The basic movement action. Can't push other units.
+    /// The basic movement action. Can push other units.
     /// </summary>
     class MoveActionProperty : BasicActionProperty
     {
@@ -18,9 +18,14 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
         public float MaxDistance;
 
         /// <summary>
-        /// The movement direction.
+        /// The starting speed factor of the charge.
         /// </summary>
-        public Location Target;
+        public float Force;
+
+        /// <summary>
+        /// How starting point of the movement.
+        /// </summary>
+        public Vector2 Start;
 
         /// <summary>
         /// How long the entity should keep moving.
@@ -28,12 +33,22 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
         public double TimeLeft;
 
         /// <summary>
+        /// The direction angle of the movement.
+        /// </summary>
+        public double Angle;
+
+        /// <summary>
+        /// The current movement distance.
+        /// </summary>
+        public double Distance;
+
+        /// <summary>
         /// The unit property.
         /// </summary>
         public BasicUnitProperty Unit;
 
         /// <summary>
-        /// The unit property.
+        /// The physics body property.
         /// </summary>
         public ClientEntityPhysicsProperty Body;
 
@@ -70,14 +85,14 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
         /// </summary>
         public override void Prepare()
         {
-            Vector2 start = new Vector2((float)Entity.LastKnownPosition.X, (float)Entity.LastKnownPosition.Y);
-            Vector2 distance = (Engine2D.MouseCoords - start);
-            float length = Math.Min(distance.Length, MaxDistance);
-            Renderable.Length = length;
-            float angle = (float)Math.Atan2(distance.Y, distance.X);
-            Renderable.Angle = angle;
+            Start = new Vector2((float)Entity.LastKnownPosition.X, (float)Entity.LastKnownPosition.Y);
+            Vector2 offset = (Engine2D.MouseCoords - Start);
+            Distance = Math.Min(offset.Length, MaxDistance);
+            Renderable.Length = (float)Distance;
+            Angle = Math.Atan2(offset.Y, offset.X);
+            Renderable.Angle = (float)Angle;
             Game.HitboxRenderable.AddProperty(Renderable);
-            Renderable.Start = start;
+            Renderable.Start = Start;
             base.Prepare();
         }
 
@@ -88,7 +103,12 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
         {
             Game.HitboxRenderable.RemoveProperty<ArrowHitboxRenderableProperty>();
             Unit.Energy -= Cost;
-            TimeLeft = 1;
+            Entity.SetOrientation(FreneticGameCore.Quaternion.FromAxisAngle(Location.UnitZ, Angle));
+            Unit.Direction = Angle;
+            double speed = MaxDistance * Force;
+            TimeLeft = Distance / speed;
+            Body.Friction = 0;
+            Body.LinearVelocity = new Location((float)Math.Cos(Angle) * speed, (float)Math.Sin(Angle) * speed, 0);
             base.Execute();
         }
 
@@ -101,55 +121,34 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
             base.Cancel();
         }
 
+        /// <summary>
+        /// Fires every tick.
+        /// </summary>
         private void Tick()
         {
             if (Preparing)
             {
-                Vector2 distance = (Engine2D.MouseCoords - Renderable.Start);
-                float length = Math.Min(distance.Length, MaxDistance);
-                Renderable.Length = length;
-                float angle = (float)Math.Atan2(distance.Y, distance.X);
-                Renderable.Angle = angle;
-                Target = new Location((float)Math.Cos(angle) * length, (float)Math.Sin(angle) * length, 0);
+                Vector2 offset = (Engine2D.MouseCoords - Start);
+                Distance = Math.Min(offset.Length, MaxDistance);
+                Renderable.Length = (float)Distance;
+                Angle = Math.Atan2(offset.Y, offset.X);
+                Renderable.Angle = (float)Angle;
             }
             else if (Executing)
             {
                 if (TimeLeft == 0)
                 {
                     Executing = false;
+                    Body.LinearVelocity = Location.Zero;
+                    Body.Friction = 0.5;
                 }
                 else if (TimeLeft > Engine.Delta)
                 {
-                    Location speed = Target * Engine.Delta;
-                    Location position = Entity.LastKnownPosition + speed;
-                    Boolean stop = false;
-                    foreach (ClientEntity otherEnt in Game.Units)
-                    {
-                        if (otherEnt != Entity)
-                        {
-                            BasicUnitProperty otherUnit = otherEnt.GetAllSubTypes<BasicUnitProperty>().First();
-                            double totalSize = (otherUnit.Size + Unit.Size) * 0.5;
-                            double totalSizeSquared = totalSize * totalSize;
-                            if (otherEnt.LastKnownPosition.DistanceSquared_Flat(position) < totalSizeSquared)
-                            {
-                                stop = true;
-                                double a = (Target.Y * otherEnt.LastKnownPosition.X - Target.X * otherEnt.LastKnownPosition.Y + position.X * Entity.LastKnownPosition.Y - position.Y * Entity.LastKnownPosition.X) / Target.Length();
-                                double b = Target.Dot(otherEnt.LastKnownPosition - Entity.LastKnownPosition) - Math.Sqrt(totalSizeSquared - a * a);
-                                SysConsole.Output(OutputType.DEBUG, totalSize + "     " + a + "     " + Target.Dot(otherEnt.LastKnownPosition - Entity.LastKnownPosition) + "     " + Math.Sqrt(totalSizeSquared - a * a) + "     " + b + "     " + speed.Length());
-                                Entity.MoveRelative(speed * b / speed.Length());
-                                TimeLeft = 0;
-                            }
-                        }
-                    }
-                    if (!stop)
-                    {
-                        Entity.MoveRelative(speed);
-                        TimeLeft -= Engine.Delta;
-                    }
+                    TimeLeft -= Engine.Delta;
                 }
                 else
                 {
-                    Entity.MoveRelative(Target * TimeLeft);
+                    Body.LinearVelocity *= TimeLeft / Engine.Delta;
                     TimeLeft = 0;
                 }
             }

@@ -72,9 +72,8 @@
     <Compile Include="GameProperties\GameEntities\TrollUnitProperty.cs" />
     <Compile Include="GameProperties\GameEntities\GoblinUnitProperty.cs" />
     <Compile Include="GameProperties\GameEntities\UnitActions\BasicActionProperty.cs" />
-    <Compile Include="GameProperties\GameEntities\UnitActions\ChargeActionProperty.cs" />
-    <Compile Include="GameProperties\GameEntities\UnitActions\ShootActionProperty.cs" />
     <Compile Include="GameProperties\GameEntities\UnitActions\MoveActionProperty.cs" />
+    <Compile Include="GameProperties\GameEntities\UnitActions\ShootActionProperty.cs" />
     <Compile Include="GameProperties\GameEntities\WolfUnitProperty.cs" />
     <Compile Include="GameProperties\GameInterfaces\IExecutable.cs" />
     <Compile Include="GameProperties\GameRenderables\ArrowHitboxRenderableProperty.cs" />

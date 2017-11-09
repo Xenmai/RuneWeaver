@@ -23,7 +23,7 @@ namespace RuneWeaver.GameProperties.GameEntities
         /// </summary>
         private void AddActions()
         {
-            Entity.AddProperty(new ChargeActionProperty()
+            Entity.AddProperty(new MoveActionProperty()
             {
                 Cost = 1,
                 MaxDistance = 3,

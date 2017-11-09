@@ -44,7 +44,7 @@ namespace RuneWeaver.GameProperties.PhysicProperties
         private void Tick()
         {
             Body.AngularVelocity = Location.Zero;
-            Body.Orientation = Quaternion.FromAxisAngle(Location.UnitZ, Unit.Direction);
+            Entity.SetOrientation(Quaternion.FromAxisAngle(Location.UnitZ, Unit.Direction));
         }
     }
 }
