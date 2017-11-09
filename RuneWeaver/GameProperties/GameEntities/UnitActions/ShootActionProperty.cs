@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace RuneWeaver.GameProperties.GameEntities.UnitActions
 {
-    class ShootActionProperty : BasicActionProperty
+    public class ShootActionProperty : BasicActionProperty
     {
         /// <summary>
         /// The maximum movement distance.

@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace RuneWeaver.GameProperties.GameControllers
 {
-    class UnitActionHandlerProperty : CustomClientEntityProperty
+    public class UnitActionHandlerProperty : CustomClientEntityProperty
     {
         /// <summary>
         /// Fired when entity is spawned.

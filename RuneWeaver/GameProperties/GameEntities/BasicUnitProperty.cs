@@ -7,7 +7,7 @@ using RuneWeaver.GameProperties.PhysicProperties;
 
 namespace RuneWeaver.GameProperties.GameEntities
 {
-    class BasicUnitProperty : CustomClientEntityProperty, ISelectable
+    public class BasicUnitProperty : CustomClientEntityProperty, ISelectable
     {
         /// <summary>
         /// The unit's renderable circle base.

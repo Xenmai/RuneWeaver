@@ -8,7 +8,7 @@ namespace RuneWeaver.GameProperties.PhysicProperties
     /// <summary>
     /// Prevents units from rotating on the Z axis.
     /// </summary>
-    class Entity2DForceOrientationProperty : CustomClientEntityProperty
+    public class Entity2DForceOrientationProperty : CustomClientEntityProperty
     {
         /// <summary>
         /// The unit property.

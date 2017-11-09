@@ -3,7 +3,7 @@ using RuneWeaver.GameProperties.GameInterfaces;
 
 namespace RuneWeaver.GameProperties.GameEntities.UnitActions
 {
-    class BasicActionProperty : CustomClientEntityProperty, IExecutable
+    public class BasicActionProperty : CustomClientEntityProperty, IExecutable
     {
         /// <summary>
         /// The action's cost.

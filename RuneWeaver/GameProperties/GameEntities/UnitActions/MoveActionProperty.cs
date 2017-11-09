@@ -10,7 +10,7 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
     /// <summary>
     /// The basic movement action. Can push other units.
     /// </summary>
-    class MoveActionProperty : BasicActionProperty
+    public class MoveActionProperty : BasicActionProperty
     {
         /// <summary>
         /// The maximum movement distance.

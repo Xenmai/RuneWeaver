@@ -2,7 +2,7 @@
 
 namespace RuneWeaver.GameProperties.GameEntities
 {
-    class TrollUnitProperty : BasicUnitProperty
+    public class TrollUnitProperty : BasicUnitProperty
     {
         /// <summary>
         /// Fired when entity is spawned.
@@ -23,7 +23,7 @@ namespace RuneWeaver.GameProperties.GameEntities
         /// </summary>
         private void AddActions()
         {
-            Entity.AddProperty(new MoveActionProperty()
+            Entity.AddProperties(new MoveActionProperty()
             {
                 Cost = 1,
                 MaxDistance = 3,

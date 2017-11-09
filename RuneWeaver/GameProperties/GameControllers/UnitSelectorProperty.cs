@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace RuneWeaver.GameProperties.GameControllers
 {
-    class UnitSelectorProperty : CustomClientEntityProperty
+    public class UnitSelectorProperty : CustomClientEntityProperty
     {
         /// <summary>
         /// Fired when entity is spawned.

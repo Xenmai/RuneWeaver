@@ -4,7 +4,6 @@ using FreneticGameGraphics.ClientSystem;
 using FreneticGameGraphics.UISystem;
 using FreneticGameGraphics.ClientSystem.EntitySystem;
 using RuneWeaver.GameProperties.GameEntities;
-using FreneticGameCore;
 
 namespace RuneWeaver.GameScreens
 {
@@ -30,7 +29,6 @@ namespace RuneWeaver.GameScreens
 
         void ResetEnergy()
         {
-            SysConsole.OutputCustom("info", "banana");
             foreach (ClientEntity ent in Engine.EntityList)
             {
                 IEnumerable<BasicUnitProperty> props = ent.GetAllSubTypes<BasicUnitProperty>();

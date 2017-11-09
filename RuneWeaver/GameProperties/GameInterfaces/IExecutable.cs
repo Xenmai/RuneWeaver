@@ -3,7 +3,7 @@
     /// <summary>
     /// Represents a unit action.
     /// </summary>
-    interface IExecutable
+    public interface IExecutable
     {
         /// <summary>
         /// Executes the action.

@@ -2,7 +2,7 @@
 
 namespace RuneWeaver.GameProperties.GameEntities
 {
-    class GoblinUnitProperty : BasicUnitProperty
+    public class GoblinUnitProperty : BasicUnitProperty
     {
         /// <summary>
         /// Fired when entity is spawned.
@@ -23,10 +23,11 @@ namespace RuneWeaver.GameProperties.GameEntities
         /// </summary>
         private void AddActions()
         {
-            Entity.AddProperty(new MoveActionProperty()
+            Entity.AddProperties(new MoveActionProperty()
             {
+                Cost = 1,
                 MaxDistance = 3,
-                Cost = 1
+                Force = 1
             });
         }
     }

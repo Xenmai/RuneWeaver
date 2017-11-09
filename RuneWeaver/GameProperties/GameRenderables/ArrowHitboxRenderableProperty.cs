@@ -6,7 +6,7 @@ using System;
 
 namespace RuneWeaver.GameProperties.GameRenderables
 {
-    class ArrowHitboxRenderableProperty : Entity2DRenderableProperty
+    public class ArrowHitboxRenderableProperty : Entity2DRenderableProperty
     {
         /// <summary>
         /// The arrow's start point.

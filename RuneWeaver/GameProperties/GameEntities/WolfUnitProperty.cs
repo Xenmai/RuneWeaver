@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace RuneWeaver.GameProperties.GameEntities
 {
-    class WolfUnitProperty : BasicUnitProperty
+    public class WolfUnitProperty : BasicUnitProperty
     {
         /// <summary>
         /// Fired when entity is spawned.
@@ -28,10 +28,11 @@ namespace RuneWeaver.GameProperties.GameEntities
         /// </summary>
         private void AddActions()
         {
-            Entity.AddProperty(new MoveActionProperty()
+            Entity.AddProperties(new MoveActionProperty()
             {
+                Cost = 2,
                 MaxDistance = 5.5f,
-                Cost = 2
+                Force = 1
             });
         }
     }
