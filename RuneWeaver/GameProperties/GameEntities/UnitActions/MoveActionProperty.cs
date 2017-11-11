@@ -43,11 +43,6 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
         public double Distance;
 
         /// <summary>
-        /// The unit property.
-        /// </summary>
-        public BasicUnitProperty Unit;
-
-        /// <summary>
         /// The physics body property.
         /// </summary>
         public ClientEntityPhysicsProperty Body;
@@ -85,15 +80,18 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
         /// </summary>
         public override void Prepare()
         {
-            Start = new Vector2((float)Entity.LastKnownPosition.X, (float)Entity.LastKnownPosition.Y);
-            Vector2 offset = (Engine2D.MouseCoords - Start);
-            Distance = Math.Min(offset.Length, MaxDistance);
-            Renderable.Length = (float)Distance;
-            Angle = Math.Atan2(offset.Y, offset.X);
-            Renderable.Angle = (float)Angle;
-            Game.HitboxRenderable.AddProperty(Renderable);
-            Renderable.Start = Start;
-            base.Prepare();
+            if (CheckEnergy())
+            {
+                Start = new Vector2((float)Entity.LastKnownPosition.X, (float)Entity.LastKnownPosition.Y);
+                Vector2 offset = (Engine2D.MouseCoords - Start);
+                Distance = Math.Min(offset.Length, MaxDistance);
+                Renderable.Length = (float)Distance;
+                Angle = Math.Atan2(offset.Y, offset.X);
+                Renderable.Angle = (float)Angle;
+                Game.HitboxRenderable.AddProperty(Renderable);
+                Renderable.Start = Start;
+                base.Prepare();
+            }
         }
 
         /// <summary>
@@ -102,12 +100,11 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
         public override void Execute()
         {
             Game.HitboxRenderable.RemoveProperty<ArrowHitboxRenderableProperty>();
-            Unit.Energy -= Cost;
-            Entity.SetOrientation(FreneticGameCore.Quaternion.FromAxisAngle(Location.UnitZ, Angle));
             Unit.Direction = Angle;
             double speed = MaxDistance * Force;
             TimeLeft = Distance / speed;
             Body.Friction = 0;
+            Entity.SetOrientation(FreneticGameCore.Quaternion.FromAxisAngle(Location.UnitZ, Angle));
             Body.LinearVelocity = new Location((float)Math.Cos(Angle) * speed, (float)Math.Sin(Angle) * speed, 0);
             base.Execute();
         }

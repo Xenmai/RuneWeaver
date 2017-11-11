@@ -22,7 +22,7 @@ namespace RuneWeaver.GameProperties.GameRenderables
             }
             set
             {
-                Entity.SetPosition(new Location(value.X, value.Y, -5));
+                Entity.SetPosition(new Location(value.X, value.Y, 3));
             }
         }
 
@@ -42,11 +42,11 @@ namespace RuneWeaver.GameProperties.GameRenderables
         /// <param name="context">The render context.</param>
         public override void RenderStandard2D(RenderContext2D context)
         {
-            context.Engine.Textures.White.Bind();
+            context.Engine.Textures.GetTexture("SelectedOutline").Bind();
             context.Engine.RenderHelper.SetColor(Color);
             Vector2 center = Center;
             context.Engine.RenderHelper.RenderRectangle(context, center.X - Radius, center.Y + Radius,
-                center.X + Radius, center.Y - Radius);
+                center.X + Radius, center.Y - Radius, new Vector3(0, 0, RenderAngle));
         }
     }
 }

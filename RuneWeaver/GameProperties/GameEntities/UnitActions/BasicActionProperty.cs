@@ -11,6 +11,11 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
         public int Cost;
 
         /// <summary>
+        /// The unit property.
+        /// </summary>
+        public BasicUnitProperty Unit;
+
+        /// <summary>
         /// Whether the action is being executed.
         /// </summary>
         public Boolean Executing = false;
@@ -21,20 +26,10 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
         public Boolean Preparing = false;
 
         /// <summary>
-        /// Executes the action.
+        /// When the entity that owns the property spawns.
         /// </summary>
         public override void OnSpawn()
         {
-
-        }
-
-        /// <summary>
-        /// Executes the action.
-        /// </summary>
-        public virtual void Execute()
-        {
-            Executing = true;
-            Preparing = false;
         }
 
         /// <summary>
@@ -46,11 +41,29 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
         }
 
         /// <summary>
+        /// Executes the action.
+        /// </summary>
+        public virtual void Execute()
+        {
+            Unit.Energy -= Cost;
+            Executing = true;
+            Preparing = false;
+        }
+
+        /// <summary>
         /// Cancels the action.
         /// </summary>
         public virtual void Cancel()
         {
             Preparing = false;
+        }
+
+        /// <summary>
+        /// Checks if the unit has enough energy to perform this action.
+        /// </summary>
+        public bool CheckEnergy()
+        {
+            return Unit.Energy >= Cost;
         }
     }
 }

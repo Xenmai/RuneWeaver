@@ -13,7 +13,7 @@ namespace RuneWeaver.GameProperties.GameEntities
             MaxHealth = 75;
             Resistance = 30;
             Stability = 20;
-            MaxEnergy = 5;
+            MaxEnergy = 3;
             base.OnSpawn();
             AddActions();
         }

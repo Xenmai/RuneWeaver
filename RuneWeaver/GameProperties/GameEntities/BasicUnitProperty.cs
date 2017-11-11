@@ -77,7 +77,7 @@ namespace RuneWeaver.GameProperties.GameEntities
             {
                 BoxColor = Color4F.Red,
                 BoxSize = new Vector2(Size, Size),
-                BoxTexture = Engine2D.Textures.White
+                BoxTexture = Engine2D.Textures.GetTexture("BaseCircle")
             };
             Body = new ClientEntityPhysicsProperty()
             {
