@@ -14,7 +14,7 @@ namespace RuneWeaver.GameProperties.GameControllers
         /// <summary>
         /// The outline renderable.
         /// </summary>
-        public SelectedEntityRenderableProperty Renderable;
+        public EntitySimple2DRenderableBoxProperty Renderable;
 
         /// <summary>
         /// Fired when entity is spawned.
@@ -25,8 +25,9 @@ namespace RuneWeaver.GameProperties.GameControllers
             Engine.Window.MouseUp += Window_MouseUp;
             Engine.Window.KeyDown += Window_KeyDown;
             ActionHandler = Entity.GetProperty<UnitActionHandlerProperty>();
-            Renderable = new SelectedEntityRenderableProperty()
+            Renderable = new EntitySimple2DRenderableBoxProperty()
             {
+                BoxTexture = Engine2D.Textures.GetTexture("SelectedOutline"),
                 CastShadows = false,
                 IsVisible = false
             };
@@ -41,7 +42,7 @@ namespace RuneWeaver.GameProperties.GameControllers
             Engine.Window.MouseDown -= Window_MouseDown;
             Engine.Window.MouseUp -= Window_MouseUp;
             Engine.Window.KeyDown -= Window_KeyDown;
-            Entity.RemoveProperty<SelectedEntityRenderableProperty>();
+            Entity.RemoveProperty<EntitySimple2DRenderableBoxProperty>();
         }
 
         /// <summary>
@@ -63,8 +64,10 @@ namespace RuneWeaver.GameProperties.GameControllers
         {
             if (e.Button == MouseButton.Left)
             {
-                if (Selected != null && (ActionHandler.Action == null || !ActionHandler.Action.Preparing))
+                if (Selected != null && (ActionHandler.Action == null || (!ActionHandler.Action.Preparing && !ActionHandler.Action.Executing)))
                 {
+                    Selected.OnPositionChanged -= UpdatePosition;
+                    Selected.OnOrientationChanged -= UpdateOrientation;
                     Renderable.IsVisible = false;
                     Selected?.SignalAllInterfacedProperties<ISelectable>((p) => p.Deselect());
                     Selected = null;
@@ -91,16 +94,41 @@ namespace RuneWeaver.GameProperties.GameControllers
                         {
                             Selected = ent;
                             Selected?.SignalAllInterfacedProperties<ISelectable>((p) => p.Select());
-                            Renderable.Radius = (float)radius * 2;
-                            Renderable.Center = new Vector2((float)Selected.LastKnownPosition.X, (float)Selected.LastKnownPosition.Y);
-                            Renderable.RenderAngle = (float)unit.Direction;
+                            Entity.SetPosition(new Location(Selected.LastKnownPosition.X, Selected.LastKnownPosition.Y, 3));
+                            Entity.SetOrientation(FreneticGameCore.Quaternion.FromAxisAngle(Location.UnitZ, unit.Direction));
+                            Renderable.BoxSize = new Vector2(unit.Size * 2);
                             Renderable.IsVisible = true;
+                            Selected.OnPositionChanged += UpdatePosition;
+                            Selected.OnOrientationChanged += UpdateOrientation;
                         }
                     }
                 }
             }
         }
 
+        /// <summary>
+        /// Updates the renderable's position.
+        /// </summary>
+        /// <param name="loc">New location.</param>
+        private void UpdatePosition(Location loc)
+        {
+            Entity.SetPosition(new Location(loc.X, loc.Y, 3));
+        }
+
+        /// <summary>
+        /// Updates the renderable's orientation.
+        /// </summary>
+        /// <param name="q">New orientation.</param>
+        private void UpdateOrientation(FreneticGameCore.Quaternion q)
+        {
+            Entity.SetOrientation(q);
+        }
+
+        /// <summary>
+        /// Listens to keyboard presses.
+        /// </summary>
+        /// <param name="sender">Sender.</param>
+        /// <param name="e">Event data.</param>
         private void Window_KeyDown(object sender, KeyboardKeyEventArgs e)
         {
             if (e.Key == Key.Space)
