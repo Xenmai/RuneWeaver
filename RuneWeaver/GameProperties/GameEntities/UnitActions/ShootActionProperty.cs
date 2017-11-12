@@ -34,11 +34,6 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
         public double TimeLeft;
 
         /// <summary>
-        /// The unit property.
-        /// </summary>
-        public BasicUnitProperty Unit;
-
-        /// <summary>
         /// The physics body.
         /// </summary>
         public ClientEntityPhysicsProperty Projectile;
@@ -60,7 +55,7 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
                 Shape = new EntityBoxShape() { Size = new Location(5, 5, 10) },
                 Friction = 0
             };
-            Unit = Entity.GetAllSubTypes<BasicUnitProperty>().First<BasicUnitProperty>();
+            Unit = Entity.GetAllSubTypes<BasicUnitProperty>().First();
             Renderable = new ArrowHitboxRenderableProperty()
             {
                 CastShadows = false,
@@ -84,7 +79,7 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
         {
             Unit.Energy -= Cost;
             TimeLeft = 1;
-            Game.HitboxRenderable.RemoveProperty<ArrowHitboxRenderableProperty>();
+            Game.UnitActionHandler.RemoveProperty<ArrowHitboxRenderableProperty>();
             base.Execute();
         }
 
@@ -94,7 +89,7 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
         public override void Prepare()
         {
             Renderable.Start = new Vector2((float)Entity.LastKnownPosition.X, (float)Entity.LastKnownPosition.Y);
-            Game.HitboxRenderable.AddProperty(Renderable);
+            Game.UnitActionHandler.AddProperty(Renderable);
             base.Prepare();
         }
 
@@ -103,7 +98,7 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
         /// </summary>
         public override void Cancel()
         {
-            Game.HitboxRenderable.RemoveProperty<ArrowHitboxRenderableProperty>();
+            Game.UnitActionHandler.RemoveProperty<ArrowHitboxRenderableProperty>();
             base.Cancel();
         }
 

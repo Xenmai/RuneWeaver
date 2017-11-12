@@ -3,8 +3,8 @@ using FreneticGameGraphics.ClientSystem.EntitySystem;
 using OpenTK;
 using OpenTK.Input;
 using RuneWeaver.GameProperties.GameEntities;
+using RuneWeaver.GameProperties.GameEntities.UnitActions;
 using RuneWeaver.GameProperties.GameInterfaces;
-using RuneWeaver.GameProperties.GameRenderables;
 using System.Linq;
 
 namespace RuneWeaver.GameProperties.GameControllers
@@ -24,7 +24,6 @@ namespace RuneWeaver.GameProperties.GameControllers
             Engine.Window.MouseDown += Window_MouseDown;
             Engine.Window.MouseUp += Window_MouseUp;
             Engine.Window.KeyDown += Window_KeyDown;
-            ActionHandler = Entity.GetProperty<UnitActionHandlerProperty>();
             Renderable = new EntitySimple2DRenderableBoxProperty()
             {
                 BoxTexture = Engine2D.Textures.GetTexture("SelectedOutline"),
@@ -46,11 +45,6 @@ namespace RuneWeaver.GameProperties.GameControllers
         }
 
         /// <summary>
-        /// The main action handler.
-        /// </summary>
-        public UnitActionHandlerProperty ActionHandler;
-
-        /// <summary>
         /// Which entity is selected.
         /// </summary>
         public ClientEntity Selected = null;
@@ -64,13 +58,18 @@ namespace RuneWeaver.GameProperties.GameControllers
         {
             if (e.Button == MouseButton.Left)
             {
-                if (Selected != null && (ActionHandler.Action == null || (!ActionHandler.Action.Preparing && !ActionHandler.Action.Executing)))
+                if (Selected != null)
                 {
-                    Selected.OnPositionChanged -= UpdatePosition;
-                    Selected.OnOrientationChanged -= UpdateOrientation;
-                    Renderable.IsVisible = false;
-                    Selected?.SignalAllInterfacedProperties<ISelectable>((p) => p.Deselect());
-                    Selected = null;
+                    BasicActionProperty action = Game.UnitActionHandler.GetProperty<UnitActionHandlerProperty>().Action;
+                    if (action == null || (!action.Preparing && !action.Executing))
+                    {
+                        Selected.OnPositionChanged -= UpdatePosition;
+                        Selected.OnOrientationChanged -= UpdateOrientation;
+                        Renderable.IsVisible = false;
+                        Selected?.SignalAllInterfacedProperties<ISelectable>((p) => p.Deselect());
+                        Selected = null;
+
+                    }
                 }
             }
         }

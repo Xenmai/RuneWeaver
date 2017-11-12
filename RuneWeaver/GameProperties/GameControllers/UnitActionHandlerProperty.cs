@@ -1,4 +1,5 @@
-﻿using OpenTK.Input;
+﻿using FreneticGameGraphics.ClientSystem.EntitySystem;
+using OpenTK.Input;
 using RuneWeaver.GameProperties.GameEntities.UnitActions;
 using System.Linq;
 
@@ -13,8 +14,6 @@ namespace RuneWeaver.GameProperties.GameControllers
         {
             Engine.Window.MouseDown += Window_MouseDown;
             Engine.Window.KeyDown += Window_KeyDown;
-            Game.HitboxRenderable = Engine.SpawnEntity();
-            Selector = Entity.GetProperty<UnitSelectorProperty>();
         }
 
         /// <summary>
@@ -25,11 +24,6 @@ namespace RuneWeaver.GameProperties.GameControllers
             Engine.Window.MouseDown -= Window_MouseDown;
             Engine.Window.KeyDown -= Window_KeyDown;
         }
-        
-        /// <summary>
-        /// The main selector.
-        /// </summary>
-        public UnitSelectorProperty Selector;
         
         /// <summary>
         /// The current unit action.
@@ -63,9 +57,10 @@ namespace RuneWeaver.GameProperties.GameControllers
         {
             if (e.Key == Key.Number1)
             {
-                if (Selector.Selected != null)
+                ClientEntity selected = Game.UnitSelector.GetProperty<UnitSelectorProperty>().Selected;
+                if (selected != null)
                 {
-                    Action = Selector.Selected.GetAllSubTypes<BasicActionProperty>().First();
+                    Action = selected.GetAllSubTypes<BasicActionProperty>().First();
                     if (!Action.Executing)
                     {
                         Action.Prepare();

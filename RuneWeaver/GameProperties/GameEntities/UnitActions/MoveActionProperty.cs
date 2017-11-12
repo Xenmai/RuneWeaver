@@ -88,7 +88,7 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
                 Renderable.Length = (float)Distance;
                 Angle = Math.Atan2(offset.Y, offset.X);
                 Renderable.Angle = (float)Angle;
-                Game.HitboxRenderable.AddProperty(Renderable);
+                Game.UnitActionHandler.AddProperty(Renderable);
                 Renderable.Start = Start;
                 base.Prepare();
             }
@@ -99,7 +99,7 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
         /// </summary>
         public override void Execute()
         {
-            Game.HitboxRenderable.RemoveProperty<ArrowHitboxRenderableProperty>();
+            Game.UnitActionHandler.RemoveProperty<ArrowHitboxRenderableProperty>();
             Unit.Direction = Angle;
             double speed = MaxDistance * Force;
             TimeLeft = Distance / speed;
@@ -114,7 +114,7 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
         /// </summary>
         public override void Cancel()
         {
-            Game.HitboxRenderable.RemoveProperty<ArrowHitboxRenderableProperty>();
+            Game.UnitActionHandler.RemoveProperty<ArrowHitboxRenderableProperty>();
             base.Cancel();
         }
 

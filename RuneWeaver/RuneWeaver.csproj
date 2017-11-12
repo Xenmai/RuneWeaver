@@ -77,7 +77,6 @@
     <Compile Include="GameProperties\GameEntities\WolfUnitProperty.cs" />
     <Compile Include="GameProperties\GameInterfaces\IExecutable.cs" />
     <Compile Include="GameProperties\GameRenderables\ArrowHitboxRenderableProperty.cs" />
-    <Compile Include="GameProperties\GameRenderables\SelectedEntityRenderableProperty.cs" />
     <Compile Include="GameProperties\GameInterfaces\ISelectable.cs" />
     <Compile Include="GameProperties\GameEntities\BasicUnitProperty.cs" />
     <Compile Include="GameProperties\GameControllers\UnitActionHandlerProperty.cs" />

@@ -36,9 +36,20 @@ namespace RuneWeaver.MainGame
         }
 
         /// <summary>
-        /// The main hitbox renderable entity.
+        /// The main action handler entity.
         /// </summary>
-        public ClientEntity HitboxRenderable;
+        public ClientEntity UnitActionHandler;
+
+        /// <summary>
+        /// The main selector entity.
+        /// </summary>
+        public ClientEntity UnitSelector;
+
+
+        /// <summary>
+        /// The main camera controller entity.
+        /// </summary>
+        public ClientEntity CameraController;
 
         public List<ClientEntity> Units = new List<ClientEntity>();
 
@@ -82,8 +93,12 @@ namespace RuneWeaver.MainGame
             {
                 Position = new Vector2(1.0f, 0.5f)
             });
-            // Controller (Camera + Unit Selector + Unit Action Handler)
-            Client.Engine2D.SpawnEntity(new CameraControllerProperty(), new UnitSelectorProperty(), new UnitActionHandlerProperty());
+            // Camera Controller
+            CameraController = Client.Engine2D.SpawnEntity(new CameraControllerProperty());
+            // Selector
+            UnitSelector = Client.Engine2D.SpawnEntity(new UnitSelectorProperty());
+            // Action Handler
+            UnitActionHandler = Client.Engine2D.SpawnEntity(new UnitActionHandlerProperty());
             // Sky light
             Client.Engine2D.SpawnEntity(new EntityLight2DCasterProperty()
             {
