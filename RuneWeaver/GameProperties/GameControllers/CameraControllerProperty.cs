@@ -1,4 +1,5 @@
-﻿using OpenTK.Input;
+﻿using FreneticGameCore;
+using OpenTK.Input;
 
 namespace RuneWeaver.GameProperties.GameControllers
 {
@@ -41,23 +42,25 @@ namespace RuneWeaver.GameProperties.GameControllers
                 Engine2D.Zoom *= 1.025f;
             }
             OpenTK.Vector2 motion = OpenTK.Vector2.Zero;
-            if (Engine2D.Window.Mouse.X < 50)
+            float x = Engine2D.Window.Mouse.X / (float)Engine2D.Window.Width;
+            float y = Engine2D.Window.Mouse.Y / (float)Engine2D.Window.Height;
+            if (x < 0.075f)
             {
-                motion.X = Engine2D.Window.Mouse.X * 0.002f - 0.1f;
+                motion.X = (x - 0.075f) * 75;
             }
-            if (Engine2D.Window.Mouse.X > Engine2D.Window.Width - 50)
+            if (x > 0.925f)
             {
-                motion.X = 0.1f - (Engine2D.Window.Width - Engine2D.Window.Mouse.X) * 0.002f;
+                motion.X = (x - 0.925f) * 75;
             }
-            if (Engine2D.Window.Mouse.Y < 50)
+            if (y < 0.075f)
             {
-                motion.Y = 0.1f - Engine2D.Window.Mouse.Y * 0.002f;
+                motion.Y = (0.075f - y) * 75;
             }
-            if (Engine2D.Window.Mouse.Y > Engine2D.Window.Height - 50)
+            if (y > 0.925f)
             {
-                motion.Y = (Engine2D.Window.Height - Engine2D.Window.Mouse.Y) * 0.002f - 0.1f;
+                motion.Y = (0.925f - y) * 75;
             }
-            Engine2D.ViewCenter += motion;
+            Engine2D.ViewCenter += motion * Engine2D.Zoom;
         }
 
         /// <summary>
