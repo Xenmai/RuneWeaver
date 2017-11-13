@@ -32,7 +32,7 @@ namespace RuneWeaver.MainGame
             Client.OnWindowLoad += Engine_WindowLoad;
             Client.Engine2D.Zoom = 0.01f;
             Client.Engine2D.Source = this;
-            Client.Start();
+            Client.Start(GameWindowFlags.Default);
         }
 
         /// <summary>

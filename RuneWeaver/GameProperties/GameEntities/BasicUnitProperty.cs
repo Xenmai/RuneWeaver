@@ -69,7 +69,7 @@ namespace RuneWeaver.GameProperties.GameEntities
         /// </summary>
         public override void OnSpawn()
         {
-            Size *= 2048 * Engine2D.Zoom / 800f;
+            Size *= 2048 * Engine2D.Zoom / Game.Client.WindowWidth;
             Direction = 0;
             Health = MaxHealth;
             Energy = MaxEnergy;
