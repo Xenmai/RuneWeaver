@@ -1,9 +1,9 @@
-﻿using FreneticGameCore;
+﻿using BEPUphysics.Entities;
+using FreneticGameCore;
 using FreneticGameCore.EntitySystem.PhysicsHelpers;
 using FreneticGameGraphics.ClientSystem.EntitySystem;
 using OpenTK;
 using RuneWeaver.GameProperties.GameInterfaces;
-using RuneWeaver.GameProperties.PhysicProperties;
 
 namespace RuneWeaver.GameProperties.GameEntities
 {
@@ -93,7 +93,9 @@ namespace RuneWeaver.GameProperties.GameEntities
             Entity.AddProperties(Circle, Body, new ClientEntityPhysics2DLimitProperty()
             {
                 ForcePosition = false
-            }, new Entity2DForceOrientationProperty() { });
+            });
+            Entity physEnt = Body.SpawnedBody;
+            physEnt.AngularDamping = 1;
             Game.Units.Add(Entity);
         }
 

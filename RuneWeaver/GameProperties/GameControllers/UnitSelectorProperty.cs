@@ -64,7 +64,6 @@ namespace RuneWeaver.GameProperties.GameControllers
                     if (action == null || (!action.Preparing && !action.Executing))
                     {
                         Selected.OnPositionChanged -= UpdatePosition;
-                        Selected.OnOrientationChanged -= UpdateOrientation;
                         Renderable.IsVisible = false;
                         Selected?.SignalAllInterfacedProperties<ISelectable>((p) => p.Deselect());
                         Selected = null;
@@ -98,7 +97,6 @@ namespace RuneWeaver.GameProperties.GameControllers
                             Renderable.BoxSize = new Vector2(unit.Size * 2);
                             Renderable.IsVisible = true;
                             Selected.OnPositionChanged += UpdatePosition;
-                            Selected.OnOrientationChanged += UpdateOrientation;
                         }
                     }
                 }
@@ -112,15 +110,6 @@ namespace RuneWeaver.GameProperties.GameControllers
         private void UpdatePosition(Location loc)
         {
             Entity.SetPosition(new Location(loc.X, loc.Y, 3));
-        }
-
-        /// <summary>
-        /// Updates the renderable's orientation.
-        /// </summary>
-        /// <param name="q">New orientation.</param>
-        private void UpdateOrientation(FreneticGameCore.Quaternion q)
-        {
-            Entity.SetOrientation(q);
         }
 
         /// <summary>

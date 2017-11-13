@@ -68,7 +68,6 @@
   <ItemGroup>
     <Compile Include="GameProperties\GameControllers\CameraControllerProperty.cs" />
     <Compile Include="GameProperties\CustomClientEntityProperty.cs" />
-    <Compile Include="GameProperties\GameEntities\PhysicProperties\Entity2DForceOrientationProperty.cs" />
     <Compile Include="GameProperties\GameEntities\TrollUnitProperty.cs" />
     <Compile Include="GameProperties\GameEntities\GoblinUnitProperty.cs" />
     <Compile Include="GameProperties\GameEntities\UnitActions\BasicActionProperty.cs" />
