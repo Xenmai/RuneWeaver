@@ -106,5 +106,8 @@
       <Name>FreneticScript</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="GameProperties\GameEntities\UnitConditions\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

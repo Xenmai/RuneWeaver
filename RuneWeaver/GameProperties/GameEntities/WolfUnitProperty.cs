@@ -14,6 +14,7 @@ namespace RuneWeaver.GameProperties.GameEntities
         /// </summary>
         public override void OnSpawn()
         {
+            Name = "Wolf";
             Size = 32;
             MaxHealth = 40;
             Resistance = 18;
@@ -30,9 +31,10 @@ namespace RuneWeaver.GameProperties.GameEntities
         {
             Entity.AddProperties(new MoveActionProperty()
             {
+                Name = "Run",
                 Cost = 2,
                 MaxDistance = 5.5f,
-                Force = 1
+                Speed = 1
             });
         }
     }

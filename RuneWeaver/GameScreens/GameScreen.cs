@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using FreneticGameGraphics.ClientSystem;
+﻿using FreneticGameGraphics.ClientSystem;
 using FreneticGameGraphics.UISystem;
 using FreneticGameGraphics.ClientSystem.EntitySystem;
 using RuneWeaver.GameProperties.GameEntities;
+using RuneWeaver.MainGame;
 
 namespace RuneWeaver.GameScreens
 {
@@ -13,9 +12,14 @@ namespace RuneWeaver.GameScreens
     public class GameScreen : UIScreen
     {
         /// <summary>
-        /// The relevant play button.
+        /// The "Reset Turn" button.
         /// </summary>
-        public UIButton PlayButton;
+        public UIButton ResetButton;
+
+        /// <summary>
+        /// The "Selected Unit Name" label.
+        /// </summary>
+        public UILabel UnitNameLabel;
 
         /// <summary>
         /// Constructs a new main menu screen.
@@ -23,19 +27,22 @@ namespace RuneWeaver.GameScreens
         /// <param name="view">The associated view.</param>
         public GameScreen(ViewUI2D view) : base(view)
         {
-            PlayButton = new UIButton("White", "Reset Turn", Client.FontSets.SlightlyBigger, ResetEnergy, new UIPositionHelper(view).Anchor(UIAnchor.BOTTOM_RIGHT).ConstantWidthHeight(350, 70));
-            AddChild(PlayButton);
+            Game game = Engine.Source as Game;
+            int height = game.Client.WindowHeight;
+            int width = game.Client.WindowWidth - height;
+            ResetButton = new UIButton("White", "Reset Turn", Client.FontSets.SlightlyBigger, ResetEnergy, new UIPositionHelper(view).Anchor(UIAnchor.BOTTOM_RIGHT).ConstantWidthHeight(width, 70));
+            AddChild(ResetButton);
+            UnitNameLabel = new UILabel(string.Empty, Client.FontSets.SlightlyBigger, new UIPositionHelper(view).Anchor(UIAnchor.TOP_RIGHT).ConstantWidthHeight(width, 70));
+            AddChild(UnitNameLabel);
+
         }
 
         void ResetEnergy()
         {
-            foreach (ClientEntity ent in Engine.EntityList)
+            foreach (ClientEntity ent in (Engine.Source as Game).Units)
             {
-                IEnumerable<BasicUnitProperty> props = ent.GetAllSubTypes<BasicUnitProperty>();
-                if (props.Count() > 0)
-                {
-                    props.First().Energy = props.First().MaxEnergy;
-                }
+                BasicUnitProperty unit = ent.GetProperty<BasicUnitProperty>();
+                unit.Energy = unit.MaxEnergy;
             }
         }
     }

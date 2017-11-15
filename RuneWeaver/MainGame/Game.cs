@@ -45,13 +45,20 @@ namespace RuneWeaver.MainGame
         /// </summary>
         public ClientEntity UnitSelector;
 
-
         /// <summary>
         /// The main camera controller entity.
         /// </summary>
         public ClientEntity CameraController;
 
+        /// <summary>
+        /// The spawned units list.
+        /// </summary>
         public List<ClientEntity> Units = new List<ClientEntity>();
+
+        /// <summary>
+        /// The main ingame UI screen.
+        /// </summary>
+        public GameScreen Screen;
 
         /// <summary>
         /// Called by the engine when it loads up.
@@ -107,9 +114,7 @@ namespace RuneWeaver.MainGame
                 LightPosition = new Vector2(0, 0),
                 IsSkyLight = true,
             });
-            ViewUI2D view = new ViewUI2D(Client);
-            UIScreen UI = new UIScreen(view);
-            UI.AddChild(new UIButton("White", "Reset Turn", Client.FontSets.Standard, ResetTurn, new UIPositionHelper(view)));
+            Screen = new GameScreen(new ViewUI2D(Client));
         }
 
         /// <summary>

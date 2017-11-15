@@ -6,6 +6,11 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
     public class BasicActionProperty : CustomClientEntityProperty, IExecutable
     {
         /// <summary>
+        /// The action's name.
+        /// </summary>
+        public string Name;
+
+        /// <summary>
         /// The action's cost.
         /// </summary>
         public int Cost;

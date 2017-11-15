@@ -19,15 +19,36 @@ namespace RuneWeaver.GameProperties.GameEntities
         /// </summary>
         public ClientEntityPhysicsProperty Body;
 
+
+        /// <summary>
+        /// The unit's name.
+        /// </summary>
+        public string Name;
+
+        /// <summary>
+        /// The unit's radius.
+        /// </summary>
+        public float Size;
+
+        /// <summary>
+        /// The unit's maximum health.
+        /// </summary>
+        public float MaxHealth;
+
         /// <summary>
         /// The unit's current health.
         /// </summary>
         public float Health;
 
         /// <summary>
-        /// The unit's maximum health.
+        /// The unit's energy per turn.
         /// </summary>
-        public float MaxHealth;
+        public int MaxEnergy;
+
+        /// <summary>
+        /// The unit's current energy.
+        /// </summary>
+        public int Energy;
 
         /// <summary>
         /// The unit's resistance.
@@ -38,21 +59,6 @@ namespace RuneWeaver.GameProperties.GameEntities
         /// The unit's stability.
         /// </summary>
         public float Stability;
-
-        /// <summary>
-        /// The unit's current energy.
-        /// </summary>
-        public int Energy;
-
-        /// <summary>
-        /// The unit's energy per turn.
-        /// </summary>
-        public int MaxEnergy;
-
-        /// <summary>
-        /// The unit's radius.
-        /// </summary>
-        public float Size;
 
         /// <summary>
         /// The unit's position.
@@ -105,6 +111,7 @@ namespace RuneWeaver.GameProperties.GameEntities
         public void Select()
         {
             Circle.BoxColor = Color4F.Blue;
+            Game.Screen.UnitNameLabel.Text = Name;
         }
 
         /// <summary>
@@ -113,6 +120,7 @@ namespace RuneWeaver.GameProperties.GameEntities
         public void Deselect()
         {
             Circle.BoxColor = Color4F.Red;
+            Game.Screen.UnitNameLabel.Text = string.Empty;
         }
     }
 }

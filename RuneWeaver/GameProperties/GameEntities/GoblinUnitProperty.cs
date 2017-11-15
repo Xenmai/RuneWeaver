@@ -9,6 +9,7 @@ namespace RuneWeaver.GameProperties.GameEntities
         /// </summary>
         public override void OnSpawn()
         {
+            Name = "Goblin";
             Size = 24;
             MaxHealth = 25;
             Resistance = 12;
@@ -25,9 +26,10 @@ namespace RuneWeaver.GameProperties.GameEntities
         {
             Entity.AddProperties(new MoveActionProperty()
             {
+                Name = "March",
                 Cost = 1,
                 MaxDistance = 3,
-                Force = 1
+                Speed = 1
             });
         }
     }

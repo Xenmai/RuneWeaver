@@ -20,7 +20,7 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
         /// <summary>
         /// The starting speed factor of the charge.
         /// </summary>
-        public float Force;
+        public float Speed;
 
         /// <summary>
         /// How starting point of the movement.
@@ -102,7 +102,7 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
             Game.UnitActionHandler.RemoveProperty<ArrowHitboxRenderableProperty>();
             Unit.Direction = Angle;
             Game.UnitSelector.SetOrientation(FreneticGameCore.Quaternion.FromAxisAngle(Location.UnitZ, Angle));
-            double speed = MaxDistance * Force;
+            double speed = MaxDistance * Speed;
             TimeLeft = Distance / speed;
             Body.Friction = 0;
             Entity.SetOrientation(FreneticGameCore.Quaternion.FromAxisAngle(Location.UnitZ, Angle));

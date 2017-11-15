@@ -9,6 +9,7 @@ namespace RuneWeaver.GameProperties.GameEntities
         /// </summary>
         public override void OnSpawn()
         {
+            Name = "Troll";
             Size = 48;
             MaxHealth = 75;
             Resistance = 30;
@@ -25,9 +26,10 @@ namespace RuneWeaver.GameProperties.GameEntities
         {
             Entity.AddProperties(new MoveActionProperty()
             {
+                Name = "Charge",
                 Cost = 1,
                 MaxDistance = 3,
-                Force = 1.2f
+                Speed = 1.2f
             });
         }
     }
