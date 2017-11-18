@@ -54,12 +54,7 @@ namespace RuneWeaver.MainGame
         /// The spawned units list.
         /// </summary>
         public List<ClientEntity> Units = new List<ClientEntity>();
-
-        /// <summary>
-        /// The main ingame UI screen.
-        /// </summary>
-        public GameScreen Screen;
-
+        
         /// <summary>
         /// Called by the engine when it loads up.
         /// </summary>
@@ -114,7 +109,6 @@ namespace RuneWeaver.MainGame
                 LightPosition = new Vector2(0, 0),
                 IsSkyLight = true,
             });
-            Screen = new GameScreen(new ViewUI2D(Client));
         }
 
         /// <summary>

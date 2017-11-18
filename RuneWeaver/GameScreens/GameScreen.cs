@@ -3,6 +3,7 @@ using FreneticGameGraphics.UISystem;
 using FreneticGameGraphics.ClientSystem.EntitySystem;
 using RuneWeaver.GameProperties.GameEntities;
 using RuneWeaver.MainGame;
+using System.Linq;
 
 namespace RuneWeaver.GameScreens
 {
@@ -19,7 +20,7 @@ namespace RuneWeaver.GameScreens
         /// <summary>
         /// The "Selected Unit Name" label.
         /// </summary>
-        public UILabel UnitNameLabel;
+        public UIButton UnitNameLabel;
 
         /// <summary>
         /// Constructs a new main menu screen.
@@ -30,20 +31,24 @@ namespace RuneWeaver.GameScreens
             Game game = Engine.Source as Game;
             int height = game.Client.WindowHeight;
             int width = game.Client.WindowWidth - height;
-            ResetButton = new UIButton("White", "Reset Turn", Client.FontSets.SlightlyBigger, ResetEnergy, new UIPositionHelper(view).Anchor(UIAnchor.BOTTOM_RIGHT).ConstantWidthHeight(width, 70));
+            ResetButton = new UIButton("White", "^!Reset Turn", Client.FontSets.SlightlyBigger, ResetEnergy, new UIPositionHelper(view).Anchor(UIAnchor.BOTTOM_RIGHT).ConstantWidthHeight(width, 70));
+            UnitNameLabel = new UIButton("White", string.Empty, Client.FontSets.SlightlyBigger, Nothing, new UIPositionHelper(view).Anchor(UIAnchor.TOP_RIGHT).ConstantWidthHeight(width, 70));
             AddChild(ResetButton);
-            UnitNameLabel = new UILabel(string.Empty, Client.FontSets.SlightlyBigger, new UIPositionHelper(view).Anchor(UIAnchor.TOP_RIGHT).ConstantWidthHeight(width, 70));
             AddChild(UnitNameLabel);
-
         }
 
-        void ResetEnergy()
+        private void ResetEnergy()
         {
             foreach (ClientEntity ent in (Engine.Source as Game).Units)
             {
-                BasicUnitProperty unit = ent.GetProperty<BasicUnitProperty>();
+                BasicUnitProperty unit = ent.GetAllSubTypes<BasicUnitProperty>().First();
                 unit.Energy = unit.MaxEnergy;
             }
+        }
+
+        private void Nothing()
+        {
+
         }
     }
 }

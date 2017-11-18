@@ -4,6 +4,7 @@ using FreneticGameCore.EntitySystem.PhysicsHelpers;
 using FreneticGameGraphics.ClientSystem.EntitySystem;
 using OpenTK;
 using RuneWeaver.GameProperties.GameInterfaces;
+using RuneWeaver.GameScreens;
 
 namespace RuneWeaver.GameProperties.GameEntities
 {
@@ -111,7 +112,7 @@ namespace RuneWeaver.GameProperties.GameEntities
         public void Select()
         {
             Circle.BoxColor = Color4F.Blue;
-            Game.Screen.UnitNameLabel.Text = Name;
+            (Game.Client.MainUI.CurrentScreen as GameScreen).UnitNameLabel.Text = "^1" + Name;
         }
 
         /// <summary>
@@ -120,7 +121,7 @@ namespace RuneWeaver.GameProperties.GameEntities
         public void Deselect()
         {
             Circle.BoxColor = Color4F.Red;
-            Game.Screen.UnitNameLabel.Text = string.Empty;
+            (Game.Client.MainUI.CurrentScreen as GameScreen).UnitNameLabel.Text = string.Empty;
         }
     }
 }

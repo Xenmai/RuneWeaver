@@ -84,11 +84,12 @@ namespace RuneWeaver.GameProperties.GameControllers
             {
                 if (Selected == null)
                 {
+                    Location mouse = new Location(Engine2D.MouseCoords.X, Engine2D.MouseCoords.Y, 0);
                     foreach (ClientEntity ent in Game.Units)
                     {
                         BasicUnitProperty unit = ent.GetAllSubTypes<BasicUnitProperty>().First();
                         double radius = unit.Size * 0.5;
-                        if (ent.LastKnownPosition.DistanceSquared_Flat(new Location(Engine2D.MouseCoords.X, Engine2D.MouseCoords.Y, 0)) < radius * radius)
+                        if (ent.LastKnownPosition.DistanceSquared_Flat(mouse) < radius * radius)
                         {
                             Selected = ent;
                             Selected?.SignalAllInterfacedProperties<ISelectable>((p) => p.Select());
@@ -97,6 +98,7 @@ namespace RuneWeaver.GameProperties.GameControllers
                             Renderable.BoxSize = new Vector2(unit.Size * 2);
                             Renderable.IsVisible = true;
                             Selected.OnPositionChanged += UpdatePosition;
+                            break;
                         }
                     }
                 }

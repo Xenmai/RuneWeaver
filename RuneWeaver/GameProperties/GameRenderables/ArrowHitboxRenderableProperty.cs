@@ -52,8 +52,7 @@ namespace RuneWeaver.GameProperties.GameRenderables
             context.Engine.Textures.GetTexture("5arrows").Bind();
             context.Engine.RenderHelper.SetColor(Color);
             float halfWidth = Width * 0.5f;
-            Vector2 corner = Start + new Vector2((float)Math.Sin(Angle) * halfWidth, (float)-Math.Cos(Angle) * halfWidth);
-            context.Engine.RenderHelper.RenderRectangle(context, corner.X, corner.Y, corner.X + Length, corner.Y + Width, new Vector3(0, 0, Angle));
+            context.Engine.RenderHelper.RenderRectangle(context, Start.X, Start.Y - halfWidth, Start.X + Length, Start.Y + halfWidth, new Vector3(0, -0.5f, Angle));
         }
     }
 }
