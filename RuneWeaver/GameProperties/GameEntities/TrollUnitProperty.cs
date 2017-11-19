@@ -11,6 +11,7 @@ namespace RuneWeaver.GameProperties.GameEntities
         {
             Name = "Troll";
             Size = 48;
+            Vision = 125;
             MaxHealth = 75;
             Resistance = 30;
             Stability = 20;
@@ -28,7 +29,7 @@ namespace RuneWeaver.GameProperties.GameEntities
             {
                 Name = "Charge",
                 Cost = 1,
-                MaxDistance = 3,
+                MaxDistance = 75,
                 Speed = 1.2f
             });
         }

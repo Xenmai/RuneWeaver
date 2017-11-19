@@ -101,14 +101,6 @@ namespace RuneWeaver.MainGame
             UnitSelector = Client.Engine2D.SpawnEntity(new UnitSelectorProperty());
             // Action Handler
             UnitActionHandler = Client.Engine2D.SpawnEntity(new UnitActionHandlerProperty());
-            // Sky light
-            Client.Engine2D.SpawnEntity(new EntityLight2DCasterProperty()
-            {
-                LightColor = Color4F.White,
-                LightStrength = 128f,
-                LightPosition = new Vector2(0, 0),
-                IsSkyLight = true,
-            });
         }
 
         /// <summary>

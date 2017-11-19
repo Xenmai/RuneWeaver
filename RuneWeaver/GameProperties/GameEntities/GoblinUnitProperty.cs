@@ -11,6 +11,7 @@ namespace RuneWeaver.GameProperties.GameEntities
         {
             Name = "Goblin";
             Size = 24;
+            Vision = 100;
             MaxHealth = 25;
             Resistance = 12;
             Stability = 8;
@@ -28,7 +29,7 @@ namespace RuneWeaver.GameProperties.GameEntities
             {
                 Name = "March",
                 Cost = 1,
-                MaxDistance = 3,
+                MaxDistance = 75,
                 Speed = 1
             });
         }

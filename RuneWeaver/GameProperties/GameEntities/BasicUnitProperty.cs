@@ -19,7 +19,11 @@ namespace RuneWeaver.GameProperties.GameEntities
         /// The unit's physics body.
         /// </summary>
         public ClientEntityPhysicsProperty Body;
-
+        
+        /// <summary>
+        /// The unit's light caster.
+        /// </summary>
+        public EntityLight2DCasterProperty Light;
 
         /// <summary>
         /// The unit's name.
@@ -30,6 +34,11 @@ namespace RuneWeaver.GameProperties.GameEntities
         /// The unit's radius.
         /// </summary>
         public float Size;
+
+        /// <summary>
+        /// The unit's vision radius.
+        /// </summary>
+        public float Vision;
 
         /// <summary>
         /// The unit's maximum health.
@@ -76,7 +85,9 @@ namespace RuneWeaver.GameProperties.GameEntities
         /// </summary>
         public override void OnSpawn()
         {
-            Size *= 2048 * Engine2D.Zoom / Game.Client.WindowWidth;
+            float scaling = 2048 * Engine2D.Zoom / 800;
+            Size *= scaling;
+            Vision *= scaling;
             Direction = 0;
             Health = MaxHealth;
             Energy = MaxEnergy;
@@ -97,7 +108,13 @@ namespace RuneWeaver.GameProperties.GameEntities
                 Mass = Stability,
                 Friction = 0.5
             };
-            Entity.AddProperties(Circle, Body, new ClientEntityPhysics2DLimitProperty()
+            Light = new EntityLight2DCasterProperty()
+            {
+                LightColor = Color4F.White,
+                LightStrength = Vision,
+                LightPosition = Position
+            };
+            Entity.AddProperties(Circle, Body, Light, new ClientEntityPhysics2DLimitProperty()
             {
                 ForcePosition = false
             });

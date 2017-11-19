@@ -57,7 +57,7 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
         /// </summary>
         public override void OnSpawn()
         {
-            Entity.OnTick += Tick;
+            MaxDistance *= 2048 * Engine2D.Zoom / 800;
             Unit = Entity.GetAllSubTypes<BasicUnitProperty>().First();
             Body = Entity.GetProperty<ClientEntityPhysicsProperty>();
             Renderable = new ArrowHitboxRenderableProperty()
@@ -65,6 +65,7 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
                 CastShadows = false,
                 Width = Unit.Size
             };
+            Entity.OnTick += Tick;
         }
 
         /// <summary>

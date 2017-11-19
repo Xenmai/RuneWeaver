@@ -16,6 +16,7 @@ namespace RuneWeaver.GameProperties.GameEntities
         {
             Name = "Wolf";
             Size = 32;
+            Vision = 150;
             MaxHealth = 40;
             Resistance = 18;
             Stability = 10;
@@ -33,7 +34,7 @@ namespace RuneWeaver.GameProperties.GameEntities
             {
                 Name = "Run",
                 Cost = 2,
-                MaxDistance = 5.5f,
+                MaxDistance = 100,
                 Speed = 1
             });
         }
