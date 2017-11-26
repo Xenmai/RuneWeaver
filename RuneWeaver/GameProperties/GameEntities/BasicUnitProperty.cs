@@ -5,6 +5,7 @@ using FreneticGameGraphics.ClientSystem.EntitySystem;
 using OpenTK;
 using RuneWeaver.GameProperties.GameInterfaces;
 using RuneWeaver.GameScreens;
+using System;
 
 namespace RuneWeaver.GameProperties.GameEntities
 {
@@ -21,9 +22,19 @@ namespace RuneWeaver.GameProperties.GameEntities
         public ClientEntityPhysicsProperty Body;
         
         /// <summary>
-        /// The unit's light caster.
+        /// The unit's first light caster.
         /// </summary>
-        public EntityLight2DCasterProperty Light;
+        public EntityLight2DCasterProperty Light1;
+
+        /// <summary>
+        /// The unit's second light caster entity.
+        /// </summary>
+        public ClientEntity Light2;
+
+        /// <summary>
+        /// Whether the unit is ally.
+        /// </summary>
+        public bool Ally;
 
         /// <summary>
         /// The unit's name.
@@ -91,6 +102,7 @@ namespace RuneWeaver.GameProperties.GameEntities
             Direction = 0;
             Health = MaxHealth;
             Energy = MaxEnergy;
+            Game.Units.Add(Entity);
             Circle = new EntitySimple2DRenderableBoxProperty()
             {
                 BoxColor = Color4F.Red,
@@ -108,19 +120,34 @@ namespace RuneWeaver.GameProperties.GameEntities
                 Mass = Stability,
                 Friction = 0.5
             };
-            Light = new EntityLight2DCasterProperty()
-            {
-                LightColor = Color4F.White,
-                LightStrength = Vision,
-                LightPosition = Position
-            };
-            Entity.AddProperties(Circle, Body, Light, new ClientEntityPhysics2DLimitProperty()
+            Entity.AddProperties(Circle, Body, new ClientEntityPhysics2DLimitProperty()
             {
                 ForcePosition = false
             });
-            Entity physEnt = Body.SpawnedBody;
-            physEnt.AngularDamping = 1;
-            Game.Units.Add(Entity);
+            Body.SpawnedBody.AngularDamping = 1;
+            if (Ally)
+            {
+                Game.AllyUnits.Add(Entity);
+                Light1 = new EntityLight2DCasterProperty()
+                {
+                    LightColor = Color4F.White,
+                    LightStrength = Vision,
+                    LightPosition = Position
+                };
+                Entity.AddProperty(Light1);
+                Light2 = Engine.SpawnEntity(new EntityLight2DCasterProperty()
+                {
+                    LightColor = Color4F.White,
+                    LightStrength = Vision,
+                    LightPosition = Position + new Vector2(Vision, 0)
+                });
+                Entity.OnPositionChanged += FixPosition;
+                Entity.OnOrientationChanged += FixPosition;
+            }
+            else
+            {
+                Game.EnemyUnits.Add(Entity);
+            }
         }
 
         /// <summary>
@@ -139,6 +166,24 @@ namespace RuneWeaver.GameProperties.GameEntities
         {
             Circle.BoxColor = Color4F.Red;
             (Game.Client.MainUI.CurrentScreen as GameScreen).UnitNameLabel.Text = string.Empty;
+        }
+
+        /// <summary>
+        /// Fixes the light's position when the entity moves.
+        /// </summary>
+        /// <param name="pos"></param>
+        public void FixPosition(Location pos)
+        {
+            Light2.SetPosition(pos + new Location((float)Math.Cos(Direction) * Vision, (float)Math.Sin(Direction) * Vision, 0));
+        }
+
+        /// <summary>
+        /// Fixes the light's position when the entity rotates.
+        /// </summary>
+        /// <param name="rot"></param>
+        public void FixPosition(FreneticGameCore.Quaternion rot)
+        {
+            Light2.SetPosition(Entity.LastKnownPosition + new Location((float)Math.Cos(Direction) * Vision, (float)Math.Sin(Direction) * Vision, 0));
         }
     }
 }

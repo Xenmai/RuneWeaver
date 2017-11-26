@@ -54,7 +54,17 @@ namespace RuneWeaver.MainGame
         /// The spawned units list.
         /// </summary>
         public List<ClientEntity> Units = new List<ClientEntity>();
-        
+
+        /// <summary>
+        /// The spawned ally units list.
+        /// </summary>
+        public List<ClientEntity> AllyUnits = new List<ClientEntity>();
+
+        /// <summary>
+        /// The spawned enemy units list.
+        /// </summary>
+        public List<ClientEntity> EnemyUnits = new List<ClientEntity>();
+
         /// <summary>
         /// Called by the engine when it loads up.
         /// </summary>
@@ -83,17 +93,20 @@ namespace RuneWeaver.MainGame
             // Entity 1
             Client.Engine2D.SpawnEntity(new GoblinUnitProperty()
             {
-                Position = new Vector2(7.5f, 7.5f)
+                Position = new Vector2(7.5f, 7.5f),
+                Ally = true
             });
             // Entity 2
             Client.Engine2D.SpawnEntity(new WolfUnitProperty()
             {
-                Position = new Vector2(2.0f, 3.5f)
+                Position = new Vector2(2.0f, 3.5f),
+                Ally = true
             });
             // Entity 3
             Client.Engine2D.SpawnEntity(new TrollUnitProperty()
             {
-                Position = new Vector2(1.0f, 0.5f)
+                Position = new Vector2(1.0f, 0.5f),
+                Ally = false
             });
             // Camera Controller
             CameraController = Client.Engine2D.SpawnEntity(new CameraControllerProperty());

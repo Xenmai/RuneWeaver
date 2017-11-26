@@ -103,10 +103,10 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
             Game.UnitActionHandler.RemoveProperty<ArrowHitboxRenderableProperty>();
             Unit.Direction = Angle;
             Game.UnitSelector.SetOrientation(FreneticGameCore.Quaternion.FromAxisAngle(Location.UnitZ, Angle));
+            Entity.SetOrientation(FreneticGameCore.Quaternion.FromAxisAngle(Location.UnitZ, Angle));
+            Body.Friction = 0;
             double speed = MaxDistance * Speed;
             TimeLeft = Distance / speed;
-            Body.Friction = 0;
-            Entity.SetOrientation(FreneticGameCore.Quaternion.FromAxisAngle(Location.UnitZ, Angle));
             Body.LinearVelocity = new Location((float)Math.Cos(Angle) * speed, (float)Math.Sin(Angle) * speed, 0);
             base.Execute();
         }
