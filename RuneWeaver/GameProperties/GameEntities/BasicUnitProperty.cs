@@ -22,12 +22,12 @@ namespace RuneWeaver.GameProperties.GameEntities
         public ClientEntityPhysicsProperty Body;
         
         /// <summary>
-        /// The unit's first light caster.
+        /// The unit's primary light caster.
         /// </summary>
         public EntityLight2DCasterProperty Light1;
 
         /// <summary>
-        /// The unit's second light caster entity.
+        /// The unit's secondary light caster entity.
         /// </summary>
         public ClientEntity Light2;
 
@@ -47,7 +47,7 @@ namespace RuneWeaver.GameProperties.GameEntities
         public float Size;
 
         /// <summary>
-        /// The unit's vision radius.
+        /// The unit's primary vision radius.
         /// </summary>
         public float Vision;
 
@@ -107,7 +107,8 @@ namespace RuneWeaver.GameProperties.GameEntities
             {
                 BoxColor = Color4F.Red,
                 BoxSize = new Vector2(Size, Size),
-                BoxTexture = Engine2D.Textures.GetTexture("BaseCircle")
+                BoxTexture = Engine2D.Textures.GetTexture("BaseCircle"),
+                CastShadows = false
             };
             Body = new ClientEntityPhysicsProperty()
             {
@@ -138,7 +139,7 @@ namespace RuneWeaver.GameProperties.GameEntities
                 Light2 = Engine.SpawnEntity(new EntityLight2DCasterProperty()
                 {
                     LightColor = Color4F.White,
-                    LightStrength = Vision,
+                    LightStrength = Vision * 1.5f,
                     LightPosition = Position + new Vector2(Vision, 0)
                 });
                 Entity.OnPositionChanged += FixPosition;

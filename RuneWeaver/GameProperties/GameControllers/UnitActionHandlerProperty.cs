@@ -1,5 +1,6 @@
 ﻿using FreneticGameGraphics.ClientSystem.EntitySystem;
 using OpenTK.Input;
+using RuneWeaver.GameProperties.GameEntities;
 using RuneWeaver.GameProperties.GameEntities.UnitActions;
 using System.Linq;
 
@@ -58,7 +59,7 @@ namespace RuneWeaver.GameProperties.GameControllers
             if (e.Key == Key.Number1)
             {
                 ClientEntity selected = Game.UnitSelector.GetProperty<UnitSelectorProperty>().Selected;
-                if (selected != null)
+                if (selected != null && selected.GetAllSubTypes<BasicUnitProperty>().First().Ally)
                 {
                     Action = selected.GetAllSubTypes<BasicActionProperty>().First();
                     if (!Action.Executing)

@@ -1,10 +1,12 @@
 ﻿using FreneticGameCore;
 using FreneticGameGraphics.ClientSystem.EntitySystem;
+using FreneticGameGraphics.LightingSystem;
 using OpenTK;
 using OpenTK.Input;
 using RuneWeaver.GameProperties.GameEntities;
 using RuneWeaver.GameProperties.GameEntities.UnitActions;
 using RuneWeaver.GameProperties.GameInterfaces;
+using RuneWeaver.Utilities;
 using System.Linq;
 
 namespace RuneWeaver.GameProperties.GameControllers
@@ -91,13 +93,36 @@ namespace RuneWeaver.GameProperties.GameControllers
                         double radius = unit.Size * 0.5;
                         if (ent.LastKnownPosition.DistanceSquared_Flat(mouse) < radius * radius)
                         {
-                            Selected = ent;
-                            Selected?.SignalAllInterfacedProperties<ISelectable>((p) => p.Select());
-                            Entity.SetPosition(new Location(Selected.LastKnownPosition.X, Selected.LastKnownPosition.Y, 3));
-                            Entity.SetOrientation(FreneticGameCore.Quaternion.FromAxisAngle(Location.UnitZ, unit.Direction));
-                            Renderable.BoxSize = new Vector2(unit.Size * 2);
-                            Renderable.IsVisible = true;
-                            Selected.OnPositionChanged += UpdatePosition;
+                            if (unit.Ally)
+                            {
+                                Selected = ent;
+                                Selected?.SignalAllInterfacedProperties<ISelectable>((p) => p.Select());
+                                Entity.SetPosition(new Location(Selected.LastKnownPosition.X, Selected.LastKnownPosition.Y, 3));
+                                Entity.SetOrientation(FreneticGameCore.Quaternion.FromAxisAngle(Location.UnitZ, unit.Direction));
+                                Renderable.BoxSize = new Vector2(unit.Size * 2);
+                                Renderable.BoxColor = Color4F.Blue;
+                                Renderable.IsVisible = true;
+                                Selected.OnPositionChanged += UpdatePosition;
+                            }
+                            else
+                            {
+                                foreach (PointLight2D light in Engine2D.Lights)
+                                {
+                                    float totalRadius = light.Strength + (float)radius;
+                                    if (ent.LastKnownPosition.DistanceSquared_Flat(light.Position.toLocation()) < totalRadius * totalRadius)
+                                    {
+                                        Selected = ent;
+                                        Selected?.SignalAllInterfacedProperties<ISelectable>((p) => p.Select());
+                                        Entity.SetPosition(new Location(Selected.LastKnownPosition.X, Selected.LastKnownPosition.Y, 3));
+                                        Entity.SetOrientation(FreneticGameCore.Quaternion.FromAxisAngle(Location.UnitZ, unit.Direction));
+                                        Renderable.BoxSize = new Vector2(unit.Size * 2);
+                                        Renderable.BoxColor = Color4F.Red;
+                                        Renderable.IsVisible = true;
+                                        Selected.OnPositionChanged += UpdatePosition;
+                                        break;
+                                    }
+                                }
+                            }
                             break;
                         }
                     }
