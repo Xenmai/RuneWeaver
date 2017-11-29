@@ -105,7 +105,6 @@ namespace RuneWeaver.GameProperties.GameEntities
             Game.Units.Add(Entity);
             Circle = new EntitySimple2DRenderableBoxProperty()
             {
-                BoxColor = Color4F.Red,
                 BoxSize = new Vector2(Size, Size),
                 BoxTexture = Engine2D.Textures.GetTexture("BaseCircle"),
                 CastShadows = false
@@ -129,6 +128,7 @@ namespace RuneWeaver.GameProperties.GameEntities
             if (Ally)
             {
                 Game.AllyUnits.Add(Entity);
+                Circle.BoxColor = Color4F.Blue;
                 Light1 = new EntityLight2DCasterProperty()
                 {
                     LightColor = Color4F.White,
@@ -148,6 +148,7 @@ namespace RuneWeaver.GameProperties.GameEntities
             else
             {
                 Game.EnemyUnits.Add(Entity);
+                Circle.BoxColor = Color4F.Red;
             }
         }
 
@@ -156,7 +157,6 @@ namespace RuneWeaver.GameProperties.GameEntities
         /// </summary>
         public void Select()
         {
-            Circle.BoxColor = Color4F.Blue;
             (Game.Client.MainUI.CurrentScreen as GameScreen).UnitNameLabel.Text = "^1" + Name;
         }
 
@@ -165,7 +165,6 @@ namespace RuneWeaver.GameProperties.GameEntities
         /// </summary>
         public void Deselect()
         {
-            Circle.BoxColor = Color4F.Red;
             (Game.Client.MainUI.CurrentScreen as GameScreen).UnitNameLabel.Text = string.Empty;
         }
 

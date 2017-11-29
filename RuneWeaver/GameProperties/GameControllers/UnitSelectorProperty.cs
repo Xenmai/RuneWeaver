@@ -100,7 +100,6 @@ namespace RuneWeaver.GameProperties.GameControllers
                                 Entity.SetPosition(new Location(Selected.LastKnownPosition.X, Selected.LastKnownPosition.Y, 3));
                                 Entity.SetOrientation(FreneticGameCore.Quaternion.FromAxisAngle(Location.UnitZ, unit.Direction));
                                 Renderable.BoxSize = new Vector2(unit.Size * 2);
-                                Renderable.BoxColor = Color4F.Blue;
                                 Renderable.IsVisible = true;
                                 Selected.OnPositionChanged += UpdatePosition;
                             }
@@ -116,7 +115,6 @@ namespace RuneWeaver.GameProperties.GameControllers
                                         Entity.SetPosition(new Location(Selected.LastKnownPosition.X, Selected.LastKnownPosition.Y, 3));
                                         Entity.SetOrientation(FreneticGameCore.Quaternion.FromAxisAngle(Location.UnitZ, unit.Direction));
                                         Renderable.BoxSize = new Vector2(unit.Size * 2);
-                                        Renderable.BoxColor = Color4F.Red;
                                         Renderable.IsVisible = true;
                                         Selected.OnPositionChanged += UpdatePosition;
                                         break;
