@@ -1,12 +1,10 @@
 ﻿using FreneticGameCore;
+using FreneticGameCore.Collision;
 using FreneticGameGraphics.ClientSystem.EntitySystem;
-using FreneticGameGraphics.LightingSystem;
 using OpenTK;
 using OpenTK.Input;
 using RuneWeaver.GameProperties.GameEntities;
-using RuneWeaver.GameProperties.GameEntities.UnitActions;
-using RuneWeaver.GameProperties.GameInterfaces;
-using RuneWeaver.Utilities;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace RuneWeaver.GameProperties.GameControllers
@@ -14,7 +12,7 @@ namespace RuneWeaver.GameProperties.GameControllers
     public class UnitSelectorProperty : CustomClientEntityProperty
     {
         /// <summary>
-        /// The outline renderable.
+        /// The selection box renderable.
         /// </summary>
         public EntitySimple2DRenderableBoxProperty Renderable;
 
@@ -23,16 +21,18 @@ namespace RuneWeaver.GameProperties.GameControllers
         /// </summary>
         public override void OnSpawn()
         {
-            Engine.Window.MouseDown += Window_MouseDown;
-            Engine.Window.MouseUp += Window_MouseUp;
-            Engine.Window.KeyDown += Window_KeyDown;
+            Selected = new List<BasicUnitProperty>();
             Renderable = new EntitySimple2DRenderableBoxProperty()
             {
-                BoxTexture = Engine2D.Textures.GetTexture("SelectedOutline"),
+                BoxTexture = Engine2D.Textures.GetTexture("white"),
+                BoxColor = new Color4F(1, 1, 1, 0.25f),
                 CastShadows = false,
                 IsVisible = false
             };
             Entity.AddProperty(Renderable);
+            Engine.Window.MouseDown += Window_MouseDown;
+            Engine.Window.MouseUp += Window_MouseUp;
+            Entity.OnTick += Tick;
         }
 
         /// <summary>
@@ -42,14 +42,28 @@ namespace RuneWeaver.GameProperties.GameControllers
         {
             Engine.Window.MouseDown -= Window_MouseDown;
             Engine.Window.MouseUp -= Window_MouseUp;
-            Engine.Window.KeyDown -= Window_KeyDown;
-            Entity.RemoveProperty<EntitySimple2DRenderableBoxProperty>();
+            Entity.OnTick -= Tick;
         }
 
         /// <summary>
-        /// Which entity is selected.
+        /// A list of selected entities.
         /// </summary>
-        public ClientEntity Selected = null;
+        public List<BasicUnitProperty> Selected;
+
+        /// <summary>
+        /// Whether the left click is down.
+        /// </summary>
+        public bool Selecting;
+
+        /// <summary>
+        /// Whether the right click is down.
+        /// </summary>
+        public bool Moving;
+
+        /// <summary>
+        /// The first clicked position when selecting or moving.
+        /// </summary>
+        public Vector2 FirstPosition;
 
         /// <summary>
         /// Tracks mouse presses.
@@ -60,17 +74,26 @@ namespace RuneWeaver.GameProperties.GameControllers
         {
             if (e.Button == MouseButton.Left)
             {
-                if (Selected != null)
+                Selecting = true;
+                FirstPosition = Engine2D.MouseCoords;
+                Renderable.IsVisible = true;
+                Renderable.BoxSize = Vector2.Zero;
+                Entity.SetPosition(new Location(FirstPosition.X, FirstPosition.Y, 1));
+                if (!Selected.IsEmpty())
                 {
-                    BasicActionProperty action = Game.UnitActionHandler.GetProperty<UnitActionHandlerProperty>().Action;
-                    if (action == null || (!action.Preparing && !action.Executing))
+                    foreach (BasicUnitProperty unit in Selected)
                     {
-                        Selected.OnPositionChanged -= UpdatePosition;
-                        Renderable.IsVisible = false;
-                        Selected?.SignalAllInterfacedProperties<ISelectable>((p) => p.Deselect());
-                        Selected = null;
-
+                        unit.Deselect();
                     }
+                    Selected.Clear();
+                }
+            }
+            else if (e.Button == MouseButton.Right)
+            {
+                if (!Selected.IsEmpty())
+                {
+                    Moving = true;
+                    FirstPosition = Engine2D.MouseCoords;
                 }
             }
         }
@@ -84,72 +107,38 @@ namespace RuneWeaver.GameProperties.GameControllers
         {
             if (e.Button == MouseButton.Left)
             {
-                if (Selected == null)
+                Selecting = false;
+                Renderable.IsVisible = false;
+                AABB box = new AABB()
                 {
-                    Location mouse = new Location(Engine2D.MouseCoords.X, Engine2D.MouseCoords.Y, 0);
-                    foreach (ClientEntity ent in Game.Units)
+                    Min = new Location(FirstPosition.X, FirstPosition.Y, 0.5),
+                    Max = new Location(FirstPosition.X, FirstPosition.Y, 0.5)
+                };
+                box.Include(new Location(Engine2D.MouseCoords.X, Engine2D.MouseCoords.Y, 1.5));
+                IEnumerable<ClientEntity> entities = Engine.PhysicsWorld.GetEntitiesInBox(box);
+                if (!entities.IsEmpty())
+                {
+                    foreach (ClientEntity ent in entities)
                     {
                         BasicUnitProperty unit = ent.GetAllSubTypes<BasicUnitProperty>().First();
-                        double radius = unit.Size * 0.5;
-                        if (ent.LastKnownPosition.DistanceSquared_Flat(mouse) < radius * radius)
+                        if (unit.Ally)
                         {
-                            if (unit.Ally)
-                            {
-                                Selected = ent;
-                                Selected?.SignalAllInterfacedProperties<ISelectable>((p) => p.Select());
-                                Entity.SetPosition(new Location(Selected.LastKnownPosition.X, Selected.LastKnownPosition.Y, 3));
-                                Entity.SetOrientation(FreneticGameCore.Quaternion.FromAxisAngle(Location.UnitZ, unit.Direction));
-                                Renderable.BoxSize = new Vector2(unit.Size * 2);
-                                Renderable.IsVisible = true;
-                                Selected.OnPositionChanged += UpdatePosition;
-                            }
-                            else
-                            {
-                                foreach (PointLight2D light in Engine2D.Lights)
-                                {
-                                    float totalRadius = light.Strength + (float)radius;
-                                    if (ent.LastKnownPosition.DistanceSquared_Flat(light.Position.toLocation()) < totalRadius * totalRadius)
-                                    {
-                                        Selected = ent;
-                                        Selected?.SignalAllInterfacedProperties<ISelectable>((p) => p.Select());
-                                        Entity.SetPosition(new Location(Selected.LastKnownPosition.X, Selected.LastKnownPosition.Y, 3));
-                                        Entity.SetOrientation(FreneticGameCore.Quaternion.FromAxisAngle(Location.UnitZ, unit.Direction));
-                                        Renderable.BoxSize = new Vector2(unit.Size * 2);
-                                        Renderable.IsVisible = true;
-                                        Selected.OnPositionChanged += UpdatePosition;
-                                        break;
-                                    }
-                                }
-                            }
-                            break;
+                            unit.Select();
+                            Selected.Add(unit);
                         }
                     }
                 }
             }
         }
 
-        /// <summary>
-        /// Updates the renderable's position.
-        /// </summary>
-        /// <param name="loc">New location.</param>
-        private void UpdatePosition(Location loc)
+        public void Tick()
         {
-            Entity.SetPosition(new Location(loc.X, loc.Y, 3));
-        }
-
-        /// <summary>
-        /// Listens to keyboard presses.
-        /// </summary>
-        /// <param name="sender">Sender.</param>
-        /// <param name="e">Event data.</param>
-        private void Window_KeyDown(object sender, KeyboardKeyEventArgs e)
-        {
-            if (e.Key == Key.Space)
+            if (Selecting)
             {
-                if (Selected != null)
-                {
-                    Engine2D.ViewCenter = new Vector2((float)Selected.LastKnownPosition.X, (float)Selected.LastKnownPosition.Y);
-                }
+                Vector2 center = (FirstPosition + Engine2D.MouseCoords) / 2;
+                Vector2 size = FirstPosition - Engine2D.MouseCoords;
+                Renderable.BoxSize = size;
+                Entity.SetPosition(new Location(center.X, center.Y, 1));
             }
         }
     }

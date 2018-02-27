@@ -1,6 +1,4 @@
-﻿using RuneWeaver.GameProperties.GameEntities.UnitActions;
-
-namespace RuneWeaver.GameProperties.GameEntities
+﻿namespace RuneWeaver.GameProperties.GameEntities
 {
     public class TrollUnitProperty : BasicUnitProperty
     {
@@ -17,21 +15,6 @@ namespace RuneWeaver.GameProperties.GameEntities
             Stability = 20;
             MaxEnergy = 3;
             base.OnSpawn();
-            AddActions();
-        }
-
-        /// <summary>
-        /// Adds the default actions for this entity.
-        /// </summary>
-        private void AddActions()
-        {
-            Entity.AddProperties(new MoveActionProperty()
-            {
-                Name = "Charge",
-                Cost = 1,
-                MaxDistance = 75,
-                Speed = 1.2f
-            });
         }
     }
 }

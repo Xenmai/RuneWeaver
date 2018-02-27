@@ -36,11 +36,6 @@ namespace RuneWeaver.MainGame
         }
 
         /// <summary>
-        /// The main action handler entity.
-        /// </summary>
-        public ClientEntity UnitActionHandler;
-
-        /// <summary>
         /// The main selector entity.
         /// </summary>
         public ClientEntity UnitSelector;
@@ -49,22 +44,7 @@ namespace RuneWeaver.MainGame
         /// The main camera controller entity.
         /// </summary>
         public ClientEntity CameraController;
-
-        /// <summary>
-        /// The spawned units list.
-        /// </summary>
-        public List<ClientEntity> Units = new List<ClientEntity>();
-
-        /// <summary>
-        /// The spawned ally units list.
-        /// </summary>
-        public List<ClientEntity> AllyUnits = new List<ClientEntity>();
-
-        /// <summary>
-        /// The spawned enemy units list.
-        /// </summary>
-        public List<ClientEntity> EnemyUnits = new List<ClientEntity>();
-
+        
         /// <summary>
         /// Called by the engine when it loads up.
         /// </summary>
@@ -86,7 +66,7 @@ namespace RuneWeaver.MainGame
                 {
                     Size = new Location(20.48f, 20, 2)
                 },
-                Position = new Location(0, 0, -2),
+                Position = new Location(0, 0, -1),
                 Mass = 0,
                 Friction = 0.6
             });
@@ -112,8 +92,6 @@ namespace RuneWeaver.MainGame
             CameraController = Client.Engine2D.SpawnEntity(new CameraControllerProperty());
             // Selector
             UnitSelector = Client.Engine2D.SpawnEntity(new UnitSelectorProperty());
-            // Action Handler
-            UnitActionHandler = Client.Engine2D.SpawnEntity(new UnitActionHandlerProperty());
         }
 
         /// <summary>

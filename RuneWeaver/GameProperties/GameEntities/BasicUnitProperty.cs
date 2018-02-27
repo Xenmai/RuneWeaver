@@ -12,9 +12,14 @@ namespace RuneWeaver.GameProperties.GameEntities
     public class BasicUnitProperty : CustomClientEntityProperty, ISelectable
     {
         /// <summary>
-        /// The unit's renderable circle base.
+        /// The unit's main renderable.
         /// </summary>
-        public EntitySimple2DRenderableBoxProperty Circle;
+        public EntitySimple2DRenderableBoxProperty Renderable;
+
+        /// <summary>
+        /// The unit's selected outline renderable.
+        /// </summary>
+        public EntitySimple2DRenderableBoxProperty Outline;
 
         /// <summary>
         /// The unit's physics body.
@@ -29,7 +34,7 @@ namespace RuneWeaver.GameProperties.GameEntities
         /// <summary>
         /// The unit's secondary light caster entity.
         /// </summary>
-        public ClientEntity Light2;
+        public EntityLight2DCasterProperty Light2;
 
         /// <summary>
         /// Whether the unit is ally.
@@ -92,6 +97,36 @@ namespace RuneWeaver.GameProperties.GameEntities
         public double Direction;
 
         /// <summary>
+        /// The base movement speed.
+        /// </summary>
+        public float Speed;
+
+        /// <summary>
+        /// The base attack damage.
+        /// </summary>
+        public float AttackDamage;
+
+        /// <summary>
+        /// The base attack range.
+        /// </summary>
+        public float AttackRange;
+
+        /// <summary>
+        /// The base attack speed.
+        /// </summary>
+        public float AttackSpeed;
+
+        /// <summary>
+        /// The base attack force.
+        /// </summary>
+        public float AttackForce;
+
+        /// <summary>
+        /// Whether this unit can attack while moving.
+        /// </summary>
+        public bool CanMoveWhileAttacking;
+
+        /// <summary>
         /// Fired when entity is spawned.
         /// </summary>
         public override void OnSpawn()
@@ -102,8 +137,7 @@ namespace RuneWeaver.GameProperties.GameEntities
             Direction = 0;
             Health = MaxHealth;
             Energy = MaxEnergy;
-            Game.Units.Add(Entity);
-            Circle = new EntitySimple2DRenderableBoxProperty()
+            Renderable = new EntitySimple2DRenderableBoxProperty()
             {
                 BoxSize = new Vector2(Size, Size),
                 BoxTexture = Engine2D.Textures.GetTexture("BaseCircle"),
@@ -116,19 +150,18 @@ namespace RuneWeaver.GameProperties.GameEntities
                     Radius = Size * 0.5,
                     Height = 2
                 },
-                Position = new Location(Position.X, Position.Y, 0),
+                Position = new Location(Position.X, Position.Y, 1),
                 Mass = Stability,
                 Friction = 0.5
             };
-            Entity.AddProperties(Circle, Body, new ClientEntityPhysics2DLimitProperty()
+            Entity.AddProperties(Renderable, Body, new ClientEntityPhysics2DLimitProperty()
             {
                 ForcePosition = false
             });
             Body.SpawnedBody.AngularDamping = 1;
             if (Ally)
             {
-                Game.AllyUnits.Add(Entity);
-                Circle.BoxColor = Color4F.Blue;
+                Renderable.BoxColor = Color4F.Blue;
                 Light1 = new EntityLight2DCasterProperty()
                 {
                     LightColor = Color4F.White,
@@ -136,28 +169,45 @@ namespace RuneWeaver.GameProperties.GameEntities
                     LightPosition = Position
                 };
                 Entity.AddProperty(Light1);
-                Light2 = Engine.SpawnEntity(new EntityLight2DCasterProperty()
+                Light2 = new EntityLight2DCasterProperty()
                 {
                     LightColor = Color4F.White,
                     LightStrength = Vision * 1.5f,
                     LightPosition = Position + new Vector2(Vision, 0)
-                });
-                Entity.OnPositionChanged += FixPosition;
-                Entity.OnOrientationChanged += FixPosition;
+                };
+                Engine.SpawnEntity(Light2);
+                Entity.OnPositionChanged += UpdateLight;
+                Entity.OnOrientationChanged += UpdateLight;
+                Outline = new EntitySimple2DRenderableBoxProperty()
+                {
+                    BoxTexture = Engine2D.Textures.GetTexture("SelectedOutline"),
+                    BoxSize = new Vector2(Size * 2, Size * 2),
+                    CastShadows = false,
+                    IsVisible = false
+                };
+                Engine.SpawnEntity(Outline);
+                Outline.Entity.SetPosition(Entity.LastKnownPosition);
+                Entity.OnPositionChanged += UpdateOutline;
             }
             else
             {
-                Game.EnemyUnits.Add(Entity);
-                Circle.BoxColor = Color4F.Red;
+                Renderable.BoxColor = Color4F.Red;
             }
         }
 
+        /// <summary>
+        /// Fires when entity is despawned.
+        /// </summary>
+        public override void OnDespawn()
+        {
+            Engine.RemoveEntity(Outline.Entity);
+        }
         /// <summary>
         /// Highlights the entity.
         /// </summary>
         public void Select()
         {
-            (Game.Client.MainUI.CurrentScreen as GameScreen).UnitNameLabel.Text = "^1" + Name;
+            Outline.IsVisible = true;
         }
 
         /// <summary>
@@ -165,25 +215,34 @@ namespace RuneWeaver.GameProperties.GameEntities
         /// </summary>
         public void Deselect()
         {
-            (Game.Client.MainUI.CurrentScreen as GameScreen).UnitNameLabel.Text = string.Empty;
+            Outline.IsVisible = false;
         }
 
         /// <summary>
-        /// Fixes the light's position when the entity moves.
+        /// Updates the light's position when the entity moves.
         /// </summary>
         /// <param name="pos"></param>
-        public void FixPosition(Location pos)
+        public void UpdateLight(Location pos)
         {
-            Light2.SetPosition(pos + new Location((float)Math.Cos(Direction) * Vision, (float)Math.Sin(Direction) * Vision, 0));
+            Light2.Entity.SetPosition(pos + new Location((float)Math.Cos(Direction) * Vision, (float)Math.Sin(Direction) * Vision, 0));
         }
 
         /// <summary>
-        /// Fixes the light's position when the entity rotates.
+        /// Updates the light's position when the entity rotates.
         /// </summary>
         /// <param name="rot"></param>
-        public void FixPosition(FreneticGameCore.Quaternion rot)
+        public void UpdateLight(FreneticGameCore.Quaternion rot)
         {
-            Light2.SetPosition(Entity.LastKnownPosition + new Location((float)Math.Cos(Direction) * Vision, (float)Math.Sin(Direction) * Vision, 0));
+            Light2.Entity.SetPosition(Entity.LastKnownPosition + new Location((float)Math.Cos(Direction) * Vision, (float)Math.Sin(Direction) * Vision, 0));
+        }
+
+        /// <summary>
+        /// Updates the outline renderable when the entity moves.
+        /// </summary>
+        /// <param name="pos"></param>
+        public void UpdateOutline(Location pos)
+        {
+            Outline.Entity.SetPosition(pos);
         }
     }
 }

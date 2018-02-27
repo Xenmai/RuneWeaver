@@ -39,9 +39,8 @@ namespace RuneWeaver.GameScreens
 
         private void ResetEnergy()
         {
-            foreach (ClientEntity ent in (Engine.Source as Game).Units)
+            foreach (BasicUnitProperty unit in Engine.GetAllSubTypes<BasicUnitProperty>())
             {
-                BasicUnitProperty unit = ent.GetAllSubTypes<BasicUnitProperty>().First();
                 unit.Energy = unit.MaxEnergy;
             }
         }

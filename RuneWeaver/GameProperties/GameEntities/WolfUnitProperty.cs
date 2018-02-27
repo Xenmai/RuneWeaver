@@ -1,11 +1,4 @@
-﻿using RuneWeaver.GameProperties.GameEntities.UnitActions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace RuneWeaver.GameProperties.GameEntities
+﻿namespace RuneWeaver.GameProperties.GameEntities
 {
     public class WolfUnitProperty : BasicUnitProperty
     {
@@ -22,21 +15,6 @@ namespace RuneWeaver.GameProperties.GameEntities
             Stability = 10;
             MaxEnergy = 4;
             base.OnSpawn();
-            AddActions();
-        }
-
-        /// <summary>
-        /// Adds the default actions for this entity.
-        /// </summary>
-        private void AddActions()
-        {
-            Entity.AddProperties(new MoveActionProperty()
-            {
-                Name = "Run",
-                Cost = 2,
-                MaxDistance = 100,
-                Speed = 1
-            });
         }
     }
 }
