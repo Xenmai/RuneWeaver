@@ -38,12 +38,12 @@ namespace RuneWeaver.MainGame
         /// <summary>
         /// The main selector entity.
         /// </summary>
-        public ClientEntity UnitSelector;
+        public UnitSelectorProperty UnitSelector;
 
         /// <summary>
         /// The main camera controller entity.
         /// </summary>
-        public ClientEntity CameraController;
+        public CameraControllerProperty CameraController;
         
         /// <summary>
         /// Called by the engine when it loads up.
@@ -89,9 +89,11 @@ namespace RuneWeaver.MainGame
                 Ally = false
             });
             // Camera Controller
-            CameraController = Client.Engine2D.SpawnEntity(new CameraControllerProperty());
+            CameraController = new CameraControllerProperty();
+            Client.Engine2D.SpawnEntity(CameraController);
             // Selector
-            UnitSelector = Client.Engine2D.SpawnEntity(new UnitSelectorProperty());
+            UnitSelector = new UnitSelectorProperty();
+            Client.Engine2D.SpawnEntity(UnitSelector);
         }
 
         /// <summary>

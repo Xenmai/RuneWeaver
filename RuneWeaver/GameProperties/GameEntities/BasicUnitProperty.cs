@@ -1,10 +1,8 @@
-﻿using BEPUphysics.Entities;
-using FreneticGameCore;
+﻿using FreneticGameCore;
 using FreneticGameCore.EntitySystem.PhysicsHelpers;
 using FreneticGameGraphics.ClientSystem.EntitySystem;
 using OpenTK;
 using RuneWeaver.GameProperties.GameInterfaces;
-using RuneWeaver.GameScreens;
 using System;
 
 namespace RuneWeaver.GameProperties.GameEntities
@@ -200,7 +198,13 @@ namespace RuneWeaver.GameProperties.GameEntities
         /// </summary>
         public override void OnDespawn()
         {
-            Engine.RemoveEntity(Outline.Entity);
+            if (Ally)
+            {
+                Engine.RemoveEntity(Outline.Entity);
+                Entity.OnPositionChanged -= UpdateLight;
+                Entity.OnOrientationChanged -= UpdateLight;
+                Entity.OnPositionChanged -= UpdateOutline;
+            }
         }
         /// <summary>
         /// Highlights the entity.

@@ -4,6 +4,7 @@ using FreneticGameGraphics.ClientSystem.EntitySystem;
 using OpenTK;
 using OpenTK.Input;
 using RuneWeaver.GameProperties.GameEntities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -24,7 +25,6 @@ namespace RuneWeaver.GameProperties.GameControllers
             Selected = new List<BasicUnitProperty>();
             Renderable = new EntitySimple2DRenderableBoxProperty()
             {
-                BoxTexture = Engine2D.Textures.GetTexture("white"),
                 BoxColor = new Color4F(1, 1, 1, 0.25f),
                 CastShadows = false,
                 IsVisible = false
@@ -32,6 +32,8 @@ namespace RuneWeaver.GameProperties.GameControllers
             Entity.AddProperty(Renderable);
             Engine.Window.MouseDown += Window_MouseDown;
             Engine.Window.MouseUp += Window_MouseUp;
+            Engine.Window.KeyDown += Window_KeyDown;
+            Engine.Window.KeyUp += Window_KeyUp;
             Entity.OnTick += Tick;
         }
 
@@ -42,6 +44,8 @@ namespace RuneWeaver.GameProperties.GameControllers
         {
             Engine.Window.MouseDown -= Window_MouseDown;
             Engine.Window.MouseUp -= Window_MouseUp;
+            Engine.Window.KeyDown -= Window_KeyDown;
+            Engine.Window.KeyUp -= Window_KeyUp;
             Entity.OnTick -= Tick;
         }
 
@@ -76,10 +80,11 @@ namespace RuneWeaver.GameProperties.GameControllers
             {
                 Selecting = true;
                 FirstPosition = Engine2D.MouseCoords;
-                Renderable.IsVisible = true;
+                Renderable.BoxTexture = Engine2D.Textures.GetTexture("white");
                 Renderable.BoxSize = Vector2.Zero;
+                Renderable.IsVisible = true;
                 Entity.SetPosition(new Location(FirstPosition.X, FirstPosition.Y, 1));
-                if (!Selected.IsEmpty())
+                if (!ControlPressed)
                 {
                     foreach (BasicUnitProperty unit in Selected)
                     {
@@ -94,6 +99,10 @@ namespace RuneWeaver.GameProperties.GameControllers
                 {
                     Moving = true;
                     FirstPosition = Engine2D.MouseCoords;
+                    Renderable.BoxTexture = Engine2D.Textures.GetTexture("SelectedOutline");
+                    Renderable.BoxSize = new Vector2(1);
+                    Renderable.IsVisible = true;
+                    Entity.SetPosition(new Location(FirstPosition.X, FirstPosition.Y, 1));
                 }
             }
         }
@@ -109,28 +118,82 @@ namespace RuneWeaver.GameProperties.GameControllers
             {
                 Selecting = false;
                 Renderable.IsVisible = false;
+                Location first = new Location(FirstPosition.X, FirstPosition.Y, 0.5);
                 AABB box = new AABB()
                 {
-                    Min = new Location(FirstPosition.X, FirstPosition.Y, 0.5),
-                    Max = new Location(FirstPosition.X, FirstPosition.Y, 0.5)
+                    Min = first,
+                    Max = first
                 };
                 box.Include(new Location(Engine2D.MouseCoords.X, Engine2D.MouseCoords.Y, 1.5));
-                IEnumerable<ClientEntity> entities = Engine.PhysicsWorld.GetEntitiesInBox(box);
-                if (!entities.IsEmpty())
+                foreach (ClientEntity ent in Engine.PhysicsWorld.GetEntitiesInBox(box))
                 {
-                    foreach (ClientEntity ent in entities)
+                    BasicUnitProperty unit = ent.GetAllSubTypes<BasicUnitProperty>().First();
+                    if (unit.Ally)
                     {
-                        BasicUnitProperty unit = ent.GetAllSubTypes<BasicUnitProperty>().First();
-                        if (unit.Ally)
-                        {
-                            unit.Select();
-                            Selected.Add(unit);
-                        }
+                        unit.Select();
+                        Selected.Add(unit);
                     }
+                }
+            }
+            else if (e.Button == MouseButton.Right)
+            {
+                if (!Selected.IsEmpty())
+                {
+                    Moving = false;
+                    Renderable.IsVisible = false;
                 }
             }
         }
 
+        /// <summary>
+        /// Is the right key down.
+        /// </summary>
+        public bool ControlPressed;
+
+        /// <summary>
+        /// Is the forward key down.
+        /// </summary>
+        public bool ShiftPressed;
+
+        /// <summary>
+        /// Tracks key presses.
+        /// </summary>
+        /// <param name="sender">Sender.</param>
+        /// <param name="e">Event data.</param>
+        private void Window_KeyDown(object sender, KeyboardKeyEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case Key.ControlLeft:
+                    ControlPressed = true;
+                    break;
+                case Key.ShiftLeft:
+                    ShiftPressed = true;
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Tracks key releases.
+        /// </summary>
+        /// <param name="sender">Sender.</param>
+        /// <param name="e">Event data.</param>
+        private void Window_KeyUp(object sender, KeyboardKeyEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case Key.ControlLeft:
+                    ControlPressed = false;
+                    break;
+                case Key.ShiftLeft:
+                    ShiftPressed = false;
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Fired when the entity ticks.
+        /// </summary>
         public void Tick()
         {
             if (Selecting)
@@ -139,6 +202,12 @@ namespace RuneWeaver.GameProperties.GameControllers
                 Vector2 size = FirstPosition - Engine2D.MouseCoords;
                 Renderable.BoxSize = size;
                 Entity.SetPosition(new Location(center.X, center.Y, 1));
+            }
+            else if (Moving)
+            {
+                Vector2 distance = Engine2D.MouseCoords - FirstPosition;
+                float angle = (float)Math.Atan2(distance.Y, distance.X);
+                Renderable.RenderAngle = angle;
             }
         }
     }
