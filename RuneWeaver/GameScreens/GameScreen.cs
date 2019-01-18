@@ -31,23 +31,17 @@ namespace RuneWeaver.GameScreens
             Game game = Engine.Source as Game;
             int height = game.Client.WindowHeight;
             int width = game.Client.WindowWidth - height;
-            ResetButton = new UIButton("White", "^!Reset Turn", Client.FontSets.SlightlyBigger, ResetEnergy, new UIPositionHelper(view).Anchor(UIAnchor.BOTTOM_RIGHT).ConstantWidthHeight(width, 70));
+            ResetButton = new UIButton("White", "^!Reset Turn", Client.FontSets.SlightlyBigger, Nothing, new UIPositionHelper(view).Anchor(UIAnchor.BOTTOM_RIGHT).ConstantWidthHeight(width, 70));
             UnitNameLabel = new UIButton("White", string.Empty, Client.FontSets.SlightlyBigger, Nothing, new UIPositionHelper(view).Anchor(UIAnchor.TOP_RIGHT).ConstantWidthHeight(width, 70));
             AddChild(ResetButton);
             AddChild(UnitNameLabel);
         }
 
-        private void ResetEnergy()
-        {
-            foreach (BasicUnitProperty unit in Engine.GetAllSubTypes<BasicUnitProperty>())
-            {
-                unit.Energy = unit.MaxEnergy;
-            }
-        }
-
+        /// <summary>
+        /// Does nothing at all.
+        /// </summary>
         private void Nothing()
         {
-
         }
     }
 }

@@ -8,12 +8,11 @@
         public override void OnSpawn()
         {
             Name = "Troll";
-            Size = 48;
-            Vision = 125;
+            Size = 3;
+            Vision = 8;
             MaxHealth = 75;
             Resistance = 30;
             Stability = 20;
-            MaxEnergy = 3;
             base.OnSpawn();
         }
     }

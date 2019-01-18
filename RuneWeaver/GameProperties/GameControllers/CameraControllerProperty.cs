@@ -1,4 +1,4 @@
-﻿using FreneticGameCore;
+﻿using FreneticGameGraphics.ClientSystem.EntitySystem;
 using OpenTK.Input;
 
 namespace RuneWeaver.GameProperties.GameControllers
@@ -6,7 +6,7 @@ namespace RuneWeaver.GameProperties.GameControllers
     /// <summary>
     /// Represents a an entity that rotates.
     /// </summary>
-    public class CameraControllerProperty : CustomClientEntityProperty
+    public class CameraControllerProperty : ClientEntityProperty
     {
         /// <summary>
         /// Fired when entity is spawned.

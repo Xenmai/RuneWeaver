@@ -8,12 +8,11 @@
         public override void OnSpawn()
         {
             Name = "Wolf";
-            Size = 32;
-            Vision = 150;
+            Size = 2;
+            Vision = 10;
             MaxHealth = 40;
             Resistance = 18;
             Stability = 10;
-            MaxEnergy = 4;
             base.OnSpawn();
         }
     }

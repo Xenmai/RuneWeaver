@@ -9,6 +9,7 @@ using FreneticGameGraphics.UISystem;
 using RuneWeaver.GameScreens;
 using System.Collections.Generic;
 using FreneticGameCore.EntitySystem.PhysicsHelpers;
+using RuneWeaver.TriangularGrid;
 
 namespace RuneWeaver.MainGame
 {
@@ -28,7 +29,7 @@ namespace RuneWeaver.MainGame
         public void Start()
         {
             Client = new GameClientWindow(threed: false);
-            Client.Engine2D.UseLightEngine = true;
+            Client.Engine2D.UseLightEngine = false;
             Client.OnWindowLoad += Engine_WindowLoad;
             Client.Engine2D.Zoom = 0.01f;
             Client.Engine2D.Source = this;
@@ -36,15 +37,25 @@ namespace RuneWeaver.MainGame
         }
 
         /// <summary>
-        /// The main selector entity.
+        /// The main unit controller property.
         /// </summary>
-        public UnitSelectorProperty UnitSelector;
+        public UnitControllerProperty UnitController;
 
         /// <summary>
-        /// The main camera controller entity.
+        /// The main camera controller property.
         /// </summary>
         public CameraControllerProperty CameraController;
-        
+
+
+        /// <summary>
+        /// The static random.
+        /// </summary>
+        public MTRandom Random;
+
+        public GridEdgeProperty[,,] Edges;
+
+        public GridFaceProperty[,,] Faces;
+
         /// <summary>
         /// Called by the engine when it loads up.
         /// </summary>
@@ -53,47 +64,61 @@ namespace RuneWeaver.MainGame
             Client.MainUI.CurrentScreen = new GameScreen(Client.MainUI);
             Client.Window.KeyDown += Window_KeyDown;
             Client.Engine2D.PhysicsWorld.Gravity = new Location(0, 0, -10);
-            // Ground
-            ClientEntity ground = Client.Engine2D.SpawnEntity(new EntitySimple2DRenderableBoxProperty()
+            Random = new MTRandom();
+            // Triangular Grid
+            List<GridVertex> vertices = new List<GridVertex>();
+            Edges = new GridEdgeProperty[10, 10, 3];
+            Faces = new GridFaceProperty[10, 10, 2];
+            for (int i = 0; i < 10; i++)
             {
-                BoxSize = new Vector2(20.48f, 20),
-                BoxColor = Color4F.Green,
-                BoxTexture = Client.Engine2D.Textures.White,
-                CastShadows = false
-            }, new ClientEntityPhysicsProperty()
-            {
-                Shape = new EntityBoxShape()
+                for (int j = 0; j < 10; j++)
                 {
-                    Size = new Location(20.48f, 20, 2)
-                },
-                Position = new Location(0, 0, -1),
-                Mass = 0,
-                Friction = 0.6
-            });
-            // Entity 1
-            Client.Engine2D.SpawnEntity(new GoblinUnitProperty()
+                    vertices.Add(new GridVertex(i, j));
+                    Edges[i, j, 0] = new GridEdgeProperty()
+                    {
+                        Coords = new GridEdge(i, j, 0)
+                    };
+                    Edges[i, j, 1] = new GridEdgeProperty()
+                    {
+                        Coords = new GridEdge(i, j, 1)
+                    };
+                    Edges[i, j, 2] = new GridEdgeProperty()
+                    {
+                        Coords = new GridEdge(i, j, 2)
+                    };
+                    Faces[i, j, 0] = new GridFaceProperty()
+                    {
+                        Coords = new GridFace(i, j, 0)
+                    };
+                    Faces[i, j, 1] = new GridFaceProperty()
+                    {
+                        Coords = new GridFace(i, j, 1)
+                    };
+                }
+            }
+            foreach (GridEdgeProperty prop in Edges)
             {
-                Position = new Vector2(7.5f, 7.5f),
-                Ally = true
-            });
-            // Entity 2
-            Client.Engine2D.SpawnEntity(new WolfUnitProperty()
+                Client.Engine2D.SpawnEntity(prop);
+            }
+            foreach (GridFaceProperty prop in Faces)
             {
-                Position = new Vector2(2.0f, 3.5f),
-                Ally = true
-            });
-            // Entity 3
-            Client.Engine2D.SpawnEntity(new TrollUnitProperty()
-            {
-                Position = new Vector2(1.0f, 0.5f),
-                Ally = false
-            });
+                Client.Engine2D.SpawnEntity(prop);
+            }
             // Camera Controller
             CameraController = new CameraControllerProperty();
             Client.Engine2D.SpawnEntity(CameraController);
             // Selector
-            UnitSelector = new UnitSelectorProperty();
-            Client.Engine2D.SpawnEntity(UnitSelector);
+            UnitController = new UnitControllerProperty();
+            Client.Engine2D.SpawnEntity(UnitController);
+        }
+
+        /// <summary>
+        /// Gets the current scaling of the game.
+        /// </summary>
+        /// <returns>The scaling as a float.</returns>
+        public float GetScaling()
+        {
+            return 2048 * Client.Engine2D.Zoom / 800;
         }
 
         /// <summary>
