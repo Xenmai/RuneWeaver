@@ -1,7 +1,6 @@
 ﻿using FreneticGameCore;
 using FreneticGameGraphics.ClientSystem.EntitySystem;
 using OpenTK;
-using OpenTK.Input;
 using RuneWeaver.MainGame;
 
 namespace RuneWeaver.TriangularGrid
@@ -33,6 +32,7 @@ namespace RuneWeaver.TriangularGrid
         public override void OnSpawn()
         {
             Game game = Engine2D.Source as Game;
+            game.Faces[Coords.U, Coords.V, Coords.Side] = this;
             float scaling = game.GetScaling();
             Renderable = new EntitySimple2DRenderableBoxProperty()
             {
@@ -46,12 +46,12 @@ namespace RuneWeaver.TriangularGrid
             float y;
             if (Coords.Side == 0) {
                 x = (Coords.U + 0.5f + Coords.V * 0.5f) * 100 * scaling;
-                y = (Coords.V + 0.5f) * 0.866f * 100 * scaling;
+                y = (Coords.V + 0.5f) * 86.6f * scaling;
             }
             else
             {
                 x = (Coords.U + 1 + Coords.V * 0.5f) * 100 * scaling;
-                y = (Coords.V + 0.5f) * 0.866f * 100 * scaling;
+                y = (Coords.V + 0.5f) * 86.6f * scaling;
                 Renderable.RenderAngle = MathHelper.Pi;
             }
             Entity.SetPosition(new Location(x, y, 1));

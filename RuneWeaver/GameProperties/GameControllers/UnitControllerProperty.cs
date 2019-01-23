@@ -1,15 +1,9 @@
 ﻿using FreneticGameCore;
-using FreneticGameCore.Collision;
 using FreneticGameGraphics.ClientSystem.EntitySystem;
-using OpenTK;
 using OpenTK.Input;
-using RuneWeaver.GameProperties.GameEntities;
-using RuneWeaver.GameProperties.GameEntities.UnitActions;
 using RuneWeaver.MainGame;
 using RuneWeaver.TriangularGrid;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace RuneWeaver.GameProperties.GameControllers
 {
@@ -21,13 +15,14 @@ namespace RuneWeaver.GameProperties.GameControllers
         /// <summary>
         /// A list of selected entities.
         /// </summary>
-        public BasicUnitProperty Selected;
+        public List<GridEdgeProperty> Selected;
         
         /// <summary>
         /// Fired when entity is spawned.
         /// </summary>
         public override void OnSpawn()
-        {            
+        {
+            Selected = new List<GridEdgeProperty>();
             Engine.Window.MouseDown += Window_MouseDown;
             Engine.Window.MouseUp += Window_MouseUp;
             Engine.Window.KeyDown += Window_KeyDown;
@@ -56,12 +51,12 @@ namespace RuneWeaver.GameProperties.GameControllers
         {
             if (e.Button == MouseButton.Left)
             {
-                Game game = Engine2D.Source as Game;
-                GridFace face = GridFace.fromVector2(Engine2D.MouseCoords, game.GetScaling());
-                foreach (GridEdge edge in face.Borders())
+                foreach (GridEdgeProperty edge in Selected)
                 {
-                    game.Edges[edge.U, edge.V, edge.Side].Renderable.BoxColor = Color4F.Red;
+                    edge.Entity.MoveRelative(0, 0, -2);
+                    edge.Renderable.BoxColor = Color4F.Black;
                 }
+                Selected.Clear();
             }
             else if (e.Button == MouseButton.Right)
             {
@@ -78,7 +73,24 @@ namespace RuneWeaver.GameProperties.GameControllers
         {
             if (e.Button == MouseButton.Left)
             {
-                
+                Game game = Engine2D.Source as Game;
+                GridFace face = GridFace.fromVector2(Engine2D.MouseCoords, game.GetScaling());
+                List<GridEdge> edges = new List<GridEdge>();
+                if (game.Units[face.U, face.V, face.Side] != null)
+                {
+                    edges = game.Units[face.U, face.V, face.Side].Borders();
+                }
+                else
+                {
+                    edges = face.Borders();
+                }
+                foreach (GridEdge edge in edges)
+                {
+                    GridEdgeProperty gep = game.Edges[edge.U, edge.V, edge.Side];
+                    gep.Entity.MoveRelative(0, 0, 2);
+                    gep.Renderable.BoxColor = Color4F.Red;
+                    Selected.Add(gep);
+                }
             }
             else if (e.Button == MouseButton.Right)
             {

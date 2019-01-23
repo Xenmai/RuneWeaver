@@ -30,7 +30,7 @@ namespace RuneWeaver.TriangularGrid
         /// </summary>
         /// <param name="u">The first coordinate.</param>
         /// <param name="v">The second coordinate.</param>
-        /// <param name="side">The side coordinate.</param>
+        /// <param name="side">The side coordinate: 0 = L, 1 = R.</param>
         public GridFace(int u, int v, int side)
         {
             this.U = u;
@@ -54,7 +54,7 @@ namespace RuneWeaver.TriangularGrid
 
         public List<GridFace> Neighbors()
         {
-            if (Side.Equals('L'))
+            if (Side == 0)
             {
                 return new List<GridFace>(new GridFace[] {
                     new GridFace(U, V, 1),
@@ -72,11 +72,11 @@ namespace RuneWeaver.TriangularGrid
 
         public List<GridEdge> Borders()
         {
-            if (Side.Equals(0))
+            if (Side == 0)
             {
                 return new List<GridEdge>(new GridEdge[] {
-                    new GridEdge(U, V, 1),
                     new GridEdge(U, V, 0),
+                    new GridEdge(U, V, 1),
                     new GridEdge(U, V, 2)});
             }
             else
@@ -90,7 +90,7 @@ namespace RuneWeaver.TriangularGrid
 
         public List<GridVertex> Corners()
         {
-            if (Side.Equals(0))
+            if (Side == 0)
             {
                 return new List<GridVertex>(new GridVertex[] {
                     new GridVertex(U, V + 1),

@@ -1,14 +1,11 @@
 ﻿using FreneticGameCore;
 using FreneticGameGraphics.ClientSystem;
-using FreneticGameGraphics.ClientSystem.EntitySystem;
 using OpenTK;
 using OpenTK.Input;
 using RuneWeaver.GameProperties.GameControllers;
 using RuneWeaver.GameProperties.GameEntities;
-using FreneticGameGraphics.UISystem;
 using RuneWeaver.GameScreens;
 using System.Collections.Generic;
-using FreneticGameCore.EntitySystem.PhysicsHelpers;
 using RuneWeaver.TriangularGrid;
 
 namespace RuneWeaver.MainGame
@@ -56,6 +53,8 @@ namespace RuneWeaver.MainGame
 
         public GridFaceProperty[,,] Faces;
 
+        public BasicUnitProperty[,,] Units;
+
         /// <summary>
         /// Called by the engine when it loads up.
         /// </summary>
@@ -66,44 +65,40 @@ namespace RuneWeaver.MainGame
             Client.Engine2D.PhysicsWorld.Gravity = new Location(0, 0, -10);
             Random = new MTRandom();
             // Triangular Grid
-            List<GridVertex> vertices = new List<GridVertex>();
             Edges = new GridEdgeProperty[10, 10, 3];
             Faces = new GridFaceProperty[10, 10, 2];
+            Units = new BasicUnitProperty[10, 10, 2];
             for (int i = 0; i < 10; i++)
             {
                 for (int j = 0; j < 10; j++)
                 {
-                    vertices.Add(new GridVertex(i, j));
-                    Edges[i, j, 0] = new GridEdgeProperty()
+                    Client.Engine2D.SpawnEntity(new GridEdgeProperty()
                     {
                         Coords = new GridEdge(i, j, 0)
-                    };
-                    Edges[i, j, 1] = new GridEdgeProperty()
+                    });
+                    Client.Engine2D.SpawnEntity(new GridEdgeProperty()
                     {
                         Coords = new GridEdge(i, j, 1)
-                    };
-                    Edges[i, j, 2] = new GridEdgeProperty()
+                    });
+                    Client.Engine2D.SpawnEntity(new GridEdgeProperty()
                     {
                         Coords = new GridEdge(i, j, 2)
-                    };
-                    Faces[i, j, 0] = new GridFaceProperty()
+                    });
+                    Client.Engine2D.SpawnEntity(new GridFaceProperty()
                     {
                         Coords = new GridFace(i, j, 0)
-                    };
-                    Faces[i, j, 1] = new GridFaceProperty()
+                    });
+                    Client.Engine2D.SpawnEntity(new GridFaceProperty()
                     {
                         Coords = new GridFace(i, j, 1)
-                    };
+                    });
                 }
             }
-            foreach (GridEdgeProperty prop in Edges)
+            // Units
+            Client.Engine2D.SpawnEntity(new GoblinUnitProperty()
             {
-                Client.Engine2D.SpawnEntity(prop);
-            }
-            foreach (GridFaceProperty prop in Faces)
-            {
-                Client.Engine2D.SpawnEntity(prop);
-            }
+                Coords = new GridVertex(5, 5)
+            });
             // Camera Controller
             CameraController = new CameraControllerProperty();
             Client.Engine2D.SpawnEntity(CameraController);

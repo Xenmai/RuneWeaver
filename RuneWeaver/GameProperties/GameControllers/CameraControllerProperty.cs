@@ -46,19 +46,19 @@ namespace RuneWeaver.GameProperties.GameControllers
             float y = Engine2D.Window.Mouse.Y / (float)Engine2D.Window.Height;
             if (x < 0.075f)
             {
-                motion.X = (x - 0.075f) * 75;
+                motion.X = (x - 0.075f) * 150;
             }
             if (x > 0.925f)
             {
-                motion.X = (x - 0.925f) * 75;
+                motion.X = (x - 0.925f) * 150;
             }
             if (y < 0.075f)
             {
-                motion.Y = (0.075f - y) * 75;
+                motion.Y = (0.075f - y) * 150;
             }
             if (y > 0.925f)
             {
-                motion.Y = (0.925f - y) * 75;
+                motion.Y = (0.925f - y) * 150;
             }
             Engine2D.ViewCenter += motion * Engine2D.Zoom;
         }

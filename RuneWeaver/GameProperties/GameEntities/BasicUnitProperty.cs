@@ -1,11 +1,9 @@
 ﻿using FreneticGameCore;
-using FreneticGameCore.EntitySystem.PhysicsHelpers;
 using FreneticGameGraphics.ClientSystem.EntitySystem;
 using OpenTK;
 using RuneWeaver.GameProperties.GameEntities.UnitActions;
-using RuneWeaver.GameProperties.GameInterfaces;
-using RuneWeaver.Utilities;
-using System;
+using RuneWeaver.MainGame;
+using RuneWeaver.TriangularGrid;
 using System.Collections.Generic;
 
 namespace RuneWeaver.GameProperties.GameEntities
@@ -66,21 +64,39 @@ namespace RuneWeaver.GameProperties.GameEntities
         public List<BasicUnitAction> Actions;
 
         /// <summary>
+        /// This unit's center triangular coordinates.
+        /// </summary>
+        public GridVertex Coords;
+
+        public List<GridEdge> Borders()
+        {
+            return Coords.Surrounds(Size);
+        }
+
+        /// <summary>
         /// Fired when entity is spawned.
         /// </summary>
         public override void OnSpawn()
         {
-            float scaling = 2048 * Engine2D.Zoom / 800;
-            
-            Health = MaxHealth;
+            Game game = Engine2D.Source as Game;
+            foreach (GridFace face in Coords.Touches())
+            {
+                game.Units[face.U, face.V, face.Side] = this;
+            }
+            float scaling = game.GetScaling();
+            float factor = scaling * Size * 2;
             Renderable = new EntitySimple2DRenderableBoxProperty()
             {
-                BoxSize = new Vector2(Size, Size),
-                BoxTexture = Engine2D.Textures.GetTexture("BaseCircle"),
+                BoxSize = new Vector2(factor * 100, factor * 86.6f),
+                BoxTexture = Engine2D.Textures.GetTexture("Hexagon"),
                 CastShadows = false
             };
+            Health = MaxHealth;
             Entity.AddProperties(Renderable);
             Renderable.BoxColor = Color4F.Blue;
+            float x = (Coords.U + Coords.V * 0.5f) * 100 * scaling;
+            float y = Coords.V * 86.6f * scaling;
+            Entity.SetPosition(new Location(x, y, 3));
         }
 
         /// <summary>

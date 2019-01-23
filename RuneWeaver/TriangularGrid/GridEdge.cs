@@ -12,7 +12,7 @@ namespace RuneWeaver.TriangularGrid
         /// </summary
         /// <param name="u">The first coordinate.</param>
         /// <param name="v">The second coordinate.</param>
-        /// <param name="side">The side coordinate.</param>
+        /// <param name="side">The side coordinate: 0 = S, 1 = E, 2 = W.</param>
         public GridEdge(int u, int v, int side)
         {
             this.U = u;
@@ -37,67 +37,67 @@ namespace RuneWeaver.TriangularGrid
 
         public List<GridFace> Joins()
         {
-            if (Side.Equals(0))
+            if (Side == 0)
             {
                 return new List<GridFace>(new GridFace[] {
                     new GridFace(U, V, 0),
                     new GridFace(U, V - 1, 1)});
             }
-            else if(Side.Equals(1))
-            {
-                return new List<GridFace>(new GridFace[] {
-                    new GridFace(U, V, 1),
-                    new GridFace(U, V, 0)});
-            }
-            else
+            else if(Side == 1)
             {
                 return new List<GridFace>(new GridFace[] {
                     new GridFace(U, V, 0),
                     new GridFace(U - 1, V, 1)});
             }
+            else
+            {
+                return new List<GridFace>(new GridFace[] {
+                    new GridFace(U, V, 1),
+                    new GridFace(U, V, 0)});
+            }
         }
 
         public List<GridEdge> Continues()
         {
-            if (Side.Equals(0))
+            if (Side == 0)
             {
                 return new List<GridEdge>(new GridEdge[] {
                     new GridEdge(U + 1, V, 0),
                     new GridEdge(U - 1, V, 0)});
             }
-            else if (Side.Equals(1))
-            {
-                return new List<GridEdge>(new GridEdge[] {
-                    new GridEdge(U + 1, V - 1, 1),
-                    new GridEdge(U - 1, V + 1, 1)});
-            }
-            else
+            else if (Side == 1)
             {
                 return new List<GridEdge>(new GridEdge[] {
                     new GridEdge(U, V + 1, 2),
                     new GridEdge(U, V - 1, 2)});
             }
+            else
+            {
+                return new List<GridEdge>(new GridEdge[] {
+                    new GridEdge(U + 1, V - 1, 1),
+                    new GridEdge(U - 1, V + 1, 1)});
+            }
         }
 
         public List<GridVertex> EndPoints()
         {
-            if (Side.Equals(0))
+            if (Side == 0)
             {
                 return new List<GridVertex>(new GridVertex[] {
                     new GridVertex(U + 1, V),
                     new GridVertex(U, V)});
             }
-            else if (Side.Equals(1))
-            {
-                return new List<GridVertex>(new GridVertex[] {
-                    new GridVertex(U + 1, V),
-                    new GridVertex(U, V + 1)});
-            }
-            else
+            else if (Side == 1)
             {
                 return new List<GridVertex>(new GridVertex[] {
                     new GridVertex(U, V + 1),
                     new GridVertex(U, V)});
+            }
+            else
+            {
+                return new List<GridVertex>(new GridVertex[] {
+                    new GridVertex(U + 1, V),
+                    new GridVertex(U, V + 1)});
             }
         }
 

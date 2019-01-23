@@ -31,23 +31,41 @@ namespace RuneWeaver.TriangularGrid
         public List<GridFace> Touches()
         {
             return new List<GridFace>(new GridFace[] {
-                    new GridFace(U - 1, V, 'R'),
-                    new GridFace(U, V, 'L'),
-                    new GridFace(U, V - 1, 'R'),
-                    new GridFace(U, V - 1, 'L'),
-                    new GridFace(U - 1, V - 1, 'R'),
-                    new GridFace(U - 1, V, 'L')});
+                    new GridFace(U - 1, V, 1),
+                    new GridFace(U, V, 0),
+                    new GridFace(U, V - 1, 1),
+                    new GridFace(U, V - 1, 0),
+                    new GridFace(U - 1, V - 1, 1),
+                    new GridFace(U - 1, V, 0)});
         }
 
         public List<GridEdge> Protrudes()
         {
             return new List<GridEdge>(new GridEdge[] {
-                    new GridEdge(U, V, 'W'),
-                    new GridEdge(U, V, 'S'),
-                    new GridEdge(U, V - 1, 'E'),
-                    new GridEdge(U, V - 1, 'W'),
-                    new GridEdge(U - 1, V, 'S'),
-                    new GridEdge(U - 1, V, 'E')});
+                    new GridEdge(U, V, 1),
+                    new GridEdge(U, V, 0),
+                    new GridEdge(U, V - 1, 2),
+                    new GridEdge(U, V - 1, 1),
+                    new GridEdge(U - 1, V, 0),
+                    new GridEdge(U - 1, V, 2)});
+        }
+
+        public List<GridEdge> Surrounds(int size)
+        {
+            if (size == 1)
+            {
+                return new List<GridEdge>(new GridEdge[] {
+                    new GridEdge(U, V, 2),
+                    new GridEdge(U - 1, V - 1, 2),
+                    new GridEdge(U - 1, V, 1),
+                    new GridEdge(U + 1, V - 1, 1),
+                    new GridEdge(U - 1, V + 1, 0),
+                    new GridEdge(U, V - 1, 0)});
+            }
+            else
+            {
+                return new List<GridEdge>();
+            }
         }
 
         public List<GridVertex> Adjacent()
