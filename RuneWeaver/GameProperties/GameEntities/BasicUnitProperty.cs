@@ -34,6 +34,11 @@ namespace RuneWeaver.GameProperties.GameEntities
         public int Size;
 
         /// <summary>
+        /// The unit's upgrades.
+        /// </summary>
+        public int[] Upgrades = new int[3];
+
+        /// <summary>
         /// The unit's vision radius.
         /// </summary>
         public int Vision;
@@ -59,7 +64,7 @@ namespace RuneWeaver.GameProperties.GameEntities
         public float Stability;
 
         /// <summary>
-        /// The list of actions this unit will perform.
+        /// The list of actions this unit can perform.
         /// </summary>
         public List<BasicUnitAction> Actions;
 
@@ -68,9 +73,13 @@ namespace RuneWeaver.GameProperties.GameEntities
         /// </summary>
         public GridVertex Coords;
 
+        /// <summary>
+        /// The border edges of this unit.
+        /// </summary>
+        /// <returns>The list of border edge coordinates.</returns>
         public List<GridEdge> Borders()
         {
-            return Coords.Surrounds(Size);
+            return Coords.Surrounded(Size);
         }
 
         /// <summary>

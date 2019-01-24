@@ -1,9 +1,13 @@
 ﻿using FreneticGameCore;
 using FreneticGameGraphics.ClientSystem.EntitySystem;
+using OpenTK;
 using OpenTK.Input;
+using RuneWeaver.GameProperties.GameEntities;
+using RuneWeaver.GameProperties.GameEntities.UnitActions;
 using RuneWeaver.MainGame;
 using RuneWeaver.TriangularGrid;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RuneWeaver.GameProperties.GameControllers
 {
@@ -13,16 +17,25 @@ namespace RuneWeaver.GameProperties.GameControllers
     public class UnitControllerProperty : ClientEntityProperty
     {
         /// <summary>
-        /// A list of selected entities.
+        /// The selected unit, if any.
         /// </summary>
-        public List<GridEdgeProperty> Selected;
+        public BasicUnitProperty SelectedUnit;
+
+        /// <summary>
+        /// The selected face, if any.
+        /// </summary>
+        public GridFaceProperty SelectedFace;
+
+        /// <summary>
+        /// Whether the selected unit is executing an action;
+        /// </summary>
+        public bool ExecutingAction;
         
         /// <summary>
         /// Fired when entity is spawned.
         /// </summary>
         public override void OnSpawn()
         {
-            Selected = new List<GridEdgeProperty>();
             Engine.Window.MouseDown += Window_MouseDown;
             Engine.Window.MouseUp += Window_MouseUp;
             Engine.Window.KeyDown += Window_KeyDown;
@@ -42,6 +55,32 @@ namespace RuneWeaver.GameProperties.GameControllers
             Entity.OnTick -= Tick;
         }
 
+        public void SelectBorders(List<GridEdge> edges)
+        {
+            Game game = Engine2D.Source as Game;
+            float scaling = game.GetScaling();
+            foreach (GridEdge edge in edges)
+            {
+                GridEdgeProperty gep = game.Edges[edge.U, edge.V, edge.Side];
+                gep.Entity.MoveRelative(0, 0, 2);
+                gep.Renderable.BoxSize = new Vector2(scaling * 100, scaling * 5);
+                gep.Renderable.BoxColor = Color4F.Red;
+            }
+        }
+
+        public void DeselectBorders(List<GridEdge> edges)
+        {
+            Game game = Engine2D.Source as Game;
+            float scaling = game.GetScaling();
+            foreach (GridEdge edge in edges)
+            {
+                GridEdgeProperty gep = game.Edges[edge.U, edge.V, edge.Side];
+                gep.Entity.MoveRelative(0, 0, -2);
+                gep.Renderable.BoxSize = new Vector2(scaling * 100, scaling * 2);
+                gep.Renderable.BoxColor = Color4F.Black;
+            }
+        }
+
         /// <summary>
         /// Tracks mouse presses.
         /// </summary>
@@ -51,16 +90,28 @@ namespace RuneWeaver.GameProperties.GameControllers
         {
             if (e.Button == MouseButton.Left)
             {
-                foreach (GridEdgeProperty edge in Selected)
+                List<GridEdge> edges = new List<GridEdge>();
+                if (SelectedUnit != null)
                 {
-                    edge.Entity.MoveRelative(0, 0, -2);
-                    edge.Renderable.BoxColor = Color4F.Black;
+                    DeselectBorders(SelectedUnit.Borders());
+                    if (ExecutingAction)
+                    {
+                        DeselectBorders(((AttackUnitAction)SelectedUnit.Actions.First()).Hitbox.Borders(SelectedUnit.Coords, 0));
+                    }
+                    SelectedUnit = null;
                 }
-                Selected.Clear();
+                else if (SelectedFace != null)
+                {
+                    DeselectBorders(SelectedFace.Coords.Borders());
+                    SelectedFace = null;
+                }                
             }
             else if (e.Button == MouseButton.Right)
             {
-                
+                if (ExecutingAction)
+                {
+                    DeselectBorders(((AttackUnitAction)SelectedUnit.Actions.First()).Hitbox.Borders(SelectedUnit.Coords, 0));
+                }
             }
         }
 
@@ -74,22 +125,18 @@ namespace RuneWeaver.GameProperties.GameControllers
             if (e.Button == MouseButton.Left)
             {
                 Game game = Engine2D.Source as Game;
-                GridFace face = GridFace.fromVector2(Engine2D.MouseCoords, game.GetScaling());
+                float scaling = game.GetScaling();
+                GridFace face = GridFace.fromVector2(Engine2D.MouseCoords, scaling);
                 List<GridEdge> edges = new List<GridEdge>();
                 if (game.Units[face.U, face.V, face.Side] != null)
                 {
-                    edges = game.Units[face.U, face.V, face.Side].Borders();
+                    SelectedUnit = game.Units[face.U, face.V, face.Side];
+                    SelectBorders(SelectedUnit.Borders());
                 }
                 else
                 {
-                    edges = face.Borders();
-                }
-                foreach (GridEdge edge in edges)
-                {
-                    GridEdgeProperty gep = game.Edges[edge.U, edge.V, edge.Side];
-                    gep.Entity.MoveRelative(0, 0, 2);
-                    gep.Renderable.BoxColor = Color4F.Red;
-                    Selected.Add(gep);
+                    SelectedFace = game.Faces[face.U, face.V, face.Side];
+                    SelectBorders(face.Borders());
                 }
             }
             else if (e.Button == MouseButton.Right)
@@ -107,7 +154,18 @@ namespace RuneWeaver.GameProperties.GameControllers
         {
             switch (e.Key)
             {
-                case Key.ControlLeft:
+                case Key.Number1:
+                    if (SelectedUnit != null)
+                    {
+                        Game game = Engine2D.Source as Game;
+                        float scaling = game.GetScaling();
+                        BasicUnitAction action = SelectedUnit.Actions.First();
+                        if (action is AttackUnitAction)
+                        {
+                            SelectBorders(((AttackUnitAction)action).Hitbox.Borders(SelectedUnit.Coords, 0));
+                        }
+                        ExecutingAction = true;
+                    }
                     break;
             }
         }

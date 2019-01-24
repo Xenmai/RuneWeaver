@@ -1,4 +1,7 @@
-﻿namespace RuneWeaver.GameProperties.GameEntities
+﻿using RuneWeaver.GameProperties.GameEntities.UnitActions;
+using System.Collections.Generic;
+
+namespace RuneWeaver.GameProperties.GameEntities
 {
     public class GoblinUnitProperty : BasicUnitProperty
     {
@@ -13,6 +16,8 @@
             MaxHealth = 25;
             Resistance = 12;
             Stability = 8;
+            Actions = new List<BasicUnitAction>(new AttackUnitAction[] {
+                new AttackUnitAction()});
             base.OnSpawn();
         }
     }

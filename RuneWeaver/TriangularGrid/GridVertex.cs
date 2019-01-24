@@ -50,21 +50,20 @@ namespace RuneWeaver.TriangularGrid
                     new GridEdge(U - 1, V, 2)});
         }
 
-        public List<GridEdge> Surrounds(int size)
+        public List<GridEdge> Surrounded(int size)
         {
-            if (size == 1)
+            switch (size)
             {
-                return new List<GridEdge>(new GridEdge[] {
+                case 1:
+                    return new List<GridEdge>(new GridEdge[] {
                     new GridEdge(U, V, 2),
                     new GridEdge(U - 1, V - 1, 2),
                     new GridEdge(U - 1, V, 1),
                     new GridEdge(U + 1, V - 1, 1),
                     new GridEdge(U - 1, V + 1, 0),
                     new GridEdge(U, V - 1, 0)});
-            }
-            else
-            {
-                return new List<GridEdge>();
+                default:
+                    return new List<GridEdge>();
             }
         }
 

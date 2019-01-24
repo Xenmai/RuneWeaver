@@ -36,7 +36,7 @@ namespace RuneWeaver.TriangularGrid
             float scaling = game.GetScaling();
             Renderable = new EntitySimple2DRenderableBoxProperty()
             {
-                BoxSize = new Vector2(scaling * 100, scaling * 2.5f),
+                BoxSize = new Vector2(scaling * 100, scaling * 2),
                 BoxTexture = Engine2D.Textures.GetTexture("White"),
                 CastShadows = false
             };

@@ -10,10 +10,14 @@
         /// </summary>
         public BasicUnitProperty Unit;
 
-
         /// <summary>
-        /// The cost of this action.
+        /// The energy cost of this action.
         /// </summary>
         public int Cost;
+
+        /// <summary>
+        /// The icon that will be used for this action.
+        /// </summary>
+        public string Icon;
     }
 }

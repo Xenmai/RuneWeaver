@@ -71,6 +71,8 @@
     <Compile Include="GameProperties\GameEntities\GoblinUnitProperty.cs" />
     <Compile Include="GameProperties\GameEntities\UnitActions\BasicUnitAction.cs" />
     <Compile Include="GameProperties\GameEntities\UnitActions\AttackUnitAction.cs" />
+    <Compile Include="GameProperties\GameEntities\UnitActions\Hitboxes\BasicHitbox.cs" />
+    <Compile Include="GameProperties\GameEntities\UnitActions\Hitboxes\LineHitbox.cs" />
     <Compile Include="GameProperties\GameEntities\WolfUnitProperty.cs" />
     <Compile Include="GameProperties\GameRenderables\ArrowHitboxRenderableProperty.cs" />
     <Compile Include="GameProperties\GameInterfaces\ISelectable.cs" />

@@ -5,7 +5,6 @@ using OpenTK.Input;
 using RuneWeaver.GameProperties.GameControllers;
 using RuneWeaver.GameProperties.GameEntities;
 using RuneWeaver.GameScreens;
-using System.Collections.Generic;
 using RuneWeaver.TriangularGrid;
 
 namespace RuneWeaver.MainGame
@@ -28,7 +27,7 @@ namespace RuneWeaver.MainGame
             Client = new GameClientWindow(threed: false);
             Client.Engine2D.UseLightEngine = false;
             Client.OnWindowLoad += Engine_WindowLoad;
-            Client.Engine2D.Zoom = 0.01f;
+            Client.Engine2D.Zoom = 1.0f;
             Client.Engine2D.Source = this;
             Client.Start(GameWindowFlags.Default);
         }
@@ -113,7 +112,7 @@ namespace RuneWeaver.MainGame
         /// <returns>The scaling as a float.</returns>
         public float GetScaling()
         {
-            return 2048 * Client.Engine2D.Zoom / 800;
+            return 2048 * 0.5f / 800;
         }
 
         /// <summary>

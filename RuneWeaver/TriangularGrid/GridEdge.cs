@@ -37,21 +37,18 @@ namespace RuneWeaver.TriangularGrid
 
         public List<GridFace> Joins()
         {
-            if (Side == 0)
+            switch (Side)
             {
-                return new List<GridFace>(new GridFace[] {
+                case 0:
+                    return new List<GridFace>(new GridFace[] {
                     new GridFace(U, V, 0),
                     new GridFace(U, V - 1, 1)});
-            }
-            else if(Side == 1)
-            {
-                return new List<GridFace>(new GridFace[] {
+                case 1:
+                    return new List<GridFace>(new GridFace[] {
                     new GridFace(U, V, 0),
                     new GridFace(U - 1, V, 1)});
-            }
-            else
-            {
-                return new List<GridFace>(new GridFace[] {
+                default:
+                    return new List<GridFace>(new GridFace[] {
                     new GridFace(U, V, 1),
                     new GridFace(U, V, 0)});
             }
@@ -59,21 +56,18 @@ namespace RuneWeaver.TriangularGrid
 
         public List<GridEdge> Continues()
         {
-            if (Side == 0)
+            switch (Side)
             {
-                return new List<GridEdge>(new GridEdge[] {
+                case 0:
+                    return new List<GridEdge>(new GridEdge[] {
                     new GridEdge(U + 1, V, 0),
                     new GridEdge(U - 1, V, 0)});
-            }
-            else if (Side == 1)
-            {
-                return new List<GridEdge>(new GridEdge[] {
+                case 1:
+                    return new List<GridEdge>(new GridEdge[] {
                     new GridEdge(U, V + 1, 2),
                     new GridEdge(U, V - 1, 2)});
-            }
-            else
-            {
-                return new List<GridEdge>(new GridEdge[] {
+                default:
+                    return new List<GridEdge>(new GridEdge[] {
                     new GridEdge(U + 1, V - 1, 1),
                     new GridEdge(U - 1, V + 1, 1)});
             }
@@ -81,21 +75,18 @@ namespace RuneWeaver.TriangularGrid
 
         public List<GridVertex> EndPoints()
         {
-            if (Side == 0)
+            switch (Side)
             {
-                return new List<GridVertex>(new GridVertex[] {
+                case 0:
+                    return new List<GridVertex>(new GridVertex[] {
                     new GridVertex(U + 1, V),
                     new GridVertex(U, V)});
-            }
-            else if (Side == 1)
-            {
-                return new List<GridVertex>(new GridVertex[] {
+                case 1:
+                    return new List<GridVertex>(new GridVertex[] {
                     new GridVertex(U, V + 1),
                     new GridVertex(U, V)});
-            }
-            else
-            {
-                return new List<GridVertex>(new GridVertex[] {
+                default:
+                    return new List<GridVertex>(new GridVertex[] {
                     new GridVertex(U + 1, V),
                     new GridVertex(U, V + 1)});
             }
