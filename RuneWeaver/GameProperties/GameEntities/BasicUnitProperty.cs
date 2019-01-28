@@ -66,7 +66,7 @@ namespace RuneWeaver.GameProperties.GameEntities
         /// <summary>
         /// The list of actions this unit can perform.
         /// </summary>
-        public List<BasicUnitAction> Actions;
+        public List<BasicUnitAction> Actions = new List<BasicUnitAction>();
 
         /// <summary>
         /// This unit's center triangular coordinates.
@@ -79,7 +79,7 @@ namespace RuneWeaver.GameProperties.GameEntities
         /// <returns>The list of border edge coordinates.</returns>
         public List<GridEdge> Borders()
         {
-            return Coords.Surrounded(Size);
+            return TriangularGrid.Utilities.ExternalBorders(TriangularGrid.Utilities.Expand(Coords.Touches(), (Size - 2) * 2));
         }
 
         /// <summary>
@@ -88,7 +88,7 @@ namespace RuneWeaver.GameProperties.GameEntities
         public override void OnSpawn()
         {
             Game game = Engine2D.Source as Game;
-            foreach (GridFace face in Coords.Touches())
+            foreach (GridFace face in TriangularGrid.Utilities.Expand(Coords.Touches(), (Size - 2) * 2))
             {
                 game.Units[face.U, face.V, face.Side] = this;
             }

@@ -1,4 +1,6 @@
-﻿namespace RuneWeaver.GameProperties.GameEntities.UnitActions
+﻿using RuneWeaver.GameProperties.GameControllers;
+
+namespace RuneWeaver.GameProperties.GameEntities.UnitActions
 {
     /// <summary>
     /// The basic action class.
@@ -19,5 +21,11 @@
         /// The icon that will be used for this action.
         /// </summary>
         public string Icon;
+
+        public abstract void Prepare(UnitControllerProperty controller);
+
+        public abstract void Cancel(UnitControllerProperty controller);
+
+        public abstract void Execute(UnitControllerProperty controller);
     }
 }

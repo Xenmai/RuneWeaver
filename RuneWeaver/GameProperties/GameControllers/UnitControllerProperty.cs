@@ -62,7 +62,7 @@ namespace RuneWeaver.GameProperties.GameControllers
             foreach (GridEdge edge in edges)
             {
                 GridEdgeProperty gep = game.Edges[edge.U, edge.V, edge.Side];
-                gep.Entity.MoveRelative(0, 0, 2);
+                gep.Entity.SetPosition(new Location(gep.Entity.LastKnownPosition.X, gep.Entity.LastKnownPosition.Y, 4));
                 gep.Renderable.BoxSize = new Vector2(scaling * 100, scaling * 5);
                 gep.Renderable.BoxColor = Color4F.Red;
             }
@@ -75,7 +75,7 @@ namespace RuneWeaver.GameProperties.GameControllers
             foreach (GridEdge edge in edges)
             {
                 GridEdgeProperty gep = game.Edges[edge.U, edge.V, edge.Side];
-                gep.Entity.MoveRelative(0, 0, -2);
+                gep.Entity.SetPosition(new Location(gep.Entity.LastKnownPosition.X, gep.Entity.LastKnownPosition.Y, 2));
                 gep.Renderable.BoxSize = new Vector2(scaling * 100, scaling * 2);
                 gep.Renderable.BoxColor = Color4F.Black;
             }
@@ -96,7 +96,7 @@ namespace RuneWeaver.GameProperties.GameControllers
                     DeselectBorders(SelectedUnit.Borders());
                     if (ExecutingAction)
                     {
-                        DeselectBorders(((AttackUnitAction)SelectedUnit.Actions.First()).Hitbox.Borders(SelectedUnit.Coords, 0));
+                        SelectAction(2).Cancel(this);
                     }
                     SelectedUnit = null;
                 }
@@ -110,7 +110,7 @@ namespace RuneWeaver.GameProperties.GameControllers
             {
                 if (ExecutingAction)
                 {
-                    DeselectBorders(((AttackUnitAction)SelectedUnit.Actions.First()).Hitbox.Borders(SelectedUnit.Coords, 0));
+                    SelectAction(2).Execute(this);
                 }
             }
         }
@@ -152,22 +152,28 @@ namespace RuneWeaver.GameProperties.GameControllers
         /// <param name="e">Event data.</param>
         private void Window_KeyDown(object sender, KeyboardKeyEventArgs e)
         {
-            switch (e.Key)
+            if (SelectedUnit != null)
             {
-                case Key.Number1:
-                    if (SelectedUnit != null)
-                    {
-                        Game game = Engine2D.Source as Game;
-                        float scaling = game.GetScaling();
-                        BasicUnitAction action = SelectedUnit.Actions.First();
-                        if (action is AttackUnitAction)
-                        {
-                            SelectBorders(((AttackUnitAction)action).Hitbox.Borders(SelectedUnit.Coords, 0));
-                        }
-                        ExecutingAction = true;
-                    }
-                    break;
+                switch (e.Key)
+                {
+                    case Key.Number1:
+                        SelectAction(1).Prepare(this);
+                        break;
+                    case Key.Number2:
+                        SelectAction(2).Prepare(this);
+                        break;
+                }
             }
+        }
+
+        public BasicUnitAction SelectAction(int num)
+        {
+            List<BasicUnitAction>.Enumerator e = SelectedUnit.Actions.GetEnumerator();
+            for (int i = 0; i < num; i++)
+            {
+                e.MoveNext();
+            }
+            return e.Current;
         }
 
         /// <summary>

@@ -1,4 +1,5 @@
 ﻿using RuneWeaver.GameProperties.GameEntities.UnitActions;
+using RuneWeaver.GameProperties.GameEntities.UnitActions.Hitboxes;
 using System.Collections.Generic;
 
 namespace RuneWeaver.GameProperties.GameEntities
@@ -16,8 +17,14 @@ namespace RuneWeaver.GameProperties.GameEntities
             MaxHealth = 25;
             Resistance = 12;
             Stability = 8;
-            Actions = new List<BasicUnitAction>(new AttackUnitAction[] {
-                new AttackUnitAction()});
+            Actions.Add(new AttackUnitAction()
+            {
+                Hitbox = new LineHitbox(2)
+            });
+            Actions.Add(new MoveUnitAction()
+            {
+                Range = 6
+            });
             base.OnSpawn();
         }
     }

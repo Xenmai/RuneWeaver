@@ -31,12 +31,12 @@ namespace RuneWeaver.TriangularGrid
         public List<GridFace> Touches()
         {
             return new List<GridFace>(new GridFace[] {
-                    new GridFace(U - 1, V, 1),
-                    new GridFace(U, V, 0),
-                    new GridFace(U, V - 1, 1),
-                    new GridFace(U, V - 1, 0),
-                    new GridFace(U - 1, V - 1, 1),
-                    new GridFace(U - 1, V, 0)});
+                new GridFace(U - 1, V, 1),
+                new GridFace(U, V, 0),
+                new GridFace(U, V - 1, 1),
+                new GridFace(U, V - 1, 0),
+                new GridFace(U - 1, V - 1, 1),
+                new GridFace(U - 1, V, 0)});
         }
 
         public List<GridEdge> Protrudes()
@@ -48,23 +48,6 @@ namespace RuneWeaver.TriangularGrid
                     new GridEdge(U, V - 1, 1),
                     new GridEdge(U - 1, V, 0),
                     new GridEdge(U - 1, V, 2)});
-        }
-
-        public List<GridEdge> Surrounded(int size)
-        {
-            switch (size)
-            {
-                case 1:
-                    return new List<GridEdge>(new GridEdge[] {
-                    new GridEdge(U, V, 2),
-                    new GridEdge(U - 1, V - 1, 2),
-                    new GridEdge(U - 1, V, 1),
-                    new GridEdge(U + 1, V - 1, 1),
-                    new GridEdge(U - 1, V + 1, 0),
-                    new GridEdge(U, V - 1, 0)});
-                default:
-                    return new List<GridEdge>();
-            }
         }
 
         public List<GridVertex> Adjacent()

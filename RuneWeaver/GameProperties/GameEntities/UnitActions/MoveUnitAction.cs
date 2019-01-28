@@ -1,39 +1,40 @@
 ﻿using RuneWeaver.GameProperties.GameControllers;
-using RuneWeaver.GameProperties.GameEntities.UnitActions.Hitboxes;
+using RuneWeaver.TriangularGrid;
+using System.Collections.Generic;
 
 namespace RuneWeaver.GameProperties.GameEntities.UnitActions
 {
     /// <summary>
     /// The move unit action class.
     /// </summary>
-    public class AttackUnitAction : BasicUnitAction
+    public class MoveUnitAction : BasicUnitAction
     {
         /// <summary>
-        /// The damage amount of this attack action.
+        /// The range of this move action.
         /// </summary>
-        public int Damage;
-
-        /// <summary>
-        /// The hitbox of this attack action.
-        /// </summary>
-        public BasicHitbox Hitbox;
+        public int Range;
 
         public override void Prepare(UnitControllerProperty controller)
         {
-            controller.SelectBorders(Hitbox.Borders(controller.SelectedUnit.Coords, 0));
+            controller.SelectBorders(Borders(controller.SelectedUnit.Coords));
             controller.ExecutingAction = true;
         }
 
         public override void Cancel(UnitControllerProperty controller)
         {
-            controller.DeselectBorders(Hitbox.Borders(controller.SelectedUnit.Coords, 0));
+            controller.DeselectBorders(Borders(controller.SelectedUnit.Coords));
             controller.ExecutingAction = false;
         }
 
         public override void Execute(UnitControllerProperty controller)
         {
-            controller.DeselectBorders(Hitbox.Borders(controller.SelectedUnit.Coords, 0));
+            controller.DeselectBorders(Borders(controller.SelectedUnit.Coords));
             controller.ExecutingAction = false;
+        }
+
+        public List<GridEdge> Borders(GridVertex source)
+        {
+            return TriangularGrid.Utilities.ExternalBorders(TriangularGrid.Utilities.Expand(source.Touches(), Range));
         }
     }
 }

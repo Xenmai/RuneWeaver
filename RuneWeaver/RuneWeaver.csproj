@@ -69,6 +69,7 @@
     <Compile Include="GameProperties\GameControllers\CameraControllerProperty.cs" />
     <Compile Include="GameProperties\GameEntities\TrollUnitProperty.cs" />
     <Compile Include="GameProperties\GameEntities\GoblinUnitProperty.cs" />
+    <Compile Include="GameProperties\GameEntities\UnitActions\MoveUnitAction.cs" />
     <Compile Include="GameProperties\GameEntities\UnitActions\BasicUnitAction.cs" />
     <Compile Include="GameProperties\GameEntities\UnitActions\AttackUnitAction.cs" />
     <Compile Include="GameProperties\GameEntities\UnitActions\Hitboxes\BasicHitbox.cs" />
@@ -87,6 +88,7 @@
     <Compile Include="TriangularGrid\GridEdge.cs" />
     <Compile Include="TriangularGrid\GridVertex.cs" />
     <Compile Include="TriangularGrid\GridFace.cs" />
+    <Compile Include="TriangularGrid\Utilities.cs" />
     <Compile Include="Utilities\Extensions.cs" />
   </ItemGroup>
   <ItemGroup>
