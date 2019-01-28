@@ -10,7 +10,7 @@ namespace RuneWeaver.TriangularGrid
             List<GridEdge> edges = new List<GridEdge>();
             foreach(GridFace face in faces)
             {
-                edges.AddRange(face.Borders().Except(edges));
+                edges = new List<GridEdge>(edges.Union(face.Borders()).Except(edges.Intersect(face.Borders())));
             }
             return edges;
         }
@@ -22,7 +22,7 @@ namespace RuneWeaver.TriangularGrid
             {
                 foreach(GridFace face in new List<GridFace>(f))
                 {
-                    f.AddRange(face.Neighbors().Except(f));
+                    f = new List<GridFace>(f.Union(face.Neighbors()));
                 }
             }
             return f;
