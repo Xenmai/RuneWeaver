@@ -1,4 +1,7 @@
-﻿namespace RuneWeaver.GameProperties.GameEntities
+﻿using RuneWeaver.GameProperties.GameEntities.UnitActions;
+using RuneWeaver.GameProperties.GameEntities.UnitActions.Hitboxes;
+
+namespace RuneWeaver.GameProperties.GameEntities
 {
     public class TrollUnitProperty : BasicUnitProperty
     {
@@ -9,10 +12,17 @@
         {
             Name = "Troll";
             Size = 3;
-            Vision = 8;
-            MaxHealth = 75;
+            Vision = 5;
+            MaxHealth = 150;
             Resistance = 30;
-            Stability = 20;
+            Actions.Add(new AttackUnitAction()
+            {
+                Hitbox = new LineHitbox(3, 3, 3)
+            });
+            Actions.Add(new MoveUnitAction()
+            {
+                Range = 5
+            });
             base.OnSpawn();
         }
     }

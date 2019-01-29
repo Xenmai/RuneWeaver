@@ -1,6 +1,5 @@
 ﻿using RuneWeaver.GameProperties.GameEntities.UnitActions;
 using RuneWeaver.GameProperties.GameEntities.UnitActions.Hitboxes;
-using System.Collections.Generic;
 
 namespace RuneWeaver.GameProperties.GameEntities
 {
@@ -16,10 +15,9 @@ namespace RuneWeaver.GameProperties.GameEntities
             Vision = 5;
             MaxHealth = 25;
             Resistance = 12;
-            Stability = 8;
             Actions.Add(new AttackUnitAction()
             {
-                Hitbox = new LineHitbox(2)
+                Hitbox = new LineHitbox(1, 1, 1)
             });
             Actions.Add(new MoveUnitAction()
             {

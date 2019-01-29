@@ -64,12 +64,13 @@ namespace RuneWeaver.MainGame
             Client.Engine2D.PhysicsWorld.Gravity = new Location(0, 0, -10);
             Random = new MTRandom();
             // Triangular Grid
-            Edges = new GridEdgeProperty[10, 10, 3];
-            Faces = new GridFaceProperty[10, 10, 2];
-            Units = new BasicUnitProperty[10, 10, 2];
-            for (int i = 0; i < 10; i++)
+            int gridSize = 30;
+            Edges = new GridEdgeProperty[gridSize, gridSize, 3];
+            Faces = new GridFaceProperty[gridSize, gridSize, 2];
+            Units = new BasicUnitProperty[gridSize, gridSize, 2];
+            for (int i = 0; i < gridSize; i++)
             {
-                for (int j = 0; j < 10; j++)
+                for (int j = 0; j < gridSize; j++)
                 {
                     Client.Engine2D.SpawnEntity(new GridEdgeProperty()
                     {
@@ -96,7 +97,11 @@ namespace RuneWeaver.MainGame
             // Units
             Client.Engine2D.SpawnEntity(new GoblinUnitProperty()
             {
-                Coords = new GridVertex(5, 5)
+                Coords = new GridVertex(4, 4)
+            });
+            Client.Engine2D.SpawnEntity(new TrollUnitProperty()
+            {
+                Coords = new GridVertex(7, 7)
             });
             // Camera Controller
             CameraController = new CameraControllerProperty();
@@ -112,7 +117,7 @@ namespace RuneWeaver.MainGame
         /// <returns>The scaling as a float.</returns>
         public float GetScaling()
         {
-            return 2048 * 0.5f / 800;
+            return 2048 * 0.4f / 800;
         }
 
         /// <summary>

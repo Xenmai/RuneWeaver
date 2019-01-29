@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace RuneWeaver.TriangularGrid
 {
@@ -61,6 +62,11 @@ namespace RuneWeaver.TriangularGrid
                     new GridVertex(U - 1, V + 1)});
         }
 
-
+        public GridVertex Rotate(int times)
+        {
+            GridVertex old = this;
+            int index = Array.FindIndex(Utilities.Directions, item => item.Equals(old));
+            return Utilities.Directions[(index + times + 6) % 6];
+        }
     }
 }

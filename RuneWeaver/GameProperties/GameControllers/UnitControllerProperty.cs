@@ -6,6 +6,8 @@ using RuneWeaver.GameProperties.GameEntities;
 using RuneWeaver.GameProperties.GameEntities.UnitActions;
 using RuneWeaver.MainGame;
 using RuneWeaver.TriangularGrid;
+using RuneWeaver.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -27,9 +29,14 @@ namespace RuneWeaver.GameProperties.GameControllers
         public GridFaceProperty SelectedFace;
 
         /// <summary>
-        /// Whether the selected unit is executing an action;
+        /// The selected action, if any.
         /// </summary>
-        public bool ExecutingAction;
+        public BasicUnitAction SelectedAction;
+
+        /// <summary>
+        /// The current action direction.
+        /// </summary>
+        public GridVertex ActionDirection;
         
         /// <summary>
         /// Fired when entity is spawned.
@@ -94,9 +101,10 @@ namespace RuneWeaver.GameProperties.GameControllers
                 if (SelectedUnit != null)
                 {
                     DeselectBorders(SelectedUnit.Borders());
-                    if (ExecutingAction)
+                    if (SelectedAction != null)
                     {
-                        SelectAction(2).Cancel(this);
+                        SelectedAction.Cancel(this);
+                        SelectedAction = null;
                     }
                     SelectedUnit = null;
                 }
@@ -108,9 +116,10 @@ namespace RuneWeaver.GameProperties.GameControllers
             }
             else if (e.Button == MouseButton.Right)
             {
-                if (ExecutingAction)
+                if (SelectedAction != null)
                 {
-                    SelectAction(2).Execute(this);
+                    SelectedAction.Execute(this);
+                    SelectedAction = null;
                 }
             }
         }
@@ -152,15 +161,17 @@ namespace RuneWeaver.GameProperties.GameControllers
         /// <param name="e">Event data.</param>
         private void Window_KeyDown(object sender, KeyboardKeyEventArgs e)
         {
-            if (SelectedUnit != null && !ExecutingAction)
+            if (SelectedUnit != null && SelectedAction == null)
             {
                 switch (e.Key)
                 {
                     case Key.Number1:
-                        SelectAction(1).Prepare(this);
+                        SelectedAction = SelectAction(1);
+                        SelectedAction.Prepare(this);
                         break;
                     case Key.Number2:
-                        SelectAction(2).Prepare(this);
+                        SelectedAction = SelectAction(2);
+                        SelectedAction.Prepare(this);
                         break;
                 }
             }
@@ -195,7 +206,18 @@ namespace RuneWeaver.GameProperties.GameControllers
         /// </summary>
         public void Tick()
         {
-            
+            if(SelectedUnit != null && SelectedAction != null)
+            {
+                Game game = Engine2D.Source as Game;
+                float scaling = game.GetScaling();
+                Vector2 distance = Engine2D.MouseCoords - SelectedUnit.Entity.LastKnownPosition.toVector2() / scaling;
+                float degrees = (float)(Math.Atan2(distance.Y, distance.X) * 180 / Math.PI);
+                int dir = (int)(((degrees + 390) % 360) / 60);
+                SelectedAction.Cancel(this);
+                SelectBorders(SelectedUnit.Borders());
+                ActionDirection = TriangularGrid.Utilities.Directions[dir];
+                SelectedAction.Prepare(this);
+            }
         }
     }
 }

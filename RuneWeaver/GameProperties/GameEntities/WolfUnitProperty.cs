@@ -12,7 +12,6 @@
             Vision = 10;
             MaxHealth = 40;
             Resistance = 18;
-            Stability = 10;
             base.OnSpawn();
         }
     }

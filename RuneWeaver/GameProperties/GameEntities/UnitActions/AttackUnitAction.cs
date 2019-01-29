@@ -1,5 +1,6 @@
 ﻿using RuneWeaver.GameProperties.GameControllers;
 using RuneWeaver.GameProperties.GameEntities.UnitActions.Hitboxes;
+using RuneWeaver.TriangularGrid;
 
 namespace RuneWeaver.GameProperties.GameEntities.UnitActions
 {
@@ -18,22 +19,19 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
         /// </summary>
         public BasicHitbox Hitbox;
 
-        public override void Prepare(UnitControllerProperty controller)
+        public override void Prepare(UnitControllerProperty c)
         {
-            controller.SelectBorders(Hitbox.Borders(controller.SelectedUnit.Coords, 0));
-            controller.ExecutingAction = true;
+            c.SelectBorders(TriangularGrid.Utilities.ExternalBorders(Hitbox.Faces(c.SelectedUnit.Coords, c.ActionDirection)));
         }
 
-        public override void Cancel(UnitControllerProperty controller)
+        public override void Cancel(UnitControllerProperty c)
         {
-            controller.DeselectBorders(Hitbox.Borders(controller.SelectedUnit.Coords, 0));
-            controller.ExecutingAction = false;
+            c.DeselectBorders(TriangularGrid.Utilities.ExternalBorders(Hitbox.Faces(c.SelectedUnit.Coords, c.ActionDirection)));
         }
 
-        public override void Execute(UnitControllerProperty controller)
+        public override void Execute(UnitControllerProperty c)
         {
-            controller.DeselectBorders(Hitbox.Borders(controller.SelectedUnit.Coords, 0));
-            controller.ExecutingAction = false;
+            c.DeselectBorders(TriangularGrid.Utilities.ExternalBorders(Hitbox.Faces(c.SelectedUnit.Coords, c.ActionDirection)));
         }
     }
 }

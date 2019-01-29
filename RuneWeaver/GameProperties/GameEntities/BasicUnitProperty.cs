@@ -59,11 +59,6 @@ namespace RuneWeaver.GameProperties.GameEntities
         public float Resistance;
 
         /// <summary>
-        /// The unit's stability.
-        /// </summary>
-        public float Stability;
-
-        /// <summary>
         /// The list of actions this unit can perform.
         /// </summary>
         public List<BasicUnitAction> Actions = new List<BasicUnitAction>();
@@ -79,7 +74,7 @@ namespace RuneWeaver.GameProperties.GameEntities
         /// <returns>The list of border edge coordinates.</returns>
         public List<GridEdge> Borders()
         {
-            return TriangularGrid.Utilities.ExternalBorders(TriangularGrid.Utilities.Expand(Coords.Touches(), (Size - 2) * 2));
+            return TriangularGrid.Utilities.ExternalBorders(TriangularGrid.Utilities.Expand(Coords.Touches(), (Size - 1) * 2));
         }
 
         /// <summary>
@@ -88,7 +83,7 @@ namespace RuneWeaver.GameProperties.GameEntities
         public override void OnSpawn()
         {
             Game game = Engine2D.Source as Game;
-            foreach (GridFace face in TriangularGrid.Utilities.Expand(Coords.Touches(), (Size - 2) * 2))
+            foreach (GridFace face in TriangularGrid.Utilities.Expand(Coords.Touches(), (Size - 1) * 2))
             {
                 game.Units[face.U, face.V, face.Side] = this;
             }

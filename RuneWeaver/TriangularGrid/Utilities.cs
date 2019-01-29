@@ -27,5 +27,13 @@ namespace RuneWeaver.TriangularGrid
             }
             return f;
         }
+
+        public static GridVertex[] Directions = new GridVertex[6] {
+            new GridVertex(1, 0),
+            new GridVertex(0, 1),
+            new GridVertex(-1, 1),
+            new GridVertex(-1, 0),
+            new GridVertex(0, -1),
+            new GridVertex(1, -1)};
     }
 }
