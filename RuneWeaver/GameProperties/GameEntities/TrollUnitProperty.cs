@@ -17,7 +17,7 @@ namespace RuneWeaver.GameProperties.GameEntities
             Resistance = 30;
             Actions.Add(new AttackUnitAction()
             {
-                Hitbox = new LineHitbox(3, 3, 3)
+                Hitbox = new LineHitbox(4, 2, 3)
             });
             Actions.Add(new MoveUnitAction()
             {

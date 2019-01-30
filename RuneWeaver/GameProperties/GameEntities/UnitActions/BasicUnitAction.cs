@@ -24,6 +24,8 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
 
         public abstract void Prepare(UnitControllerProperty controller);
 
+        public abstract void Update(UnitControllerProperty controller);
+
         public abstract void Cancel(UnitControllerProperty controller);
 
         public abstract void Execute(UnitControllerProperty controller);

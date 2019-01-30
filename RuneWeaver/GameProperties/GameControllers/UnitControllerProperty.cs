@@ -36,7 +36,7 @@ namespace RuneWeaver.GameProperties.GameControllers
         /// <summary>
         /// The current action direction.
         /// </summary>
-        public GridVertex ActionDirection;
+        public int Angle;
         
         /// <summary>
         /// Fired when entity is spawned.
@@ -62,32 +62,6 @@ namespace RuneWeaver.GameProperties.GameControllers
             Entity.OnTick -= Tick;
         }
 
-        public void SelectBorders(List<GridEdge> edges)
-        {
-            Game game = Engine2D.Source as Game;
-            float scaling = game.GetScaling();
-            foreach (GridEdge edge in edges)
-            {
-                GridEdgeProperty gep = game.Edges[edge.U, edge.V, edge.Side];
-                gep.Entity.SetPosition(new Location(gep.Entity.LastKnownPosition.X, gep.Entity.LastKnownPosition.Y, 4));
-                gep.Renderable.BoxSize = new Vector2(scaling * 100, scaling * 5);
-                gep.Renderable.BoxColor = Color4F.Red;
-            }
-        }
-
-        public void DeselectBorders(List<GridEdge> edges)
-        {
-            Game game = Engine2D.Source as Game;
-            float scaling = game.GetScaling();
-            foreach (GridEdge edge in edges)
-            {
-                GridEdgeProperty gep = game.Edges[edge.U, edge.V, edge.Side];
-                gep.Entity.SetPosition(new Location(gep.Entity.LastKnownPosition.X, gep.Entity.LastKnownPosition.Y, 2));
-                gep.Renderable.BoxSize = new Vector2(scaling * 100, scaling * 2);
-                gep.Renderable.BoxColor = Color4F.Black;
-            }
-        }
-
         /// <summary>
         /// Tracks mouse presses.
         /// </summary>
@@ -100,17 +74,17 @@ namespace RuneWeaver.GameProperties.GameControllers
                 List<GridEdge> edges = new List<GridEdge>();
                 if (SelectedUnit != null)
                 {
-                    DeselectBorders(SelectedUnit.Borders());
                     if (SelectedAction != null)
                     {
                         SelectedAction.Cancel(this);
                         SelectedAction = null;
                     }
+                    SelectedUnit.Renderable.BoxTexture = Engine2D.Textures.GetTexture("Hexagon");
                     SelectedUnit = null;
                 }
                 else if (SelectedFace != null)
                 {
-                    DeselectBorders(SelectedFace.Coords.Borders());
+                    SelectedFace.Renderable.BoxTexture = Engine2D.Textures.GetTexture("Triangle");
                     SelectedFace = null;
                 }                
             }
@@ -140,12 +114,12 @@ namespace RuneWeaver.GameProperties.GameControllers
                 if (game.Units[face.U, face.V, face.Side] != null)
                 {
                     SelectedUnit = game.Units[face.U, face.V, face.Side];
-                    SelectBorders(SelectedUnit.Borders());
+                    SelectedUnit.Renderable.BoxTexture = Engine2D.Textures.GetTexture("Hexagon_Outline");
                 }
                 else
                 {
                     SelectedFace = game.Faces[face.U, face.V, face.Side];
-                    SelectBorders(face.Borders());
+                    SelectedFace.Renderable.BoxTexture = Engine2D.Textures.GetTexture("Triangle_Outline");
                 }
             }
             else if (e.Button == MouseButton.Right)
@@ -212,11 +186,8 @@ namespace RuneWeaver.GameProperties.GameControllers
                 float scaling = game.GetScaling();
                 Vector2 distance = Engine2D.MouseCoords - SelectedUnit.Entity.LastKnownPosition.toVector2() / scaling;
                 float degrees = (float)(Math.Atan2(distance.Y, distance.X) * 180 / Math.PI);
-                int dir = (int)(((degrees + 390) % 360) / 60);
-                SelectedAction.Cancel(this);
-                SelectBorders(SelectedUnit.Borders());
-                ActionDirection = TriangularGrid.Utilities.Directions[dir];
-                SelectedAction.Prepare(this);
+                Angle = (int)(((degrees + 390) % 360) / 60);
+                SelectedAction.Update(this);
             }
         }
     }

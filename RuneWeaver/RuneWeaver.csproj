@@ -83,7 +83,6 @@
     <Compile Include="MainGame\Game.cs" />
     <Compile Include="GameProgram.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TriangularGrid\GridEdgeProperty.cs" />
     <Compile Include="TriangularGrid\GridFaceProperty.cs" />
     <Compile Include="TriangularGrid\GridEdge.cs" />
     <Compile Include="TriangularGrid\GridVertex.cs" />

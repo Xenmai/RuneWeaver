@@ -16,20 +16,22 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
 
         public override void Prepare(UnitControllerProperty controller)
         {
-            controller.SelectBorders(Borders(controller.SelectedUnit.Coords));
-            controller.SelectedAction = this;
+            
+        }
+
+        public override void Update(UnitControllerProperty controller)
+        {
+
         }
 
         public override void Cancel(UnitControllerProperty controller)
         {
-            controller.DeselectBorders(Borders(controller.SelectedUnit.Coords));
-            controller.SelectedAction = null;
+            
         }
 
         public override void Execute(UnitControllerProperty controller)
         {
-            controller.DeselectBorders(Borders(controller.SelectedUnit.Coords));
-            controller.SelectedAction = null;
+            
         }
 
         public List<GridEdge> Borders(GridVertex source)

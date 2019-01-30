@@ -48,8 +48,6 @@ namespace RuneWeaver.MainGame
         /// </summary>
         public MTRandom Random;
 
-        public GridEdgeProperty[,,] Edges;
-
         public GridFaceProperty[,,] Faces;
 
         public BasicUnitProperty[,,] Units;
@@ -65,25 +63,12 @@ namespace RuneWeaver.MainGame
             Random = new MTRandom();
             // Triangular Grid
             int gridSize = 30;
-            Edges = new GridEdgeProperty[gridSize, gridSize, 3];
             Faces = new GridFaceProperty[gridSize, gridSize, 2];
             Units = new BasicUnitProperty[gridSize, gridSize, 2];
             for (int i = 0; i < gridSize; i++)
             {
                 for (int j = 0; j < gridSize; j++)
                 {
-                    Client.Engine2D.SpawnEntity(new GridEdgeProperty()
-                    {
-                        Coords = new GridEdge(i, j, 0)
-                    });
-                    Client.Engine2D.SpawnEntity(new GridEdgeProperty()
-                    {
-                        Coords = new GridEdge(i, j, 1)
-                    });
-                    Client.Engine2D.SpawnEntity(new GridEdgeProperty()
-                    {
-                        Coords = new GridEdge(i, j, 2)
-                    });
                     Client.Engine2D.SpawnEntity(new GridFaceProperty()
                     {
                         Coords = new GridFace(i, j, 0)
