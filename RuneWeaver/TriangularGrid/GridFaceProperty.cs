@@ -53,10 +53,14 @@ namespace RuneWeaver.TriangularGrid
                 y = (Coords.V + 0.5f) * 86.6f * scaling;
                 Renderable.RenderAngle = MathHelper.Pi;
             }
-            Material = SimplexNoise.Generate(x, y) > 0.5 ? Utilities.GridHelper.Grass : Utilities.GridHelper.Dirt;
-            //Material = game.Random.NextDouble() > 0.6 ? Utilities.GridHelper.Grass : Utilities.GridHelper.Dirt;
             Renderable.BoxColor = Material.Color;
             Entity.SetPosition(new Location(x, y, 0));
+        }
+
+        public void ChangeMaterial(GridMaterial newMat)
+        {
+            Material = newMat;
+            Renderable.BoxColor = newMat.Color;
         }
 
         /// <summary>

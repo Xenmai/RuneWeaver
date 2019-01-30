@@ -114,7 +114,7 @@ namespace RuneWeaver.GameProperties.GameEntities
             Health -= amount;
             if (Health <= 0)
             {
-                Engine2D.DespawnEntity(Entity);
+                Remove();
             }
         }
 
@@ -125,6 +125,19 @@ namespace RuneWeaver.GameProperties.GameEntities
         public void Heal(int amount)
         {
             Health = Math.Min(Health + amount, MaxHealth);
+        }
+
+        /// <summary>
+        /// Totally despawns and removes this entity.
+        /// </summary>
+        public void Remove()
+        {
+            Game game = Engine2D.Source as Game;
+            foreach (GridFace face in Utilities.GridHelper.Expand(Coords.Touches(), (Size - 1) * 2))
+            {
+                game.Units[face.U, face.V, face.Side] = null;
+            }
+            Engine2D.DespawnEntity(Entity);
         }
 
         /// <summary>
