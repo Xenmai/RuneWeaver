@@ -39,7 +39,7 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions.Hitboxes
                     faces = new List<GridFace>(faces.Union(new GridVertex(U + a, V + b).Touches()).Union(new GridVertex(U + c, V + d).Touches()));
                 }
             }
-            return new List<GridFace>(faces.Except(TriangularGrid.Utilities.Expand(source.Touches(), (Offset - 1) * 2)));
+            return new List<GridFace>(faces.Except(Utilities.GridHelper.Expand(source.Touches(), (Offset - 1) * 2)));
         }
     }
 }

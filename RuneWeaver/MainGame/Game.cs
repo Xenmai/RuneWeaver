@@ -42,14 +42,24 @@ namespace RuneWeaver.MainGame
         /// </summary>
         public CameraControllerProperty CameraController;
 
+        /// <summary>
+        /// The main UI screen.
+        /// </summary>
+        public GameScreen MainUIScreen;
 
         /// <summary>
         /// The static random.
         /// </summary>
         public MTRandom Random;
 
+        /// <summary>
+        /// The grid faces.
+        /// </summary>
         public GridFaceProperty[,,] Faces;
 
+        /// <summary>
+        /// The spawned units.
+        /// </summary>
         public BasicUnitProperty[,,] Units;
 
         /// <summary>
@@ -57,9 +67,10 @@ namespace RuneWeaver.MainGame
         /// </summary>
         public void Engine_WindowLoad()
         {
-            Client.MainUI.CurrentScreen = new GameScreen(Client.MainUI);
+            MainUIScreen = new GameScreen(Client.MainUI);
+            Client.MainUI.CurrentScreen = MainUIScreen;
             Client.Window.KeyDown += Window_KeyDown;
-            Client.Engine2D.PhysicsWorld.Gravity = new Location(0, 0, -10);
+            Client.Engine2D.PhysicsWorld.Gravity = new Location(0, 0, 0);
             Random = new MTRandom();
             // Triangular Grid
             int gridSize = 30;
@@ -118,6 +129,9 @@ namespace RuneWeaver.MainGame
             }
         }
 
+        /// <summary>
+        /// Resets the turn, restoring every unit's energy.
+        /// </summary>
         private void ResetTurn()
         {
             SysConsole.OutputCustom("info", "banana");

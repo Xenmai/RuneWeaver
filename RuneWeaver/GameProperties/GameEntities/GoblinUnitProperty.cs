@@ -15,8 +15,12 @@ namespace RuneWeaver.GameProperties.GameEntities
             Vision = 5;
             MaxHealth = 25;
             Resistance = 12;
-            Actions.Add(new AttackUnitAction(this, 5, new LineHitbox(1, 1, 1)));
-            Actions.Add(new MoveUnitAction(this, 6));
+            Actions.Add(new AttackUnitAction(this, 3, 5, new LineHitbox(1, 1, 1))
+            {
+                Name = "Stab",
+                Icon = "Sword_Icon"
+            });
+            Actions.Add(new MoveUnitAction(this, 2, 6));
             base.OnSpawn();
         }
     }

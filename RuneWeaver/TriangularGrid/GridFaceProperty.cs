@@ -19,7 +19,7 @@ namespace RuneWeaver.TriangularGrid
         /// <summary>
         /// This face's material, currently used for coloring.
         /// </summary>
-        public string Material;
+        public GridMaterial Material;
 
         /// <summary>
         /// The grid triangle renderable.
@@ -41,7 +41,6 @@ namespace RuneWeaver.TriangularGrid
                 CastShadows = false
             };
             Entity.AddProperties(Renderable);
-            Renderable.BoxColor = new Color4F((float)game.Random.NextDouble(), (float)game.Random.NextDouble(), (float)game.Random.NextDouble());
             float x;
             float y;
             if (Coords.Side == 0) {
@@ -54,7 +53,10 @@ namespace RuneWeaver.TriangularGrid
                 y = (Coords.V + 0.5f) * 86.6f * scaling;
                 Renderable.RenderAngle = MathHelper.Pi;
             }
-            Entity.SetPosition(new Location(x, y, 1));
+            Material = SimplexNoise.Generate(x, y) > 0.5 ? Utilities.GridHelper.Grass : Utilities.GridHelper.Dirt;
+            //Material = game.Random.NextDouble() > 0.6 ? Utilities.GridHelper.Grass : Utilities.GridHelper.Dirt;
+            Renderable.BoxColor = Material.Color;
+            Entity.SetPosition(new Location(x, y, 0));
         }
 
         /// <summary>

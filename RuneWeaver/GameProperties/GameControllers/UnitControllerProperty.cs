@@ -71,6 +71,7 @@ namespace RuneWeaver.GameProperties.GameControllers
         {
             if (e.Button == MouseButton.Left)
             {
+                Game game = Engine2D.Source as Game;
                 List<GridEdge> edges = new List<GridEdge>();
                 if (SelectedUnit != null)
                 {
@@ -80,6 +81,7 @@ namespace RuneWeaver.GameProperties.GameControllers
                         SelectedAction = null;
                     }
                     SelectedUnit.Renderable.BoxTexture = Engine2D.Textures.GetTexture("Hexagon");
+                    game.MainUIScreen.UnitNameLabel.Text = String.Empty;
                     SelectedUnit = null;
                 }
                 else if (SelectedFace != null)
@@ -115,11 +117,13 @@ namespace RuneWeaver.GameProperties.GameControllers
                 {
                     SelectedUnit = game.Units[face.U, face.V, face.Side];
                     SelectedUnit.Renderable.BoxTexture = Engine2D.Textures.GetTexture("Hexagon_Outline");
+                    game.MainUIScreen.UnitNameLabel.Text = "^!" + SelectedUnit.Name;
                 }
                 else
                 {
                     SelectedFace = game.Faces[face.U, face.V, face.Side];
                     SelectedFace.Renderable.BoxTexture = Engine2D.Textures.GetTexture("Triangle_Outline");
+                    game.MainUIScreen.UnitNameLabel.Text = "^!" + SelectedFace.Material.Name;
                 }
             }
             else if (e.Button == MouseButton.Right)
@@ -151,6 +155,11 @@ namespace RuneWeaver.GameProperties.GameControllers
             }
         }
 
+        /// <summary>
+        /// Selects an action from the selected unit, based on an index.
+        /// </summary>
+        /// <param name="num"></param>
+        /// <returns></returns>
         public BasicUnitAction SelectAction(int num)
         {
             List<BasicUnitAction>.Enumerator e = SelectedUnit.Actions.GetEnumerator();

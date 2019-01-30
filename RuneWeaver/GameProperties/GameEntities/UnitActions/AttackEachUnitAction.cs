@@ -14,7 +14,7 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
     /// <summary>
     /// The move unit action class.
     /// </summary>
-    public class AttackUnitAction : BasicUnitAction
+    public class AttackEachUnitAction : BasicUnitAction
     {
         /// <summary>
         /// The damage amount of this attack action.
@@ -32,7 +32,7 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
 
         public EntitySimple2DRenderableBoxProperty Renderable2;
 
-        public AttackUnitAction(BasicUnitProperty unit, int cost, int damage, LineHitbox hitbox) : base(unit, cost)
+        public AttackEachUnitAction(BasicUnitProperty unit, int cost, int damage, LineHitbox hitbox) : base(unit, cost)
         {
             this.Damage = damage;
             this.Hitbox = hitbox;
@@ -106,12 +106,8 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
             {
                 if (game.Units[face.U, face.V, face.Side] != null)
                 {
-                    targets.Add(game.Units[face.U, face.V, face.Side]);
+                    game.Units[face.U, face.V, face.Side].Hurt(Damage);
                 }
-            }
-            foreach(BasicUnitProperty t in targets.Distinct())
-            {
-                t.Hurt(Damage);
             }
         }
     }

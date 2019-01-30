@@ -14,7 +14,7 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
         /// </summary>
         public int Range;
 
-        public MoveUnitAction(BasicUnitProperty unit, int range) : base(unit)
+        public MoveUnitAction(BasicUnitProperty unit, int cost, int range) : base(unit, cost)
         {
             this.Range = range;
         }
@@ -37,11 +37,6 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
         public override void Execute()
         {
             
-        }
-
-        public List<GridEdge> Borders(GridVertex source)
-        {
-            return TriangularGrid.Utilities.ExternalBorders(TriangularGrid.Utilities.Expand(source.Touches(), Range));
         }
     }
 }

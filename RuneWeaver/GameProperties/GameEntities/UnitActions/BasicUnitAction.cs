@@ -22,9 +22,20 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
         /// </summary>
         public string Icon;
 
-        public BasicUnitAction(BasicUnitProperty unit)
+        /// <summary>
+        /// The name of this unit action.
+        /// </summary>
+        public string Name;
+
+        /// <summary>
+        /// Constructs a new basic unit action.
+        /// </summary>
+        /// <param name="unit">The unit that has this action.</param>
+        /// <param name="cost">The energy cost of this action.</param>
+        public BasicUnitAction(BasicUnitProperty unit, int cost)
         {
             this.Unit = unit;
+            this.Cost = cost;
         }
 
         public abstract void Prepare();

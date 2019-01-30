@@ -65,8 +65,8 @@ namespace RuneWeaver.TriangularGrid
         public GridVertex Rotate(int times)
         {
             GridVertex old = this;
-            int index = Array.FindIndex(Utilities.Directions, item => item.Equals(old));
-            return Utilities.Directions[(index + times + 6) % 6];
+            int index = Array.FindIndex(Utilities.GridHelper.Directions, item => item.Equals(old));
+            return Utilities.GridHelper.Directions[(index + times + 6) % 6];
         }
     }
 }

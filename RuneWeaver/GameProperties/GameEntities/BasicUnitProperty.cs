@@ -4,6 +4,7 @@ using OpenTK;
 using RuneWeaver.GameProperties.GameEntities.UnitActions;
 using RuneWeaver.MainGame;
 using RuneWeaver.TriangularGrid;
+using System;
 using System.Collections.Generic;
 
 namespace RuneWeaver.GameProperties.GameEntities
@@ -54,6 +55,16 @@ namespace RuneWeaver.GameProperties.GameEntities
         public float Health;
 
         /// <summary>
+        /// The unit's maximum energy.
+        /// </summary>
+        public int MaxEnergy;
+
+        /// <summary>
+        /// The unit's current energy.
+        /// </summary>
+        public int Energy;
+
+        /// <summary>
         /// The unit's resistance.
         /// </summary>
         public float Resistance;
@@ -69,21 +80,12 @@ namespace RuneWeaver.GameProperties.GameEntities
         public GridVertex Coords;
 
         /// <summary>
-        /// The border edges of this unit.
-        /// </summary>
-        /// <returns>The list of border edge coordinates.</returns>
-        public List<GridEdge> Borders()
-        {
-            return TriangularGrid.Utilities.ExternalBorders(TriangularGrid.Utilities.Expand(Coords.Touches(), (Size - 1) * 2));
-        }
-
-        /// <summary>
         /// Fired when entity is spawned.
         /// </summary>
         public override void OnSpawn()
         {
             Game game = Engine2D.Source as Game;
-            foreach (GridFace face in TriangularGrid.Utilities.Expand(Coords.Touches(), (Size - 1) * 2))
+            foreach (GridFace face in Utilities.GridHelper.Expand(Coords.Touches(), (Size - 1) * 2))
             {
                 game.Units[face.U, face.V, face.Side] = this;
             }
@@ -100,9 +102,13 @@ namespace RuneWeaver.GameProperties.GameEntities
             Renderable.BoxColor = Color4F.Blue;
             float x = (Coords.U + Coords.V * 0.5f) * 100 * scaling;
             float y = Coords.V * 86.6f * scaling;
-            Entity.SetPosition(new Location(x, y, 3));
+            Entity.SetPosition(new Location(x, y, 1));
         }
 
+        /// <summary>
+        /// Hurts this entity for the specified amount.
+        /// </summary>
+        /// <param name="amount">Number of damage points.</param>
         public void Hurt(int amount)
         {
             Health -= amount;
@@ -110,6 +116,15 @@ namespace RuneWeaver.GameProperties.GameEntities
             {
                 Engine2D.DespawnEntity(Entity);
             }
+        }
+
+        /// <summary>
+        /// Heals this entity for the specified amount.
+        /// </summary>
+        /// <param name="amount">Number of healing points.</param>
+        public void Heal(int amount)
+        {
+            Health = Math.Min(Health + amount, MaxHealth);
         }
 
         /// <summary>
