@@ -15,14 +15,8 @@ namespace RuneWeaver.GameProperties.GameEntities
             Vision = 5;
             MaxHealth = 150;
             Resistance = 30;
-            Actions.Add(new AttackUnitAction()
-            {
-                Hitbox = new LineHitbox(4, 2, 3)
-            });
-            Actions.Add(new MoveUnitAction()
-            {
-                Range = 5
-            });
+            Actions.Add(new AttackUnitAction(this, 15, new LineHitbox(4, 2, 3)));
+            Actions.Add(new MoveUnitAction(this, 5));
             base.OnSpawn();
         }
     }

@@ -6,6 +6,8 @@ using RuneWeaver.GameProperties.GameEntities.UnitActions.Hitboxes;
 using RuneWeaver.MainGame;
 using RuneWeaver.TriangularGrid;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace RuneWeaver.GameProperties.GameEntities.UnitActions
 {
@@ -30,10 +32,17 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
 
         public EntitySimple2DRenderableBoxProperty Renderable2;
 
-        public override void Prepare(UnitControllerProperty c)
+        public AttackUnitAction(BasicUnitProperty unit, int damage, LineHitbox hitbox) : base(unit)
         {
-            Game game = c.Engine2D.Source as Game;
+            this.Damage = damage;
+            this.Hitbox = hitbox;
+        }
+
+        public override void Prepare()
+        {
+            Game game = Unit.Engine2D.Source as Game;
             float scaling = game.GetScaling();
+            UnitControllerProperty c = game.UnitController;
             Renderable1 = new EntitySimple2DRenderableBoxProperty()
             {
                 BoxDownRight = new Vector2(scaling * 100 * Hitbox.Range, -scaling * 86.6f * Hitbox.Width),
@@ -43,7 +52,7 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
                 IsVisible = false,
                 CastShadows = false
             };
-            Entities[0] = c.Engine2D.SpawnEntity(Renderable1);
+            Entities[0] = Unit.Engine2D.SpawnEntity(Renderable1);
             Renderable2 = new EntitySimple2DRenderableBoxProperty()
             {
                 BoxDownRight = new Vector2(scaling * 27.4f * Hitbox.Width * 2, -scaling * 86.6f * Hitbox.Width),
@@ -53,13 +62,14 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
                 IsVisible = false,
                 CastShadows = false
             };
-            Entities[1] = c.Engine2D.SpawnEntity(Renderable2);
+            Entities[1] = Unit.Engine2D.SpawnEntity(Renderable2);
         }
 
-        public override void Update(UnitControllerProperty c)
+        public override void Update()
         {
-            Game game = c.Engine2D.Source as Game;
+            Game game = Unit.Engine2D.Source as Game;
             float scaling = game.GetScaling();
+            UnitControllerProperty c = game.UnitController;
             double angle = c.Angle * Math.PI / 3;
             double cos = Math.Cos(angle);
             double sin = Math.Sin(angle);
@@ -76,18 +86,33 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
             Entities[1].SetPosition(new Location(x2, y2, 4));
         }
 
-        public override void Cancel(UnitControllerProperty c)
+        public override void Cancel()
         {
+            Game game = Unit.Engine2D.Source as Game;
+            UnitControllerProperty c = game.UnitController;
             c.Engine2D.DespawnEntity(Entities[0]);
             c.Engine2D.DespawnEntity(Entities[1]);
         }
 
-        public override void Execute(UnitControllerProperty c)
+        public override void Execute()
         {
+            Game game = Unit.Engine2D.Source as Game;
+            UnitControllerProperty c = game.UnitController;
             c.Engine2D.DespawnEntity(Entities[0]);
             c.Engine2D.DespawnEntity(Entities[1]);
             GridVertex vector = TriangularGrid.Utilities.Directions[c.Angle];
-            //c.DeselectBorders(TriangularGrid.Utilities.ExternalBorders(Hitbox.Faces(c.SelectedUnit.Coords, c.ActionDirection)));
+            List<BasicUnitProperty> targets = new List<BasicUnitProperty>();
+            foreach (GridFace face in Hitbox.Faces(c.SelectedUnit.Coords, vector))
+            {
+                if (game.Units[face.U, face.V, face.Side] != null)
+                {
+                    targets.Add(game.Units[face.U, face.V, face.Side]);
+                }
+            }
+            foreach(BasicUnitProperty t in targets.Distinct())
+            {
+                t.Hurt(Damage);
+            }
         }
     }
 }

@@ -76,7 +76,7 @@ namespace RuneWeaver.GameProperties.GameControllers
                 {
                     if (SelectedAction != null)
                     {
-                        SelectedAction.Cancel(this);
+                        SelectedAction.Cancel();
                         SelectedAction = null;
                     }
                     SelectedUnit.Renderable.BoxTexture = Engine2D.Textures.GetTexture("Hexagon");
@@ -92,7 +92,7 @@ namespace RuneWeaver.GameProperties.GameControllers
             {
                 if (SelectedAction != null)
                 {
-                    SelectedAction.Execute(this);
+                    SelectedAction.Execute();
                     SelectedAction = null;
                 }
             }
@@ -141,11 +141,11 @@ namespace RuneWeaver.GameProperties.GameControllers
                 {
                     case Key.Number1:
                         SelectedAction = SelectAction(1);
-                        SelectedAction.Prepare(this);
+                        SelectedAction.Prepare();
                         break;
                     case Key.Number2:
                         SelectedAction = SelectAction(2);
-                        SelectedAction.Prepare(this);
+                        SelectedAction.Prepare();
                         break;
                 }
             }
@@ -187,7 +187,7 @@ namespace RuneWeaver.GameProperties.GameControllers
                 Vector2 distance = Engine2D.MouseCoords - SelectedUnit.Entity.LastKnownPosition.toVector2() / scaling;
                 float degrees = (float)(Math.Atan2(distance.Y, distance.X) * 180 / Math.PI);
                 Angle = (int)(((degrees + 390) % 360) / 60);
-                SelectedAction.Update(this);
+                SelectedAction.Update();
             }
         }
     }

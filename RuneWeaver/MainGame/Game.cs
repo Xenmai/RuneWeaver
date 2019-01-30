@@ -82,7 +82,7 @@ namespace RuneWeaver.MainGame
             // Units
             Client.Engine2D.SpawnEntity(new GoblinUnitProperty()
             {
-                Coords = new GridVertex(4, 4)
+                Coords = new GridVertex(6, 3)
             });
             Client.Engine2D.SpawnEntity(new TrollUnitProperty()
             {

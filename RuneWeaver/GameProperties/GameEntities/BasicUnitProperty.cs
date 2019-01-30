@@ -103,6 +103,15 @@ namespace RuneWeaver.GameProperties.GameEntities
             Entity.SetPosition(new Location(x, y, 3));
         }
 
+        public void Hurt(int amount)
+        {
+            Health -= amount;
+            if (Health <= 0)
+            {
+                Engine2D.DespawnEntity(Entity);
+            }
+        }
+
         /// <summary>
         /// Fires when entity is despawned.
         /// </summary>

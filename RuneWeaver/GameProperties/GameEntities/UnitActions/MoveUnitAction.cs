@@ -14,22 +14,27 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
         /// </summary>
         public int Range;
 
-        public override void Prepare(UnitControllerProperty controller)
+        public MoveUnitAction(BasicUnitProperty unit, int range) : base(unit)
+        {
+            this.Range = range;
+        }
+
+        public override void Prepare()
         {
             
         }
 
-        public override void Update(UnitControllerProperty controller)
+        public override void Update()
         {
 
         }
 
-        public override void Cancel(UnitControllerProperty controller)
+        public override void Cancel()
         {
             
         }
 
-        public override void Execute(UnitControllerProperty controller)
+        public override void Execute()
         {
             
         }

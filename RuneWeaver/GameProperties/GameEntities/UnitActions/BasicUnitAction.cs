@@ -22,12 +22,17 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
         /// </summary>
         public string Icon;
 
-        public abstract void Prepare(UnitControllerProperty controller);
+        public BasicUnitAction(BasicUnitProperty unit)
+        {
+            this.Unit = unit;
+        }
 
-        public abstract void Update(UnitControllerProperty controller);
+        public abstract void Prepare();
 
-        public abstract void Cancel(UnitControllerProperty controller);
+        public abstract void Update();
 
-        public abstract void Execute(UnitControllerProperty controller);
+        public abstract void Cancel();
+
+        public abstract void Execute();
     }
 }
