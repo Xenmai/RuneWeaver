@@ -42,8 +42,8 @@ namespace RuneWeaver.GameProperties.GameControllers
                 Engine2D.Zoom *= 1.025f;
             }
             OpenTK.Vector2 motion = OpenTK.Vector2.Zero;
-            float x = Engine2D.Window.Mouse.X / (float)Engine2D.Window.Width;
-            float y = Engine2D.Window.Mouse.Y / (float)Engine2D.Window.Height;
+            float x = Engine2D.Client.MouseX/ (float)Engine2D.Window.Width;
+            float y = Engine2D.Client.MouseY / (float)Engine2D.Window.Height;
             if (x < 0.075f)
             {
                 motion.X = (x - 0.075f) * 150;

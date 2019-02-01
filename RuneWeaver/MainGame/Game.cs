@@ -1,4 +1,6 @@
-﻿using FreneticGameCore;
+﻿using FreneticGameCore.CoreSystems;
+using FreneticGameCore.MathHelpers;
+using FreneticGameCore.UtilitySystems;
 using FreneticGameGraphics.ClientSystem;
 using OpenTK;
 using OpenTK.Input;
@@ -7,6 +9,7 @@ using RuneWeaver.GameProperties.GameEntities;
 using RuneWeaver.GameScreens;
 using RuneWeaver.TriangularGrid;
 using RuneWeaver.Utilities;
+using System.Collections.Generic;
 
 namespace RuneWeaver.MainGame
 {
@@ -74,9 +77,14 @@ namespace RuneWeaver.MainGame
         public GridFaceProperty[,,] Faces;
 
         /// <summary>
+        /// The spawned units' faces.
+        /// </summary>
+        public BasicUnitProperty[,,] UnitFaces;
+
+        /// <summary>
         /// The spawned units.
         /// </summary>
-        public BasicUnitProperty[,,] Units;
+        public List<BasicUnitProperty> Units = new List<BasicUnitProperty>();
 
         /// <summary>
         /// Called by the engine when it loads up.
@@ -101,7 +109,7 @@ namespace RuneWeaver.MainGame
             ApplyGridLayer(GridHelper.Dirt, 0.25, LayerSeeds[0], 800);
             ApplyGridLayer(GridHelper.Rock, 0.05, LayerSeeds[1], 500);
             // Units
-            Units = new BasicUnitProperty[GridSize, GridSize, 2];
+            UnitFaces = new BasicUnitProperty[GridSize, GridSize, 2];
             Client.Engine2D.SpawnEntity(new GoblinUnitProperty()
             {
                 Coords = new GridVertex(6, 3)

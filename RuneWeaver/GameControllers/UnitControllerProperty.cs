@@ -81,7 +81,8 @@ namespace RuneWeaver.GameProperties.GameControllers
                         SelectedAction = null;
                     }
                     SelectedUnit.Renderable.BoxTexture = Engine2D.Textures.GetTexture("Hexagon");
-                    game.MainUIScreen.UnitNameLabel.Text = String.Empty;
+                    game.MainUIScreen.UnitNameLabel.Text = string.Empty;
+                    game.MainUIScreen.UnitEnergyLabel.Text = string.Empty;
                     SelectedUnit = null;
                 }
                 else if (SelectedFace != null)
@@ -113,11 +114,12 @@ namespace RuneWeaver.GameProperties.GameControllers
                 float scaling = game.GetScaling();
                 GridFace face = GridFace.fromVector2(Engine2D.MouseCoords, scaling);
                 List<GridEdge> edges = new List<GridEdge>();
-                if (game.Units[face.U, face.V, face.Side] != null)
+                if (game.UnitFaces[face.U, face.V, face.Side] != null)
                 {
-                    SelectedUnit = game.Units[face.U, face.V, face.Side];
+                    SelectedUnit = game.UnitFaces[face.U, face.V, face.Side];
                     SelectedUnit.Renderable.BoxTexture = Engine2D.Textures.GetTexture("Hexagon_Outline");
                     game.MainUIScreen.UnitNameLabel.Text = "^!" + SelectedUnit.Name;
+                    game.MainUIScreen.UnitEnergyLabel.Text = "^!" + SelectedUnit.Energy;
                 }
                 else
                 {

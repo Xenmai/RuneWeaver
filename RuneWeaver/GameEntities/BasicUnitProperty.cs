@@ -1,4 +1,4 @@
-﻿using FreneticGameCore;
+﻿using FreneticGameCore.MathHelpers;
 using FreneticGameGraphics.ClientSystem.EntitySystem;
 using OpenTK;
 using RuneWeaver.GameProperties.GameEntities.UnitActions;
@@ -85,9 +85,10 @@ namespace RuneWeaver.GameProperties.GameEntities
         public override void OnSpawn()
         {
             Game game = Engine2D.Source as Game;
+            game.Units.Add(this);
             foreach (GridFace face in Utilities.GridHelper.Expand(Coords.Touches(), (Size - 1) * 2))
             {
-                game.Units[face.U, face.V, face.Side] = this;
+                game.UnitFaces[face.U, face.V, face.Side] = this;
             }
             float scaling = game.GetScaling();
             float factor = scaling * Size * 2;
@@ -98,6 +99,7 @@ namespace RuneWeaver.GameProperties.GameEntities
                 CastShadows = false
             };
             Health = MaxHealth;
+            Energy = MaxEnergy;
             Entity.AddProperties(Renderable);
             Renderable.BoxColor = Color4F.Blue;
             float x = (Coords.U + Coords.V * 0.5f) * 100 * scaling;
@@ -114,7 +116,7 @@ namespace RuneWeaver.GameProperties.GameEntities
             Health -= amount;
             if (Health <= 0)
             {
-                Remove();
+                Engine2D.DespawnEntity(Entity);
             }
         }
 
@@ -127,17 +129,14 @@ namespace RuneWeaver.GameProperties.GameEntities
             Health = Math.Min(Health + amount, MaxHealth);
         }
 
-        /// <summary>
-        /// Totally despawns and removes this entity.
-        /// </summary>
-        public void Remove()
+        public void UpdateEnergy(int amount)
         {
+            Energy = amount;
             Game game = Engine2D.Source as Game;
-            foreach (GridFace face in Utilities.GridHelper.Expand(Coords.Touches(), (Size - 1) * 2))
+            if (game.UnitController.SelectedUnit == this)
             {
-                game.Units[face.U, face.V, face.Side] = null;
+                game.MainUIScreen.UnitEnergyLabel.Text = "^!" + amount;
             }
-            Engine2D.DespawnEntity(Entity);
         }
 
         /// <summary>
@@ -145,6 +144,11 @@ namespace RuneWeaver.GameProperties.GameEntities
         /// </summary>
         public override void OnDespawn()
         {
+            Game game = Engine2D.Source as Game;
+            foreach (GridFace face in Utilities.GridHelper.Expand(Coords.Touches(), (Size - 1) * 2))
+            {
+                game.UnitFaces[face.U, face.V, face.Side] = null;
+            }
         }
 
         /// <summary>

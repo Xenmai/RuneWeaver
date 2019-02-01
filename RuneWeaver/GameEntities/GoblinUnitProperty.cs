@@ -3,24 +3,25 @@ using RuneWeaver.GameProperties.GameEntities.UnitActions.Hitboxes;
 
 namespace RuneWeaver.GameProperties.GameEntities
 {
-    public class TrollUnitProperty : BasicUnitProperty
+    public class GoblinUnitProperty : BasicUnitProperty
     {
         /// <summary>
         /// Fired when entity is spawned.
         /// </summary>
         public override void OnSpawn()
         {
-            Name = "Troll";
-            Size = 3;
+            Name = "Goblin";
+            Size = 1;
             Vision = 5;
-            MaxHealth = 150;
-            Resistance = 30;
-            Actions.Add(new AttackUnitAction(this, 5, 15, new LineHitbox(4, 2, 3))
+            MaxHealth = 25;
+            MaxEnergy = 5;
+            Resistance = 12;
+            Actions.Add(new AttackUnitAction(this, 3, 5, new LineHitbox(1, 1, 1))
             {
-                Name = "Smash",
+                Name = "Stab",
                 Icon = "Sword_Icon"
             });
-            Actions.Add(new MoveUnitAction(this, 5, 5));
+            Actions.Add(new MoveUnitAction(this, 2, 6));
             base.OnSpawn();
         }
     }

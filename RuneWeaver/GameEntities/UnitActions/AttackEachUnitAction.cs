@@ -1,4 +1,4 @@
-﻿using FreneticGameCore;
+﻿using FreneticGameCore.MathHelpers;
 using FreneticGameGraphics.ClientSystem.EntitySystem;
 using OpenTK;
 using RuneWeaver.GameProperties.GameControllers;
@@ -7,7 +7,6 @@ using RuneWeaver.MainGame;
 using RuneWeaver.TriangularGrid;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace RuneWeaver.GameProperties.GameEntities.UnitActions
 {
@@ -96,6 +95,12 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
 
         public override void Execute()
         {
+            if (Unit.Energy < Cost)
+            {
+                Cancel();
+                return;
+            }
+            Unit.UpdateEnergy(Unit.Energy - Cost);
             Game game = Unit.Engine2D.Source as Game;
             UnitControllerProperty c = game.UnitController;
             c.Engine2D.DespawnEntity(Entities[0]);
@@ -104,9 +109,9 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
             List<BasicUnitProperty> targets = new List<BasicUnitProperty>();
             foreach (GridFace face in Hitbox.Faces(c.SelectedUnit.Coords, vector))
             {
-                if (game.Units[face.U, face.V, face.Side] != null)
+                if (game.UnitFaces[face.U, face.V, face.Side] != null)
                 {
-                    game.Units[face.U, face.V, face.Side].Hurt(Damage);
+                    game.UnitFaces[face.U, face.V, face.Side].Hurt(Damage);
                 }
             }
         }
