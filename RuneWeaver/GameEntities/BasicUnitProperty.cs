@@ -17,7 +17,7 @@ namespace RuneWeaver.GameProperties.GameEntities
         /// <summary>
         /// The unit's main renderable.
         /// </summary>
-        public EntitySimple2DRenderableBoxProperty Renderable;
+        public EntitySimple3DRenderableModelProperty Renderable;
                 
         /// <summary>
         /// Whether the unit is ally.
@@ -84,27 +84,16 @@ namespace RuneWeaver.GameProperties.GameEntities
         /// </summary>
         public override void OnSpawn()
         {
-            Game game = Engine2D.Source as Game;
-            game.Units.Add(this);
-            foreach (GridFace face in Utilities.GridHelper.Expand(Coords.Touches(), (Size - 1) * 2))
+            Game game = Engine3D.Source as Game;
+            double mul = 0.866 * Size;
+            Renderable = new EntitySimple3DRenderableModelProperty()
             {
-                game.UnitFaces[face.U, face.V, face.Side] = this;
-            }
-            float scaling = game.GetScaling();
-            float factor = scaling * Size * 2;
-            Renderable = new EntitySimple2DRenderableBoxProperty()
-            {
-                BoxSize = new Vector2(factor * 100, factor * 86.6f),
-                BoxTexture = Engine2D.Textures.GetTexture("Hexagon"),
-                CastShadows = false
+                EntityModel = game.Client.Models.Cylinder,
+                Scale = new Location(mul, mul, 2.5 * Size),
+                DiffuseTexture = game.Client.Textures.White,
+                Color = Color4F.Blue
             };
-            Health = MaxHealth;
-            Energy = MaxEnergy;
-            Entity.AddProperties(Renderable);
-            Renderable.BoxColor = Color4F.Blue;
-            float x = (Coords.U + Coords.V * 0.5f) * 100 * scaling;
-            float y = Coords.V * 86.6f * scaling;
-            Entity.SetPosition(new Location(x, y, 1));
+            Entity.AddProperty(Renderable);
         }
 
         /// <summary>

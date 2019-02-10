@@ -24,11 +24,6 @@ namespace RuneWeaver.GameProperties.GameControllers
         public BasicUnitProperty SelectedUnit;
 
         /// <summary>
-        /// The selected face, if any.
-        /// </summary>
-        public GridFaceProperty SelectedFace;
-
-        /// <summary>
         /// The selected action, if any.
         /// </summary>
         public BasicUnitAction SelectedAction;
@@ -70,34 +65,10 @@ namespace RuneWeaver.GameProperties.GameControllers
         private void Window_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (e.Button == MouseButton.Left)
-            {
-                Game game = Engine2D.Source as Game;
-                List<GridEdge> edges = new List<GridEdge>();
-                if (SelectedUnit != null)
-                {
-                    if (SelectedAction != null)
-                    {
-                        SelectedAction.Cancel();
-                        SelectedAction = null;
-                    }
-                    SelectedUnit.Renderable.BoxTexture = Engine2D.Textures.GetTexture("Hexagon");
-                    game.MainUIScreen.UnitNameLabel.Text = string.Empty;
-                    game.MainUIScreen.UnitEnergyLabel.Text = string.Empty;
-                    SelectedUnit = null;
-                }
-                else if (SelectedFace != null)
-                {
-                    SelectedFace.Renderable.BoxTexture = Engine2D.Textures.GetTexture("Triangle");
-                    SelectedFace = null;
-                }                
+            {     
             }
             else if (e.Button == MouseButton.Right)
             {
-                if (SelectedAction != null)
-                {
-                    SelectedAction.Execute();
-                    SelectedAction = null;
-                }
             }
         }
 
@@ -110,27 +81,10 @@ namespace RuneWeaver.GameProperties.GameControllers
         {
             if (e.Button == MouseButton.Left)
             {
-                Game game = Engine2D.Source as Game;
-                float scaling = game.GetScaling();
-                GridFace face = GridFace.fromVector2(Engine2D.MouseCoords, scaling);
-                List<GridEdge> edges = new List<GridEdge>();
-                if (game.UnitFaces[face.U, face.V, face.Side] != null)
-                {
-                    SelectedUnit = game.UnitFaces[face.U, face.V, face.Side];
-                    SelectedUnit.Renderable.BoxTexture = Engine2D.Textures.GetTexture("Hexagon_Outline");
-                    game.MainUIScreen.UnitNameLabel.Text = "^!" + SelectedUnit.Name;
-                    game.MainUIScreen.UnitEnergyLabel.Text = "^!" + SelectedUnit.Energy;
-                }
-                else
-                {
-                    SelectedFace = game.Faces[face.U, face.V, face.Side];
-                    SelectedFace.Renderable.BoxTexture = Engine2D.Textures.GetTexture("Triangle_Outline");
-                    game.MainUIScreen.UnitNameLabel.Text = "^!" + SelectedFace.Material.Name;
-                }
             }
             else if (e.Button == MouseButton.Right)
             {
-                
+
             }
         }
 
@@ -191,15 +145,9 @@ namespace RuneWeaver.GameProperties.GameControllers
         /// </summary>
         public void Tick()
         {
-            if(SelectedUnit != null && SelectedAction != null)
-            {
-                Game game = Engine2D.Source as Game;
-                float scaling = game.GetScaling();
-                Vector2 distance = Engine2D.MouseCoords - SelectedUnit.Entity.LastKnownPosition.toVector2() / scaling;
-                float degrees = (float)(Math.Atan2(distance.Y, distance.X) * 180 / Math.PI);
-                Angle = (int)(((degrees + 390) % 360) / 60);
-                SelectedAction.Update();
-            }
+            //Vector2 distance = Engine2D.MouseCoords - SelectedUnit.Entity.LastKnownPosition.toVector2() / scaling;
+            //float degrees = (float)(Math.Atan2(distance.Y, distance.X) * 180 / Math.PI);
+            //Angle = (int)(((degrees + 390) % 360) / 60);
         }
     }
 }

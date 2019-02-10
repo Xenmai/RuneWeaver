@@ -98,7 +98,7 @@
     <Compile Include="MainGame\Game.cs" />
     <Compile Include="GameProgram.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TriangularGrid\GridFaceProperty.cs" />
+    <Compile Include="TriangularGrid\TerrainGridProperty.cs" />
     <Compile Include="TriangularGrid\GridEdge.cs" />
     <Compile Include="TriangularGrid\GridMaterial.cs" />
     <Compile Include="TriangularGrid\GridVertex.cs" />
@@ -125,20 +125,20 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\FreneticGameEngine\FreneticGameCore\FreneticGameCore.csproj">
+    <ProjectReference Include="..\FreneticGameEngine\FreneticGameCore\FreneticGameCore.csproj">
       <Project>{c608fd6d-fb74-4a0b-affe-d24ac7deb3e3}</Project>
       <Name>FreneticGameCore</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\FreneticGameEngine\FreneticGameGraphics\FreneticGameGraphics.csproj">
+    <ProjectReference Include="..\FreneticGameEngine\FreneticGameGraphics\FreneticGameGraphics.csproj">
       <Project>{cf20c1b4-c199-4d11-8053-ecf7d18b4b7b}</Project>
       <Name>FreneticGameGraphics</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\FreneticGameEngine\FreneticScript\FreneticScript\FreneticScript.csproj">
+    <ProjectReference Include="..\FreneticGameEngine\FreneticScript\FreneticScript\FreneticScript.csproj">
       <Project>{0672dd5f-6f33-4853-bd6e-8716d3abc7ad}</Project>
       <Name>FreneticScript</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\FreneticGameEngine\FreneticScript\FreneticUtilities\FreneticUtilities\FreneticUtilities.csproj">
-      <Project>{a0b4893c-93ee-473a-b404-34337e5bb583}</Project>
+    <ProjectReference Include="..\FreneticGameEngine\FreneticScript\FreneticUtilities\FreneticUtilities\FreneticUtilities.csproj">
+      <Project>{9c4aac8f-514c-43b4-a49d-e4d35e97f422}</Project>
       <Name>FreneticUtilities</Name>
     </ProjectReference>
   </ItemGroup>

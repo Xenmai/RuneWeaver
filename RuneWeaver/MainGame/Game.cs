@@ -2,13 +2,13 @@
 using FreneticGameCore.MathHelpers;
 using FreneticGameCore.UtilitySystems;
 using FreneticGameGraphics.ClientSystem;
+using FreneticGameGraphics.ClientSystem.EntitySystem;
 using OpenTK;
 using OpenTK.Input;
 using RuneWeaver.GameProperties.GameControllers;
 using RuneWeaver.GameProperties.GameEntities;
 using RuneWeaver.GameScreens;
 using RuneWeaver.TriangularGrid;
-using RuneWeaver.Utilities;
 using System.Collections.Generic;
 
 namespace RuneWeaver.MainGame
@@ -28,11 +28,12 @@ namespace RuneWeaver.MainGame
         /// </summary>
         public void Start()
         {
-            Client = new GameClientWindow(threed: false);
-            Client.Engine2D.UseLightEngine = false;
+            Client = new GameClientWindow(threed: true);
             Client.OnWindowLoad += Engine_WindowLoad;
-            Client.Engine2D.Zoom = 1.0f;
-            Client.Engine2D.Source = this;
+            Client.Engine3D.Forward_Shadows = true;
+            Client.Engine3D.EnforceAudio = false;
+            Client.Engine3D.MainView.ShadowTexSize = () => 1024;
+            Client.Engine3D.Source = this;
             Client.Start(GameWindowFlags.Default);
         }
 
@@ -72,11 +73,6 @@ namespace RuneWeaver.MainGame
         public Vector2[] LayerSeeds;
 
         /// <summary>
-        /// The grid faces.
-        /// </summary>
-        public GridFaceProperty[,,] Faces;
-
-        /// <summary>
         /// The spawned units' faces.
         /// </summary>
         public BasicUnitProperty[,,] UnitFaces;
@@ -94,45 +90,31 @@ namespace RuneWeaver.MainGame
             // Events
             Client.Window.KeyDown += Window_KeyDown;
             // UI Screens
-            MainUIScreen = new GameScreen(Client.MainUI);
-            Client.MainUI.CurrentScreen = MainUIScreen;
-            // World Constants
-            Client.Engine2D.PhysicsWorld.Gravity = new Location(0, 0, 0);
-            // Triangular Grid
-            LayerSeeds = new Vector2[GridLayers];
-            for (int i = 0; i < GridLayers; i++)
-            {
-                LayerSeeds[i] = new Vector2((float)Random.NextDouble(), (float)Random.NextDouble());
-            }
-            Faces = new GridFaceProperty[GridSize, GridSize, 2];
-            GenerateGrid(GridHelper.Grass);
-            ApplyGridLayer(GridHelper.Dirt, 0.25, LayerSeeds[0], 800);
-            ApplyGridLayer(GridHelper.Rock, 0.05, LayerSeeds[1], 500);
-            // Units
-            UnitFaces = new BasicUnitProperty[GridSize, GridSize, 2];
-            Client.Engine2D.SpawnEntity(new GoblinUnitProperty()
-            {
-                Coords = new GridVertex(6, 3)
-            });
-            Client.Engine2D.SpawnEntity(new TrollUnitProperty()
-            {
-                Coords = new GridVertex(7, 7)
-            });
-            // Camera Controller
+            // MainUIScreen = new GameScreen(Client.MainUI);
+            // Client.MainUI.CurrentScreen = MainUIScreen;
+            // Camera
+            Client.Engine3D.MainCamera.Position = new Location(0, 0, 10);
+            Client.Engine3D.MainCamera.Direction = MathUtilities.ForwardVector_Deg(0, -45);
             CameraController = new CameraControllerProperty();
-            Client.Engine2D.SpawnEntity(CameraController);
-            // Unit Selector
-            UnitController = new UnitControllerProperty();
-            Client.Engine2D.SpawnEntity(UnitController);
-        }
-
-        /// <summary>
-        /// Gets the current scaling of the game.
-        /// </summary>
-        /// <returns>The scaling as a float.</returns>
-        public float GetScaling()
-        {
-            return 2048 * 0.4f / 800;
+            Client.Engine3D.SpawnEntity(CameraController);
+            // Terrain
+            Client.Engine3D.SpawnEntity(new TerrainGridProperty()
+            {
+                Scale = new Location(10, 10, 1),
+                DiffuseTexture = Client.Textures.White
+            }).SetPosition(new Location(0, 0, -5));
+            // Units
+            Client.Engine3D.SpawnEntity(new GoblinUnitProperty()
+            {
+            }).SetPosition(new Location(0, 0, 1.25));
+            // Sky light
+            Client.Engine3D.SpawnEntity(new EntitySkyLight3DProperty());
+            // Center light
+            Client.Engine3D.SpawnEntity(new EntityPointLight3DProperty()
+            {
+                LightPosition = new Location(0, 0, 50),
+                LightStrength = 25f
+            });
         }
 
         /// <summary>
@@ -146,67 +128,6 @@ namespace RuneWeaver.MainGame
             {
                 Client.Window.Close();
             }
-        }
-
-        /// <summary>
-        /// Generates the first grid layer.
-        /// </summary>
-        /// <param name="mat">The material that will be used.</param>
-        public void GenerateGrid(GridMaterial mat)
-        {
-            for (int i = 0; i < Faces.GetLength(0); i++)
-            {
-                for (int j = 0; j < Faces.GetLength(1); j++)
-                {
-                    Client.Engine2D.SpawnEntity(new GridFaceProperty()
-                    {
-                        Coords = new GridFace(i, j, 0),
-                        Material = mat
-                    });
-                    Client.Engine2D.SpawnEntity(new GridFaceProperty()
-                    {
-                        Coords = new GridFace(i, j, 1),
-                        Material = mat
-                    });
-                }
-            }
-        }
-
-        /// <summary>
-        /// Applies a new layer on top of the grid.
-        /// </summary>
-        /// <param name="mat">The material that will be used.</param>
-        /// <param name="chance">The chance to apply the material.</param>
-        /// <param name="seedX">The random seed on the X coordinate.</param>
-        /// <param name="seedY">The random seed on the Y coordinate.</param>
-        public void ApplyGridLayer(GridMaterial mat, double chance, Vector2 seed, double modifier)
-        {
-            for (int i = 0; i < Faces.GetLength(0); i++)
-            {
-                for (int j = 0; j < Faces.GetLength(1); j++)
-                {
-                    GridFaceProperty face1 = Faces[i, j, 0];
-                    Vector2 pos1 = face1.Entity.LastKnownPosition.toVector2();
-                    if (SimplexNoise.Generate(seed.X + pos1.X / modifier, seed.Y + pos1.Y / modifier) < chance)
-                    {
-                        face1.ChangeMaterial(mat);
-                    }
-                    GridFaceProperty face2 = Faces[i, j, 1];
-                    Vector2 pos2 = face2.Entity.LastKnownPosition.toVector2();
-                    if (SimplexNoise.Generate(seed.X + pos2.X / modifier, seed.Y + pos2.Y / modifier) < chance)
-                    {
-                        face2.ChangeMaterial(mat);
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Resets the turn, restoring every unit's energy.
-        /// </summary>
-        public void ResetTurn()
-        {
-            SysConsole.OutputCustom("info", "banana");
         }
     }
 }

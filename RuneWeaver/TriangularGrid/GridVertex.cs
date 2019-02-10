@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OpenTK;
+using System;
 using System.Collections.Generic;
 
 namespace RuneWeaver.TriangularGrid
@@ -28,6 +29,24 @@ namespace RuneWeaver.TriangularGrid
         /// The second coordinate.
         /// </summary>
         public int V;
+
+        /// <summary>
+        /// Converts this vertex' position from triangular to 3D cartesian coords.
+        /// </summary>
+        /// <returns>The vertex position in cartesian coordinates.</returns>
+        public Vector3 ToCartesianCoords3D(float h)
+        {
+            return new Vector3(U + V * 0.5f, V * 0.866f, h);
+        }
+
+        /// <summary>
+        /// Converts this vertex' position from triangular to 2D cartesian coords.
+        /// </summary>
+        /// <returns>The vertex position in cartesian coordinates.</returns>
+        public Vector2 ToCartesianCoords2D()
+        {
+            return new Vector2(U + V * 0.5f, V * 0.866f);
+        }
 
         public List<GridFace> Touches()
         {

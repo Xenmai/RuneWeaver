@@ -25,6 +25,25 @@ namespace RuneWeaver.TriangularGrid
         public int Side;
 
         /// <summary>
+        /// Converts this vertex' position from triangular to cartesian coords.
+        /// </summary>
+        /// <returns></returns>
+        public Vector2 ToCartesianCoords()
+        {
+            switch (Side)
+            {
+                case 0:
+                    float x = (U + 0.5f) + V * 0.5f;
+                    float y = (V + 0.333f) * 0.866f;
+                    return new Vector2(x, y);
+                default:
+                    x = (U + 1f) + V * 0.5f;
+                    y = (V + 0.667f) * 0.866f;
+                    return new Vector2(x, y);
+            }
+        }
+
+        /// <summary>
         /// Constructs a new grid face object.
         /// </summary>
         /// <param name="u">The first coordinate.</param>
@@ -43,7 +62,7 @@ namespace RuneWeaver.TriangularGrid
         /// <param name="vector">The 2D position.</param>
         /// <param name="scaling">The scaling factor.</param>
         /// <returns>The GridFace in triangular coordinates.</returns>
-        public static GridFace fromVector2(Vector2 vector, float scaling)
+        public static GridFace FromVector2(Vector2 vector, float scaling)
         {
             float v = vector.Y / (100 * scaling * 0.866f);
             float u = vector.X / (100 * scaling) - (v * 0.5f);
