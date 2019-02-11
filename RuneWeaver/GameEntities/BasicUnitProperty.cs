@@ -70,6 +70,11 @@ namespace RuneWeaver.GameProperties.GameEntities
         public float Resistance;
 
         /// <summary>
+        /// The unit's stability.
+        /// </summary>
+        public float Stability;
+
+        /// <summary>
         /// The list of actions this unit can perform.
         /// </summary>
         public List<BasicUnitAction> Actions = new List<BasicUnitAction>();

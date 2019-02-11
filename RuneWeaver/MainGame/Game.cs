@@ -48,6 +48,11 @@ namespace RuneWeaver.MainGame
         public CameraControllerProperty CameraController;
 
         /// <summary>
+        /// The terrain grid property.
+        /// </summary>
+        public TerrainGridProperty Terrain;
+
+        /// <summary>
         /// The main UI screen.
         /// </summary>
         public GameScreen MainUIScreen;
@@ -98,23 +103,19 @@ namespace RuneWeaver.MainGame
             CameraController = new CameraControllerProperty();
             Client.Engine3D.SpawnEntity(CameraController);
             // Terrain
-            Client.Engine3D.SpawnEntity(new TerrainGridProperty()
+            Terrain = new TerrainGridProperty()
             {
-                Scale = new Location(10, 10, 1),
+                Scale = new Location(1, 1, 1),
                 DiffuseTexture = Client.Textures.White
-            }).SetPosition(new Location(0, 0, -5));
+            };
+            Client.Engine3D.SpawnEntity(Terrain).SetPosition(new Location(0, 0, 0));
             // Units
+            Vector2 pos = new GridVertex(5, 10).ToCartesianCoords2D();
             Client.Engine3D.SpawnEntity(new GoblinUnitProperty()
             {
-            }).SetPosition(new Location(0, 0, 1.25));
+            }).SetPosition(new Location(pos.X, pos.Y, Terrain.HeightMap[5, 10] + 1.25));
             // Sky light
             Client.Engine3D.SpawnEntity(new EntitySkyLight3DProperty());
-            // Center light
-            Client.Engine3D.SpawnEntity(new EntityPointLight3DProperty()
-            {
-                LightPosition = new Location(0, 0, 50),
-                LightStrength = 25f
-            });
         }
 
         /// <summary>

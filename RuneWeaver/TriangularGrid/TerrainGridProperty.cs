@@ -1,4 +1,5 @@
-﻿using FreneticGameCore.MathHelpers;
+﻿using FreneticGameCore.CoreSystems;
+using FreneticGameCore.MathHelpers;
 using FreneticGameCore.UtilitySystems;
 using FreneticGameGraphics;
 using FreneticGameGraphics.ClientSystem;
@@ -73,9 +74,10 @@ namespace RuneWeaver.TriangularGrid
             {
                 Seeds[i] = new Vector2((float)game.Random.NextDouble(), (float)game.Random.NextDouble());
             }
-            GenerateHeightMap(6, 0.2f, Seeds[0]);
-            GenerateMaterialLayer(new Vector4(0, 0.8f, 0, 1));
-            ApplyMaterialLayer(new Vector4(0.6f, 0.2f, 0, 1), 0.1f, Seeds[1], 0.3f);
+            GenerateHeightMap(2, 0.05f, Seeds[0]);
+            ApplyHeightMap(1, 0.25f, Seeds[1]);
+            GenerateMaterialLayer(new Vector4(0, 1, 0, 1));
+            ApplyMaterialLayer(new Vector4(0.7f, 0.3f, 0, 1), 0.1f, Seeds[2], 0.3f);
             // Generate the terrain grid mesh: Vertices, Normals and Indices
             Renderable.ArrayBuilder builder = new Renderable.ArrayBuilder();
             int n = Size * Size * 6;
@@ -95,15 +97,16 @@ namespace RuneWeaver.TriangularGrid
                     builder.Vertices[index + 3] = vertex4;
                     builder.Vertices[index + 4] = vertex3;
                     builder.Vertices[index + 5] = vertex2;
-                    Vector3 normal1 = Vector3.Cross(vertex2 - vertex1, vertex3 - vertex1);
+                    Vector3 normal1 = Vector3.Cross(vertex3 - vertex1, vertex2 - vertex1);
                     normal1.Normalize();
                     builder.Normals[index] = normal1;
                     builder.Normals[index + 1] = normal1;
                     builder.Normals[index + 2] = normal1;
+                    SysConsole.OutputCustom("info", "normal is: " + normal1);
                     builder.TexCoords[index] = new Vector3(0, 0, 0);
                     builder.TexCoords[index + 1] = new Vector3(0.5f, 1, 0);
                     builder.TexCoords[index + 2] = new Vector3(1, 0, 0);
-                    Vector3 normal2 = Vector3.Cross(vertex4 - vertex3, vertex4 - vertex2);
+                    Vector3 normal2 = Vector3.Cross(vertex4 - vertex2, vertex4 - vertex3);
                     normal2.Normalize();
                     builder.Normals[index + 3] = normal2;
                     builder.Normals[index + 4] = normal2;
@@ -133,6 +136,21 @@ namespace RuneWeaver.TriangularGrid
                 {
                     Vector2 pos = new GridVertex(i, j).ToCartesianCoords2D();
                     HeightMap[i, j] = (float)SimplexNoise.Generate(seed.X + pos.X * scale, seed.Y + pos.Y * scale) * h;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Applies a random height distribution to the terrain grid.
+        /// </summary>
+        public void ApplyHeightMap(float h, float scale, Vector2 seed)
+        {
+            for (int i = 0; i <= Size; i++)
+            {
+                for (int j = 0; j <= Size; j++)
+                {
+                    Vector2 pos = new GridVertex(i, j).ToCartesianCoords2D();
+                    HeightMap[i, j] += (float)SimplexNoise.Generate(seed.X + pos.X * scale, seed.Y + pos.Y * scale) * h;
                 }
             }
         }
@@ -196,7 +214,7 @@ namespace RuneWeaver.TriangularGrid
                 GL.ActiveTexture(TextureUnit.Texture0);
                 DiffuseTexture.Bind();
             }
-            context.Engine.Rendering.SetColor(Color4F.Red, context.Engine.MainView);
+            context.Engine.Rendering.SetColor(Color4F.White, context.Engine.MainView);
             Matrix4d mat = Matrix4d.Scale(Scale.ToOpenTK3D()) * Matrix4d.CreateFromQuaternion(RenderOrientation.ToOpenTKDoubles()) * Matrix4d.CreateTranslation(RenderAt.ToOpenTK3D());
             context.Engine.MainView.SetMatrix(ShaderLocations.Common.WORLD, mat);
             Rend.Render(true);
