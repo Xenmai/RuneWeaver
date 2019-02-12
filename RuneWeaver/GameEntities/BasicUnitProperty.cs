@@ -1,4 +1,5 @@
-﻿using FreneticGameCore.MathHelpers;
+﻿using FreneticGameCore.EntitySystem.PhysicsHelpers;
+using FreneticGameCore.MathHelpers;
 using FreneticGameGraphics.ClientSystem.EntitySystem;
 using OpenTK;
 using RuneWeaver.GameProperties.GameEntities.UnitActions;
@@ -15,9 +16,14 @@ namespace RuneWeaver.GameProperties.GameEntities
     public class BasicUnitProperty : ClientEntityProperty
     {
         /// <summary>
-        /// The unit's main renderable.
+        /// The unit's renderable.
         /// </summary>
         public EntitySimple3DRenderableModelProperty Renderable;
+
+        /// <summary>
+        /// The unit's physics body.
+        /// </summary>
+        public ClientEntityPhysicsProperty Body;
                 
         /// <summary>
         /// Whether the unit is ally.
@@ -91,14 +97,34 @@ namespace RuneWeaver.GameProperties.GameEntities
         {
             Game game = Engine3D.Source as Game;
             double mul = 0.866 * Size;
+            // Build the renderable property
             Renderable = new EntitySimple3DRenderableModelProperty()
             {
                 EntityModel = game.Client.Models.Cylinder,
-                Scale = new Location(mul, mul, 2.5 * Size),
+                Scale = new Location(mul, mul, 2 * Size),
                 DiffuseTexture = game.Client.Textures.White,
                 Color = Color4F.Blue
             };
-            Entity.AddProperty(Renderable);
+            // Build the physics body property
+            Body = new ClientEntityPhysicsProperty()
+            {
+                Shape = new EntityCylinderShape()
+                {
+                    FixedOrientation = true,
+                    Height = 2 * Size,
+                    Radius = 0.5 * Size
+                },
+                Mass = 0
+            };
+            // Add properties and set position
+            Entity.AddProperties(Renderable, Body);
+            Vector2 pos = Coords.ToCartesianCoords2D();
+            Entity.SetPosition(new Location(pos.X, pos.Y, game.Terrain.HeightMap[Coords.U, Coords.V] + Size));
+            // Update the UnitFaces array with this unit's occupied faces
+            foreach (GridFace face in Utilities.GridHelper.Expand(Coords.Touches(), (Size - 1) * 2))
+            {
+                game.UnitFaces[face.U, face.V, face.Side] = this;
+            }
         }
 
         /// <summary>

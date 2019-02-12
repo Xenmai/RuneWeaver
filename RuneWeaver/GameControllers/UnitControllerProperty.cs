@@ -1,4 +1,6 @@
 ﻿using FreneticGameCore;
+using FreneticGameCore.CoreSystems;
+using FreneticGameCore.MathHelpers;
 using FreneticGameGraphics.ClientSystem.EntitySystem;
 using OpenTK;
 using OpenTK.Input;
@@ -65,7 +67,12 @@ namespace RuneWeaver.GameProperties.GameControllers
         private void Window_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (e.Button == MouseButton.Left)
-            {     
+            {
+                if (SelectedUnit != null)
+                {
+                    SelectedUnit.Renderable.Color = Color4F.Blue;
+                    SelectedUnit = null;
+                }
             }
             else if (e.Button == MouseButton.Right)
             {
@@ -81,6 +88,20 @@ namespace RuneWeaver.GameProperties.GameControllers
         {
             if (e.Button == MouseButton.Left)
             {
+                Matrix4 m = Engine3D.MainView.PrimaryMatrix.Inverted();
+                m.Transpose();
+                float x = 2.0f * Engine3D.Client.MouseX / Engine3D.Window.Width - 1.0f;
+                float y = 1.0f - 2.0f * Engine3D.Client.MouseY / Engine3D.Window.Height;
+                Vector4 vIn = new Vector4(x, y, 1, 1);
+                Vector4 vOut = Vector4.Transform(m, vIn);
+                float mul = 1.0f / vOut.W;
+                Location dir = new Location(vOut.X * mul, vOut.Y * mul, vOut.Z * mul);
+                ClientEntity ent = Engine3D.PhysicsWorld.RayTraceSingle(Engine3D.MainCamera.Position, dir, 100);
+                if (ent != null)
+                {
+                    SelectedUnit = ent.GetFirstSubType<BasicUnitProperty>();
+                    SelectedUnit.Renderable.Color = Color4F.Red;
+                }
             }
             else if (e.Button == MouseButton.Right)
             {

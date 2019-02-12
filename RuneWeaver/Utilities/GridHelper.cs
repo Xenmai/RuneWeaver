@@ -36,20 +36,5 @@ namespace RuneWeaver.Utilities
             new GridVertex(-1, 0),
             new GridVertex(0, -1),
             new GridVertex(1, -1)};
-
-        /// <summary>
-        /// The grass grid material -> green.
-        /// </summary>
-        public static readonly GridMaterial Grass = new GridMaterial("Grass", new Color4F(0.3f, 0.8f, 0), false);
-
-        /// <summary>
-        /// The dirt grid material -> brown.
-        /// </summary>
-        public static readonly GridMaterial Dirt = new GridMaterial("Dirt", new Color4F(0.6f, 0.25f, 0), false);
-
-        /// <summary>
-        /// The rock grid material -> gray.
-        /// </summary>
-        public static readonly GridMaterial Rock = new GridMaterial("Rock", new Color4F(0.6f, 0.6f, 0.6f), true);
     }
 }

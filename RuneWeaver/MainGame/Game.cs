@@ -63,21 +63,6 @@ namespace RuneWeaver.MainGame
         public MTRandom Random = new MTRandom();
 
         /// <summary>
-        /// The playing grid's size.
-        /// </summary>
-        public int GridSize = 30;
-
-        /// <summary>
-        /// The number of grid layers applied on top of the base one.
-        /// </summary>
-        public int GridLayers = 2;
-
-        /// <summary>
-        /// The X and Y seeds used for applying grid layers.
-        /// </summary>
-        public Vector2[] LayerSeeds;
-
-        /// <summary>
         /// The spawned units' faces.
         /// </summary>
         public BasicUnitProperty[,,] UnitFaces;
@@ -97,25 +82,47 @@ namespace RuneWeaver.MainGame
             // UI Screens
             // MainUIScreen = new GameScreen(Client.MainUI);
             // Client.MainUI.CurrentScreen = MainUIScreen;
-            // Camera
+            // Camera Controller
             Client.Engine3D.MainCamera.Position = new Location(0, 0, 10);
             Client.Engine3D.MainCamera.Direction = MathUtilities.ForwardVector_Deg(0, -45);
             CameraController = new CameraControllerProperty();
             Client.Engine3D.SpawnEntity(CameraController);
+            // Unit Controller
+            UnitController = new UnitControllerProperty();
+            Client.Engine3D.SpawnEntity(UnitController);
             // Terrain
             Terrain = new TerrainGridProperty()
             {
-                Scale = new Location(1, 1, 1),
+                Size = 100,
                 DiffuseTexture = Client.Textures.White
             };
             Client.Engine3D.SpawnEntity(Terrain).SetPosition(new Location(0, 0, 0));
+            UnitFaces = new BasicUnitProperty[Terrain.Size, Terrain.Size, 2];
             // Units
-            Vector2 pos = new GridVertex(5, 10).ToCartesianCoords2D();
-            Client.Engine3D.SpawnEntity(new GoblinUnitProperty()
-            {
-            }).SetPosition(new Location(pos.X, pos.Y, Terrain.HeightMap[5, 10] + 1.25));
+            SpawnUnit(new GoblinUnitProperty(), new GridVertex(5, 10));
+            SpawnUnit(new TrollUnitProperty(), new GridVertex(12, 12));
             // Sky light
             Client.Engine3D.SpawnEntity(new EntitySkyLight3DProperty());
+        }
+
+        /// <summary>
+        /// Spawns a new unit entity at the specified location if it's empty.
+        /// </summary>
+        /// <param name="unit">The unit property for this entity.</param>
+        /// <param name="pos">The position in grid vertex coordinates.</param>
+        /// <returns></returns>
+        public ClientEntity SpawnUnit(BasicUnitProperty unit, GridVertex pos)
+        {
+            foreach (GridFace face in Utilities.GridHelper.Expand(pos.Touches(), (unit.Size - 1) * 2))
+            {
+                if (UnitFaces[face.U, face.V, face.Side] != null)
+                {
+                    SysConsole.OutputCustom("Error", "Grid position already occupied by another unit!");
+                    return null;
+                }
+            }
+            unit.Coords = pos;
+            return Client.Engine3D.SpawnEntity(unit);
         }
 
         /// <summary>

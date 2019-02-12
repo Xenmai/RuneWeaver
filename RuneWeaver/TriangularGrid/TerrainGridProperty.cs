@@ -1,5 +1,4 @@
-﻿using FreneticGameCore.CoreSystems;
-using FreneticGameCore.MathHelpers;
+﻿using FreneticGameCore.MathHelpers;
 using FreneticGameCore.UtilitySystems;
 using FreneticGameGraphics;
 using FreneticGameGraphics.ClientSystem;
@@ -28,11 +27,6 @@ namespace RuneWeaver.TriangularGrid
         public float[,] HeightMap;
 
         /// <summary>
-        /// The terrain grid color map.
-        /// </summary>
-        public Vector4[] ColorMap;
-
-        /// <summary>
         /// The amount of grid layers that will be applied.
         /// </summary>
         public int Layers = 5;
@@ -48,9 +42,14 @@ namespace RuneWeaver.TriangularGrid
         public GridMaterial[,,] Materials;
 
         /// <summary>
-        /// The terrain grid VBO.
+        /// The terrain grid renderable.
         /// </summary>
         public Renderable Rend;
+
+        /// <summary>
+        /// The terrain grid physics body.
+        /// </summary>
+        public ClientEntityPhysicsProperty Body;
 
         /// <summary>
         /// The diffuse color texture.
@@ -60,7 +59,7 @@ namespace RuneWeaver.TriangularGrid
         /// <summary>
         /// The render scale.
         /// </summary>
-        public Location Scale;
+        public Location Scale = new Location(1, 1, 1);
 
         /// <summary>
         /// Fired when entity is spawned.
@@ -68,16 +67,17 @@ namespace RuneWeaver.TriangularGrid
         public override void OnSpawn()
         {
             Game game = Engine3D.Source as Game;
-            // Generate the layer seeds
+            // Generate the layer seeds, height map and materials
             Seeds = new Vector2[Layers];
             for (int i = 0; i < Layers; i++)
             {
                 Seeds[i] = new Vector2((float)game.Random.NextDouble(), (float)game.Random.NextDouble());
             }
-            GenerateHeightMap(2, 0.05f, Seeds[0]);
-            ApplyHeightMap(1, 0.25f, Seeds[1]);
-            GenerateMaterialLayer(new Vector4(0, 1, 0, 1));
-            ApplyMaterialLayer(new Vector4(0.7f, 0.3f, 0, 1), 0.1f, Seeds[2], 0.3f);
+            HeightMap = new float[Size + 1, Size + 1];
+            ApplyClampedHeightMap(5, 0.025f, 0.75f, Seeds[0]);
+            ApplyHeightMap(0.5f, 0.25f, Seeds[1]);
+            GenerateMaterialLayer(GridMaterial.Grass);
+            ApplyMaterialLayer(GridMaterial.Dirt, 0.1f, Seeds[2], 0.3f);
             // Generate the terrain grid mesh: Vertices, Normals and Indices
             Renderable.ArrayBuilder builder = new Renderable.ArrayBuilder();
             int n = Size * Size * 6;
@@ -102,7 +102,10 @@ namespace RuneWeaver.TriangularGrid
                     builder.Normals[index] = normal1;
                     builder.Normals[index + 1] = normal1;
                     builder.Normals[index + 2] = normal1;
-                    SysConsole.OutputCustom("info", "normal is: " + normal1);
+                    Vector4 c1 = Materials[i, j, 0].Color.ToOpenTK();
+                    builder.Colors[index] = c1;
+                    builder.Colors[index + 1] = c1;
+                    builder.Colors[index + 2] = c1;
                     builder.TexCoords[index] = new Vector3(0, 0, 0);
                     builder.TexCoords[index + 1] = new Vector3(0.5f, 1, 0);
                     builder.TexCoords[index + 2] = new Vector3(1, 0, 0);
@@ -111,6 +114,10 @@ namespace RuneWeaver.TriangularGrid
                     builder.Normals[index + 3] = normal2;
                     builder.Normals[index + 4] = normal2;
                     builder.Normals[index + 5] = normal2;
+                    Vector4 c2 = Materials[i, j, 1].Color.ToOpenTK();
+                    builder.Colors[index + 3] = c2;
+                    builder.Colors[index + 4] = c2;
+                    builder.Colors[index + 5] = c2;
                     builder.TexCoords[index + 3] = new Vector3(1, 1, 0);
                     builder.TexCoords[index + 4] = new Vector3(0.5f, 0, 0);
                     builder.TexCoords[index + 5] = new Vector3(0, 1, 0);
@@ -120,24 +127,7 @@ namespace RuneWeaver.TriangularGrid
                     }
                 }
             }
-            builder.Colors = ColorMap;
             Rend = builder.Generate();
-        }
-
-        /// <summary>
-        /// Applies a random height distribution to the terrain grid.
-        /// </summary>
-        public void GenerateHeightMap(float h, float scale, Vector2 seed)
-        {
-            HeightMap = new float[Size + 1, Size + 1];
-            for (int i = 0; i <= Size; i++)
-            {
-                for (int j = 0; j <= Size; j++)
-                {
-                    Vector2 pos = new GridVertex(i, j).ToCartesianCoords2D();
-                    HeightMap[i, j] = (float)SimplexNoise.Generate(seed.X + pos.X * scale, seed.Y + pos.Y * scale) * h;
-                }
-            }
         }
 
         /// <summary>
@@ -156,20 +146,32 @@ namespace RuneWeaver.TriangularGrid
         }
 
         /// <summary>
+        /// Applies a random height distribution to the terrain grid.
+        /// </summary>
+        public void ApplyClampedHeightMap(float h, float scale, float clamp, Vector2 seed)
+        {
+            for (int i = 0; i <= Size; i++)
+            {
+                for (int j = 0; j <= Size; j++)
+                {
+                    Vector2 pos = new GridVertex(i, j).ToCartesianCoords2D();
+                    HeightMap[i, j] += (float)Math.Min(SimplexNoise.Generate(seed.X + pos.X * scale, seed.Y + pos.Y * scale), clamp) * h;
+                }
+            }
+        }
+
+        /// <summary>
         /// Generates a base material distribution for the terrain grid.
         /// </summary>
-        public void GenerateMaterialLayer(Vector4 c)
+        public void GenerateMaterialLayer(GridMaterial mat)
         {
-            ColorMap = new Vector4[Size * Size * 6];
+            Materials = new GridMaterial[Size, Size, 2];
             for (int i = 0; i < Size; i++)
             {
                 for (int j = 0; j < Size; j++)
                 {
-                    int index = ((i * Size) + j) * 6;
-                    for (int k = 0; k < 6; k++)
-                    {
-                        ColorMap[index + k] = c;
-                    }
+                    Materials[i, j, 0] = mat;
+                    Materials[i, j, 1] = mat;
                 }
             }
         }
@@ -177,7 +179,7 @@ namespace RuneWeaver.TriangularGrid
         /// <summary>
         /// Applies a random material distribution to the terrain grid.
         /// </summary>
-        public void ApplyMaterialLayer(Vector4 c, float scale, Vector2 seed, float chance)
+        public void ApplyMaterialLayer(GridMaterial mat, float scale, Vector2 seed, float chance)
         {
             for (int i = 0; i < Size; i++)
             {
@@ -188,16 +190,12 @@ namespace RuneWeaver.TriangularGrid
                     Vector2 pos1 = pos + new Vector2(0.5f, 0.333f);
                     if (SimplexNoise.Generate(seed.X + pos1.X * scale, seed.Y + pos1.Y * scale) < chance)
                     {
-                        ColorMap[index] = c;
-                        ColorMap[index + 1] = c;
-                        ColorMap[index + 2] = c;
+                        Materials[i, j, 0] = mat;
                     }
                     Vector2 pos2 = pos + new Vector2(1, 0.667f);
                     if (SimplexNoise.Generate(seed.X + pos2.X * scale, seed.Y + pos2.Y * scale) < chance)
                     {
-                        ColorMap[index + 3] = c;
-                        ColorMap[index + 4] = c;
-                        ColorMap[index + 5] = c;
+                        Materials[i, j, 1] = mat;
                     }
                 }
             }
