@@ -55,12 +55,12 @@ namespace RuneWeaver.TriangularGrid
         public List<GridFace> Touches()
         {
             return new List<GridFace>(new GridFace[] {
-                new GridFace(U - 1, V),
-                new GridFace(U, V),
-                new GridFace(U, V - 1),
+                new GridFace(U + 1, V),
+                new GridFace(U + 1, V - 1),
                 new GridFace(U, V - 1),
                 new GridFace(U - 1, V - 1),
-                new GridFace(U - 1, V)});
+                new GridFace(U - 1, V),
+                new GridFace(U, V)});
         }
 
         /// <summary>
@@ -70,12 +70,12 @@ namespace RuneWeaver.TriangularGrid
         public List<GridVertex> Adjacent()
         {
             return new List<GridVertex>(new GridVertex[] {
-                    new GridVertex(U + 1, V),
+                    new GridVertex(U + 2, V),
                     new GridVertex(U + 1, V - 1),
-                    new GridVertex(U, V - 1),
-                    new GridVertex(U - 1, V),
+                    new GridVertex(U - 1, V - 1),
+                    new GridVertex(U - 2, V),
                     new GridVertex(U - 1, V + 1),
-                    new GridVertex(U, V + 1) });
+                    new GridVertex(U + 1, V + 1) });
         }
 
         /// <summary>

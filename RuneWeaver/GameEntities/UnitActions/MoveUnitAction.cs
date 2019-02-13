@@ -47,7 +47,7 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
         public override void Prepare()
         {
             Game game = Unit.Engine3D.Source as Game;
-            Flood(Unit.Coords, Range);
+            Flood(Unit.Coords, 0);
             List<GridFace> faces = new List<GridFace>();
             foreach (GridVertex vert in AffectedVertices.Keys)
             {
@@ -104,9 +104,9 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
         /// Calculates the next affected grid vertices.
         /// </summary>
         /// <param name="source">The current flooded grid vertex.</param>
-        public void Flood(GridVertex source, int rangeLeft)
+        public void Flood(GridVertex source, int currentSteps)
         {
-            if (rangeLeft <= 0)
+            if (Range - currentSteps <= 0)
             {
                 return;
             }
@@ -114,12 +114,37 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
             foreach (GridVertex target in source.Adjacent())
             {
                 float h = Math.Abs(game.Terrain.HeightMap[target.U, target.V] - game.Terrain.HeightMap[source.U, source.V]);
-                if (h <= Unit.Stability && !AffectedVertices.ContainsKey(target))
+                if (h <= Unit.Stability)
                 {
-                    AffectedVertices.Add(target, source);
-                    Flood(target, rangeLeft - 1);
+                    if (!AffectedVertices.ContainsKey(target))
+                    {
+                        AffectedVertices.Add(target, source);
+                        Flood(target, currentSteps + 1);
+                    }
+                    else if (currentSteps < TraceSteps(target))
+                    {
+                        AffectedVertices.Remove(target);
+                        AffectedVertices.Add(target, source);
+                        Flood(target, currentSteps + 1);
+                    }
                 }
             }
+        }
+
+        /// <summary>
+        /// Traces a grid vertex step back to the source.
+        /// </summary>
+        /// <param name="vert">The final vertex.</param>
+        /// <returns>The number of steps taken to reach the start.</returns>
+        public int TraceSteps(GridVertex vert)
+        {
+            int steps = 0;
+            while (!vert.Equals(Unit.Coords))
+            {
+                steps++;
+                AffectedVertices.TryGetValue(vert, out vert);
+            }
+            return steps;
         }
 
         /// <summary>

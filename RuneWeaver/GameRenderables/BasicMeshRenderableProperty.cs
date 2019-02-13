@@ -41,7 +41,7 @@ namespace RuneWeaver.GameRenderables
             context.Engine.Rendering.SetColor(Color4F.White, context.Engine.MainView);
             Matrix4d mat = Matrix4d.Scale(Scale.ToOpenTK3D()) * Matrix4d.CreateFromQuaternion(RenderOrientation.ToOpenTKDoubles()) * Matrix4d.CreateTranslation(RenderAt.ToOpenTK3D());
             context.Engine.MainView.SetMatrix(ShaderLocations.Common.WORLD, mat);
-            Rend.Render(true);
+            Rend.Render(context, true);
         }
 
         /// <summary>
