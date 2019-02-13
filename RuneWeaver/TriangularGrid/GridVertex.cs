@@ -48,6 +48,10 @@ namespace RuneWeaver.TriangularGrid
             return new Vector2(U + V * 0.5f, V * 0.866f);
         }
 
+        /// <summary>
+        /// Returns the list of faces this vertex touches.
+        /// </summary>
+        /// <returns>A list of touched faces.</returns>
         public List<GridFace> Touches()
         {
             return new List<GridFace>(new GridFace[] {
@@ -59,6 +63,10 @@ namespace RuneWeaver.TriangularGrid
                 new GridFace(U - 1, V, 0)});
         }
 
+        /// <summary>
+        /// Returns the list of edges this vertex protrudes.
+        /// </summary>
+        /// <returns>A list of protruded edges.</returns>
         public List<GridEdge> Protrudes()
         {
             return new List<GridEdge>(new GridEdge[] {
@@ -70,22 +78,51 @@ namespace RuneWeaver.TriangularGrid
                     new GridEdge(U - 1, V, 2)});
         }
 
+        /// <summary>
+        /// Returns the list of vertices that are adjacent to this vertex.
+        /// </summary>
+        /// <returns>A list of adjacent vertices.</returns>
         public List<GridVertex> Adjacent()
         {
             return new List<GridVertex>(new GridVertex[] {
-                    new GridVertex(U, V + 1),
                     new GridVertex(U + 1, V),
                     new GridVertex(U + 1, V - 1),
                     new GridVertex(U, V - 1),
                     new GridVertex(U - 1, V),
-                    new GridVertex(U - 1, V + 1)});
+                    new GridVertex(U - 1, V + 1),
+                    new GridVertex(U, V + 1) });
         }
 
+        /// <summary>
+        /// Rotates a grid vector the specified amount of times. +1 is 60 degrees clockwise.
+        /// </summary>
+        /// <param name="times">How many times to rotate.</param>
+        /// <returns>The new rotated grid vector.</returns>
         public GridVertex Rotate(int times)
         {
             GridVertex old = this;
-            int index = Array.FindIndex(Utilities.GridHelper.Directions, item => item.Equals(old));
+            int index = Array.FindIndex(Utilities.GridHelper.Directions, vert => vert.Equals(old));
             return Utilities.GridHelper.Directions[(index + times + 6) % 6];
+        }
+
+        /// <summary>
+        /// Wether this grid vertex equals an object.
+        /// </summary>
+        /// <param name="obj">The object to compare to.</param>
+        /// <returns>Wether they are equal.</returns>
+        public override bool Equals(object obj)
+        {
+            GridVertex vert = (GridVertex)obj;
+            return vert.U == U && vert.V == V;
+        }
+
+        /// <summary>
+        /// Gets the hashcode of this grid vertex.
+        /// </summary>
+        /// <returns>The hashcode of this grid vertex.</returns>
+        public override int GetHashCode()
+        {
+            return U.GetHashCode() + V.GetHashCode();
         }
     }
 }

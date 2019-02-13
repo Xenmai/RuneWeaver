@@ -6,6 +6,7 @@ using FreneticGameGraphics.ClientSystem.EntitySystem;
 using FreneticGameGraphics.GraphicsHelpers;
 using OpenTK;
 using OpenTK.Graphics.OpenGL4;
+using RuneWeaver.GameRenderables;
 using RuneWeaver.MainGame;
 using System;
 
@@ -14,12 +15,12 @@ namespace RuneWeaver.TriangularGrid
     /// <summary>
     /// Represents a an entity that rotates.
     /// </summary>
-    public class TerrainGridProperty : EntityRenderableProperty
+    public class TerrainGridProperty : BasicMeshRenderableProperty
     {
         /// <summary>
         /// The terrain grid size.
         /// </summary>
-        public int Size = 30;
+        public int Size;
 
         /// <summary>
         /// The terrain grid height map.
@@ -40,26 +41,6 @@ namespace RuneWeaver.TriangularGrid
         /// The terrain grid materials.
         /// </summary>
         public GridMaterial[,,] Materials;
-
-        /// <summary>
-        /// The terrain grid renderable.
-        /// </summary>
-        public Renderable Rend;
-
-        /// <summary>
-        /// The terrain grid physics body.
-        /// </summary>
-        public ClientEntityPhysicsProperty Body;
-
-        /// <summary>
-        /// The diffuse color texture.
-        /// </summary>
-        public Texture DiffuseTexture;
-
-        /// <summary>
-        /// The render scale.
-        /// </summary>
-        public Location Scale = new Location(1, 1, 1);
 
         /// <summary>
         /// Fired when entity is spawned.
@@ -199,41 +180,6 @@ namespace RuneWeaver.TriangularGrid
                     }
                 }
             }
-        }
-
-        /// <summary>
-        /// Render the entity as seen normally, in 3D.
-        /// </summary>
-        /// <param name="context">The render context.</param>
-        public override void RenderStandard(RenderContext context)
-        {
-            if (DiffuseTexture != null)
-            {
-                GL.ActiveTexture(TextureUnit.Texture0);
-                DiffuseTexture.Bind();
-            }
-            context.Engine.Rendering.SetColor(Color4F.White, context.Engine.MainView);
-            Matrix4d mat = Matrix4d.Scale(Scale.ToOpenTK3D()) * Matrix4d.CreateFromQuaternion(RenderOrientation.ToOpenTKDoubles()) * Matrix4d.CreateTranslation(RenderAt.ToOpenTK3D());
-            context.Engine.MainView.SetMatrix(ShaderLocations.Common.WORLD, mat);
-            Rend.Render(true);
-        }
-        
-        /// <summary>
-        /// Render the entity as seen by a top-down map.
-        /// </summary>
-        /// <param name="context">The render context.</param>
-        public override void RenderForTopMap(RenderContext context)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// Non-implemented 2D option.
-        /// </summary>
-        /// <param name="context">The 2D render context.</param>
-        public override void RenderStandard2D(RenderContext2D context)
-        {
-            throw new NotImplementedException();
         }
     }
 }

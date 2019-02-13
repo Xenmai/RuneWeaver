@@ -110,9 +110,9 @@ namespace RuneWeaver.TriangularGrid
             {
                 case 0:
                     return new List<GridVertex>(new GridVertex[] {
+                    new GridVertex(U, V),
                     new GridVertex(U, V + 1),
-                    new GridVertex(U + 1, V),
-                    new GridVertex(U, V)});
+                    new GridVertex(U + 1, V) });
                 default:
                     return new List<GridVertex>(new GridVertex[] {
                     new GridVertex(U + 1, V + 1),

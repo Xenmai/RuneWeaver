@@ -99,8 +99,8 @@ namespace RuneWeaver.MainGame
             Client.Engine3D.SpawnEntity(Terrain).SetPosition(new Location(0, 0, 0));
             UnitFaces = new BasicUnitProperty[Terrain.Size, Terrain.Size, 2];
             // Units
-            SpawnUnit(new GoblinUnitProperty(), new GridVertex(5, 10));
-            SpawnUnit(new TrollUnitProperty(), new GridVertex(12, 12));
+            SpawnUnit(new GoblinUnitProperty(), new GridVertex(30, 30));
+            SpawnUnit(new TrollUnitProperty(), new GridVertex(50, 50));
             // Sky light
             Client.Engine3D.SpawnEntity(new EntitySkyLight3DProperty());
         }

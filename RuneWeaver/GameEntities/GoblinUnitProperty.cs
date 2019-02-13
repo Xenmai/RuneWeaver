@@ -16,7 +16,7 @@ namespace RuneWeaver.GameProperties.GameEntities
             MaxHealth = 25;
             MaxEnergy = 5;
             Resistance = 12;
-            Stability = 6;
+            Stability = 0.3f;
             Actions.Add(new AttackUnitAction(this, 3, 5, new LineHitbox(1, 1, 1))
             {
                 Name = "Stab",
