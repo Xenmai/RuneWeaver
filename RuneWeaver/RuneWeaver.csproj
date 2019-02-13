@@ -103,7 +103,6 @@
     <Compile Include="TriangularGrid\GridMaterial.cs" />
     <Compile Include="TriangularGrid\GridVertex.cs" />
     <Compile Include="TriangularGrid\GridFace.cs" />
-    <Compile Include="Utilities\GridHelper.cs" />
     <Compile Include="Utilities\Extensions.cs" />
   </ItemGroup>
   <ItemGroup>

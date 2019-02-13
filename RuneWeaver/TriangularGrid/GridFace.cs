@@ -34,7 +34,7 @@ namespace RuneWeaver.TriangularGrid
         /// <returns></returns>
         public Vector2 ToCartesianCoords2D()
         {
-            return new Vector2(U * 0.6f, V * 0.866f);
+            return new Vector2(U * 0.5f, V * 0.866f);
         }
 
         /// <summary>
@@ -52,21 +52,21 @@ namespace RuneWeaver.TriangularGrid
         /// Returns the list of faces that are neighbors of this face.
         /// </summary>
         /// <returns>A list of neighbor faces.</returns>
-        public List<GridFace> Neighbors()
+        public HashSet<GridFace> Neighbors()
         {
             if (PointsUp())
             {
-                return new List<GridFace>(new GridFace[] {
+                return new HashSet<GridFace> {
                     new GridFace(U, V - 1),
                     new GridFace(U + 1, V),
-                    new GridFace(U - 1, V)});
+                    new GridFace(U - 1, V)};
             }
             else
             {
-                return new List<GridFace>(new GridFace[] {
+                return new HashSet<GridFace> {
                     new GridFace(U, V + 1),
                     new GridFace(U + 1, V),
-                    new GridFace(U - 1, V)});
+                    new GridFace(U - 1, V)};
             }
         }
 
@@ -74,21 +74,21 @@ namespace RuneWeaver.TriangularGrid
         /// Returns the list of vertices that are corners of this face.
         /// </summary>
         /// <returns>A list of corner vertices.</returns>
-        public List<GridVertex> Corners()
+        public HashSet<GridVertex> Corners()
         {
             if (PointsUp())
             {
-                return new List<GridVertex>(new GridVertex[] {
+                return new HashSet<GridVertex> {
                     new GridVertex(U, V + 1),
                     new GridVertex(U + 1, V),
-                    new GridVertex(U - 1, V)});
+                    new GridVertex(U - 1, V)};
             }
             else
             {
-                return new List<GridVertex>(new GridVertex[] {
+                return new HashSet<GridVertex> {
                     new GridVertex(U, V),
                     new GridVertex(U - 1, V + 1),
-                    new GridVertex(U + 1, V + 1)});
+                    new GridVertex(U + 1, V + 1)};
             }
         }
 

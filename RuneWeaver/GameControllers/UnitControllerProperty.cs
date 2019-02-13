@@ -34,7 +34,17 @@ namespace RuneWeaver.GameProperties.GameControllers
         /// The current action direction.
         /// </summary>
         public int Angle;
-        
+
+        /// <summary>
+        /// The movement steps the selected unit will perform.
+        /// </summary>
+        public List<GridVertex>.Enumerator MoveSteps;
+
+        /// <summary>
+        /// Wether the selected unit is moving.
+        /// </summary>
+        public bool IsMoving;
+
         /// <summary>
         /// Fired when entity is spawned.
         /// </summary>
@@ -72,10 +82,18 @@ namespace RuneWeaver.GameProperties.GameControllers
                 {
                     SelectedUnit.Renderable.Color = Color4F.Blue;
                     SelectedUnit = null;
+                    if (SelectedAction != null)
+                    {
+                        SelectedAction.Cancel();
+                    }
                 }
             }
             else if (e.Button == MouseButton.Right)
             {
+                if (SelectedUnit != null && SelectedAction != null)
+                {
+                    SelectedAction.Execute();
+                }
             }
         }
 
@@ -148,6 +166,28 @@ namespace RuneWeaver.GameProperties.GameControllers
         }
 
         /// <summary>
+        /// The grid faces occupied by this unit.
+        /// </summary>
+        /// <returns></returns>
+        public HashSet<GridFace> OccupiedFaces(int size, GridVertex pos)
+        {
+            switch (size)
+            {
+                case 1:
+                    return pos.Touches();
+                case 2:
+                    HashSet<GridFace> faces = new HashSet<GridFace>();
+                    foreach (GridVertex vert in pos.Adjacent())
+                    {
+                        faces.UnionWith(vert.Touches());
+                    }
+                    return faces;
+                default:
+                    return null;
+            }
+        }
+
+        /// <summary>
         /// Tracks key releases.
         /// </summary>
         /// <param name="sender">Sender.</param>
@@ -166,6 +206,30 @@ namespace RuneWeaver.GameProperties.GameControllers
         /// </summary>
         public void Tick()
         {
+            if (SelectedUnit != null)
+            {
+                Game game = Engine3D.Source as Game;
+                if (IsMoving)
+                {
+                    ClientEntity ent = SelectedUnit.Entity;
+                    Vector3 v = MoveSteps.Current.ToCartesianCoords3D(game.Terrain.HeightMap);
+                    Location target = new Location(v.X, v.Y, v.Z + SelectedUnit.Size);
+                    double move = Engine.Delta * 2;
+                    if (ent.LastKnownPosition.DistanceSquared(target) <= move * move)
+                    {
+                        ent.SetPosition(target);
+                        SelectedUnit.Coords = MoveSteps.Current;
+                        if (!MoveSteps.MoveNext())
+                        {
+                            IsMoving = false;
+                        }
+                    }
+                    else
+                    {
+                        ent.MoveRelative((target - ent.LastKnownPosition).Normalize() * move);
+                    }
+                }
+            }
             //Vector2 distance = Engine2D.MouseCoords - SelectedUnit.Entity.LastKnownPosition.toVector2() / scaling;
             //float degrees = (float)(Math.Atan2(distance.Y, distance.X) * 180 / Math.PI);
             //Angle = (int)(((degrees + 390) % 360) / 60);

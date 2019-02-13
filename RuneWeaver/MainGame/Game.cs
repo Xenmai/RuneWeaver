@@ -113,7 +113,7 @@ namespace RuneWeaver.MainGame
         /// <returns></returns>
         public ClientEntity SpawnUnit(BasicUnitProperty unit, GridVertex pos)
         {
-            foreach (GridFace face in Utilities.GridHelper.Expand(pos.Touches(), (unit.Size - 1) * 2))
+            foreach (GridFace face in UnitController.OccupiedFaces(unit.Size, pos))
             {
                 if (UnitFaces[face.U, face.V] != null)
                 {

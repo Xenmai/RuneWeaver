@@ -16,6 +16,6 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions.Hitboxes
         /// <param name="source">The source vertex of the hitbox.</param>
         /// <param name="direction">The direction of the hitbox.</param>
         /// <returns>This hitbox' borders.</returns>
-        public abstract List<GridFace> Faces(GridVertex source, GridVertex direction);
+        public abstract HashSet<GridVertex> Area(GridVertex source, GridVertex direction);
     }
 }

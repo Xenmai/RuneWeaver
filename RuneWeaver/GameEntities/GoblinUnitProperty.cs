@@ -6,9 +6,9 @@ namespace RuneWeaver.GameProperties.GameEntities
     public class GoblinUnitProperty : BasicUnitProperty
     {
         /// <summary>
-        /// Fired when entity is spawned.
+        /// Constructs a new goblin unit property, setting its values.
         /// </summary>
-        public override void OnSpawn()
+        public GoblinUnitProperty()
         {
             Name = "Goblin";
             Size = 1;
@@ -17,7 +17,14 @@ namespace RuneWeaver.GameProperties.GameEntities
             MaxEnergy = 5;
             Resistance = 12;
             Stability = 0.8f;
-            Actions.Add(new AttackUnitAction(this, 3, 5, new LineHitbox(1, 1, 1))
+        }
+        
+        /// <summary>
+        /// Fired when entity is spawned.
+        /// </summary>
+        public override void OnSpawn()
+        {
+            Actions.Add(new AttackUnitAction(this, 3, 5, new LineHitbox(1, 1, Size))
             {
                 Name = "Stab",
                 Icon = "Sword_Icon"

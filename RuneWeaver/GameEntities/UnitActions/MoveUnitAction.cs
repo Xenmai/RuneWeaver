@@ -48,11 +48,12 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
         {
             Game game = Unit.Engine3D.Source as Game;
             Flood(Unit.Coords, 0);
-            List<GridFace> faces = new List<GridFace>();
+            HashSet<GridFace> faces = new HashSet<GridFace>();
             foreach (GridVertex vert in AffectedVertices.Keys)
             {
-                faces = new List<GridFace>(faces.Union(Utilities.GridHelper.Expand(vert.Touches(), (Unit.Size - 1) * 2)));
+                faces.UnionWith(game.UnitController.OccupiedFaces(Unit.Size, vert));
             }
+            faces.ExceptWith(game.UnitController.OccupiedFaces(Unit.Size, Unit.Coords));
             Renderable.ListBuilder builder = new Renderable.ListBuilder();
             int n = faces.Count * 3;
             builder.Prepare(n);
@@ -61,7 +62,7 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
                 List<Vector3> vertices = new List<Vector3>();
                 foreach (GridVertex vert in face.Corners())
                 {
-                    vertices.Add(vert.ToCartesianCoords3D(game.Terrain.HeightMap[vert.U, vert.V] + 0.1f));
+                    vertices.Add(vert.ToCartesianCoords3D(game.Terrain.HeightMap) + new Vector3(0, 0, 0.1f));
                     builder.AddEmptyBoneInfo();
                 }
                 builder.Vertices.AddRange(vertices);
@@ -160,7 +161,9 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
         /// </summary>
         public override void Cancel()
         {
-            
+            Game game = Unit.Engine3D.Source as Game;
+            game.UnitController.Entity.RemoveProperty<BasicMeshRenderableProperty>();
+            game.UnitController.SelectedAction = null;
         }
 
         /// <summary>
@@ -168,7 +171,19 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
         /// </summary>
         public override void Execute()
         {
-            
+            Game game = Unit.Engine3D.Source as Game;
+            game.UnitController.Entity.RemoveProperty<BasicMeshRenderableProperty>();
+            game.UnitController.SelectedAction = null;
+            GridVertex target = new GridVertex(Unit.Coords.U + 6, Unit.Coords.V + 2);
+            List<GridVertex> steps = new List<GridVertex>();
+            while (!target.Equals(Unit.Coords))
+            {
+                steps.Add(target);
+                AffectedVertices.TryGetValue(target, out target);
+            }
+            game.UnitController.MoveSteps = steps.Reverse<GridVertex>().ToList().GetEnumerator();
+            game.UnitController.MoveSteps.MoveNext();
+            game.UnitController.IsMoving = true;
         }
     }
 }

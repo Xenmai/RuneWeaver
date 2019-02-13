@@ -6,9 +6,9 @@ namespace RuneWeaver.GameProperties.GameEntities
     public class TrollUnitProperty : BasicUnitProperty
     {
         /// <summary>
-        /// Fired when entity is spawned.
+        /// Constructs a new goblin unit property, setting its values.
         /// </summary>
-        public override void OnSpawn()
+        public TrollUnitProperty()
         {
             Name = "Troll";
             Size = 2;
@@ -16,8 +16,15 @@ namespace RuneWeaver.GameProperties.GameEntities
             MaxHealth = 150;
             MaxEnergy = 4;
             Resistance = 30;
-            Stability = 4;
-            Actions.Add(new AttackUnitAction(this, 4, 15, new LineHitbox(4, 2, 3))
+            Stability = 1.0f;
+        }
+
+        /// <summary>
+        /// Fired when entity is spawned.
+        /// </summary>
+        public override void OnSpawn()
+        {
+            Actions.Add(new AttackUnitAction(this, 4, 15, new LineHitbox(4, 2, Size))
             {
                 Name = "Smash",
                 Icon = "Sword_Icon"

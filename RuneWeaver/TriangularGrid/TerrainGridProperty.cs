@@ -70,7 +70,7 @@ namespace RuneWeaver.TriangularGrid
                     List<Vector3> vertices = new List<Vector3>();
                     foreach (GridVertex vert in face.Corners())
                     {
-                        vertices.Add(vert.ToCartesianCoords3D(HeightMap[vert.U, vert.V]));
+                        vertices.Add(vert.ToCartesianCoords3D(HeightMap));
                         builder.AddEmptyBoneInfo();
                     }
                     builder.Vertices.AddRange(vertices);

@@ -36,7 +36,7 @@ namespace RuneWeaver.GameProperties.GameEntities
         public string Name;
 
         /// <summary>
-        /// The unit's size: 1 = small, 2 = medium, 3 = big, 4 = giant.
+        /// The unit's size: 1 = small, 2 = medium, 3 = big.
         /// </summary>
         public int Size;
 
@@ -121,7 +121,7 @@ namespace RuneWeaver.GameProperties.GameEntities
             Vector2 pos = Coords.ToCartesianCoords2D();
             Entity.SetPosition(new Location(pos.X, pos.Y, game.Terrain.HeightMap[Coords.U, Coords.V] + Size));
             // Update the UnitFaces array with this unit's occupied faces
-            foreach (GridFace face in Utilities.GridHelper.Expand(Coords.Touches(), (Size - 1) * 2))
+            foreach (GridFace face in game.UnitController.OccupiedFaces(Size, Coords))
             {
                 game.UnitFaces[face.U, face.V] = this;
             }
@@ -165,7 +165,7 @@ namespace RuneWeaver.GameProperties.GameEntities
         public override void OnDespawn()
         {
             Game game = Engine2D.Source as Game;
-            foreach (GridFace face in Utilities.GridHelper.Expand(Coords.Touches(), (Size - 1) * 2))
+            foreach (GridFace face in game.UnitController.OccupiedFaces(Size, Coords))
             {
                 game.UnitFaces[face.U, face.V] = null;
             }

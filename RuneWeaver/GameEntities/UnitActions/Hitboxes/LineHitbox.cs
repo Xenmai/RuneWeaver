@@ -21,9 +21,9 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions.Hitboxes
             this.Offset = offset;
         }
 
-        public override List<GridFace> Faces(GridVertex source, GridVertex direction)
+        public override HashSet<GridVertex> Area(GridVertex source, GridVertex direction)
         {
-            List<GridFace> faces = new List<GridFace>();
+            HashSet<GridVertex> verts = new HashSet<GridVertex>();
             GridVertex left = direction.Rotate(-2);
             GridVertex right = direction.Rotate(2);
             for (int i = Offset; i < Range + Offset; i++)
@@ -36,10 +36,14 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions.Hitboxes
                     int b = left.V * j;
                     int c = right.U * j;
                     int d = right.V * j;
-                    faces = new List<GridFace>(faces.Union(new GridVertex(U + a, V + b).Touches()).Union(new GridVertex(U + c, V + d).Touches()));
+                    verts.UnionWith(new GridVertex[]
+                    {
+                        new GridVertex(U + a, V + b),
+                        new GridVertex(U + c, V + d)
+                    });
                 }
             }
-            return new List<GridFace>(faces.Except(Utilities.GridHelper.Expand(source.Touches(), (Offset - 1) * 2)));
+            return verts;
         }
     }
 }

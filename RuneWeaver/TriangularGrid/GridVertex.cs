@@ -34,8 +34,9 @@ namespace RuneWeaver.TriangularGrid
         /// Converts this vertex' position from triangular to 3D cartesian coords.
         /// </summary>
         /// <returns>The vertex position in cartesian coordinates.</returns>
-        public Vector3 ToCartesianCoords3D(float h)
+        public Vector3 ToCartesianCoords3D(float[,] map)
         {
+            float h = map[U, V];
             return new Vector3(U * 0.5f, V * 0.866f, h);
         }
 
@@ -52,30 +53,30 @@ namespace RuneWeaver.TriangularGrid
         /// Returns the list of faces this vertex touches.
         /// </summary>
         /// <returns>A list of touched faces.</returns>
-        public List<GridFace> Touches()
+        public HashSet<GridFace> Touches()
         {
-            return new List<GridFace>(new GridFace[] {
+            return new HashSet<GridFace> {
                 new GridFace(U + 1, V),
                 new GridFace(U + 1, V - 1),
                 new GridFace(U, V - 1),
                 new GridFace(U - 1, V - 1),
                 new GridFace(U - 1, V),
-                new GridFace(U, V)});
+                new GridFace(U, V)};
         }
 
         /// <summary>
         /// Returns the list of vertices that are adjacent to this vertex.
         /// </summary>
         /// <returns>A list of adjacent vertices.</returns>
-        public List<GridVertex> Adjacent()
+        public HashSet<GridVertex> Adjacent()
         {
-            return new List<GridVertex>(new GridVertex[] {
+            return new HashSet<GridVertex> {
                     new GridVertex(U + 2, V),
                     new GridVertex(U + 1, V - 1),
                     new GridVertex(U - 1, V - 1),
                     new GridVertex(U - 2, V),
                     new GridVertex(U - 1, V + 1),
-                    new GridVertex(U + 1, V + 1) });
+                    new GridVertex(U + 1, V + 1) };
         }
 
         /// <summary>
@@ -86,9 +87,21 @@ namespace RuneWeaver.TriangularGrid
         public GridVertex Rotate(int times)
         {
             GridVertex old = this;
-            int index = Array.FindIndex(Utilities.GridHelper.Directions, vert => vert.Equals(old));
-            return Utilities.GridHelper.Directions[(index + times + 6) % 6];
+            int index = Array.FindIndex(Directions, vert => vert.Equals(old));
+            return Directions[(index + times + 6) % 6];
         }
+
+        /// <summary>
+        /// A list of all valid grid directions.
+        /// </summary>
+        public static readonly GridVertex[] Directions = new GridVertex[6] {
+            new GridVertex(2, 0),
+            new GridVertex(1, -1),
+            new GridVertex(-1, -1),
+            new GridVertex(-2, 0),
+            new GridVertex(-1, 1),
+            new GridVertex(1, 1)
+        };
 
         /// <summary>
         /// Wether this grid vertex equals an object.
