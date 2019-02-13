@@ -36,7 +36,7 @@ namespace RuneWeaver.TriangularGrid
         /// <returns>The vertex position in cartesian coordinates.</returns>
         public Vector3 ToCartesianCoords3D(float h)
         {
-            return new Vector3(U + V * 0.5f, V * 0.866f, h);
+            return new Vector3(U * 0.5f, V * 0.866f, h);
         }
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace RuneWeaver.TriangularGrid
         /// <returns>The vertex position in cartesian coordinates.</returns>
         public Vector2 ToCartesianCoords2D()
         {
-            return new Vector2(U + V * 0.5f, V * 0.866f);
+            return new Vector2(U * 0.5f, V * 0.866f);
         }
 
         /// <summary>
@@ -55,27 +55,12 @@ namespace RuneWeaver.TriangularGrid
         public List<GridFace> Touches()
         {
             return new List<GridFace>(new GridFace[] {
-                new GridFace(U - 1, V, 1),
-                new GridFace(U, V, 0),
-                new GridFace(U, V - 1, 1),
-                new GridFace(U, V - 1, 0),
-                new GridFace(U - 1, V - 1, 1),
-                new GridFace(U - 1, V, 0)});
-        }
-
-        /// <summary>
-        /// Returns the list of edges this vertex protrudes.
-        /// </summary>
-        /// <returns>A list of protruded edges.</returns>
-        public List<GridEdge> Protrudes()
-        {
-            return new List<GridEdge>(new GridEdge[] {
-                    new GridEdge(U, V, 1),
-                    new GridEdge(U, V, 0),
-                    new GridEdge(U, V - 1, 2),
-                    new GridEdge(U, V - 1, 1),
-                    new GridEdge(U - 1, V, 0),
-                    new GridEdge(U - 1, V, 2)});
+                new GridFace(U - 1, V),
+                new GridFace(U, V),
+                new GridFace(U, V - 1),
+                new GridFace(U, V - 1),
+                new GridFace(U - 1, V - 1),
+                new GridFace(U - 1, V)});
         }
 
         /// <summary>

@@ -15,15 +15,15 @@ namespace RuneWeaver.Utilities
         /// <returns></returns>
         public static List<GridFace> Expand(List<GridFace> faces, int times)
         {
-            List<GridFace> f = new List<GridFace>(faces);
+            HashSet<GridFace> f = new HashSet<GridFace>(faces);
             for(int i = 0; i < times; i++)
             {
-                foreach(GridFace face in new List<GridFace>(f))
+                foreach (GridFace face in new List<GridFace>(f))
                 {
-                    f = new List<GridFace>(f.Union(face.Neighbors()));
+                    f.UnionWith(face.Neighbors());
                 }
             }
-            return f;
+            return f.ToList<GridFace>();
         }
 
         /// <summary>

@@ -61,13 +61,11 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
                 List<Vector3> vertices = new List<Vector3>();
                 foreach (GridVertex vert in face.Corners())
                 {
-                    vertices.Add(vert.ToCartesianCoords3D(game.Terrain.HeightMap[vert.U, vert.V] + 0.25f));
+                    vertices.Add(vert.ToCartesianCoords3D(game.Terrain.HeightMap[vert.U, vert.V] + 0.1f));
+                    builder.AddEmptyBoneInfo();
                 }
+                builder.Vertices.AddRange(vertices);
                 Vector3[] vArray = vertices.ToArray();
-                builder.Vertices.AddRange(vArray);
-                builder.AddEmptyBoneInfo();
-                builder.AddEmptyBoneInfo();
-                builder.AddEmptyBoneInfo();
                 Vector3 normal = Vector3.Cross(vArray[2] - vArray[0], vArray[1] - vArray[0]);
                 normal.Normalize();
                 builder.Normals.Add(normal);
@@ -76,7 +74,7 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
                 builder.Colors.Add(new Vector4(1, 0, 0, 0.4f));
                 builder.Colors.Add(new Vector4(1, 0, 0, 0.4f));
                 builder.Colors.Add(new Vector4(1, 0, 0, 0.4f));
-                if (face.Side == 0)
+                if (face.PointsUp())
                 {
                     builder.TexCoords.Add(new Vector3(0, 0, 0));
                     builder.TexCoords.Add(new Vector3(0.5f, 1, 0));
@@ -108,7 +106,6 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
         /// <param name="source">The current flooded grid vertex.</param>
         public void Flood(GridVertex source, int rangeLeft)
         {
-            SysConsole.OutputCustom("info", "Range: " + rangeLeft);
             if (rangeLeft <= 0)
             {
                 return;

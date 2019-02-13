@@ -20,27 +20,21 @@ namespace RuneWeaver.TriangularGrid
         public int V;
 
         /// <summary>
-        /// The side coordinate.
+        /// wether the triangle face points upwards.
         /// </summary>
-        public int Side;
+        /// <returns>True if the triangle points up.</returns>
+        public bool PointsUp()
+        {
+            return (U + V) % 2 == 1;
+        }
 
         /// <summary>
         /// Converts this vertex' position from triangular to cartesian coords.
         /// </summary>
         /// <returns></returns>
-        public Vector2 ToCartesianCoords()
+        public Vector2 ToCartesianCoords2D()
         {
-            switch (Side)
-            {
-                case 0:
-                    float x = (U + 0.5f) + V * 0.5f;
-                    float y = (V + 0.333f) * 0.866f;
-                    return new Vector2(x, y);
-                default:
-                    x = (U + 1f) + V * 0.5f;
-                    y = (V + 0.667f) * 0.866f;
-                    return new Vector2(x, y);
-            }
+            return new Vector2(U * 0.6f, V * 0.866f);
         }
 
         /// <summary>
@@ -48,78 +42,74 @@ namespace RuneWeaver.TriangularGrid
         /// </summary>
         /// <param name="u">The first coordinate.</param>
         /// <param name="v">The second coordinate.</param>
-        /// <param name="side">The side coordinate: 0 = L, 1 = R.</param>
-        public GridFace(int u, int v, int side)
+        public GridFace(int u, int v)
         {
             this.U = u;
             this.V = v;
-            this.Side = side;
         }
 
         /// <summary>
-        /// Constructs a new GridFace from a 2D position and a scaling factor.
+        /// Returns the list of faces that are neighbors of this face.
         /// </summary>
-        /// <param name="vector">The 2D position.</param>
-        /// <param name="scaling">The scaling factor.</param>
-        /// <returns>The GridFace in triangular coordinates.</returns>
-        public static GridFace FromVector2(Vector2 vector, float scaling)
-        {
-            float v = vector.Y / (100 * scaling * 0.866f);
-            float u = vector.X / (100 * scaling) - (v * 0.5f);
-            int side = (int)Math.Floor(u % 1 + v % 1);
-            return new GridFace((int)Math.Floor(u), (int)Math.Floor(v), side);
-        }
-
+        /// <returns>A list of neighbor faces.</returns>
         public List<GridFace> Neighbors()
         {
-            switch (Side)
+            if (PointsUp())
             {
-                case 0:
-                    return new List<GridFace>(new GridFace[] {
-                    new GridFace(U, V, 1),
-                    new GridFace(U, V - 1, 1),
-                    new GridFace(U - 1, V, 1)});
-                default:
-                    return new List<GridFace>(new GridFace[] {
-                    new GridFace(U, V + 1, 0),
-                    new GridFace(U + 1, V, 0),
-                    new GridFace(U, V, 0)});
+                return new List<GridFace>(new GridFace[] {
+                    new GridFace(U, V - 1),
+                    new GridFace(U + 1, V),
+                    new GridFace(U - 1, V)});
+            }
+            else
+            {
+                return new List<GridFace>(new GridFace[] {
+                    new GridFace(U, V + 1),
+                    new GridFace(U + 1, V),
+                    new GridFace(U - 1, V)});
             }
         }
 
-        public List<GridEdge> Borders()
-        {
-            switch (Side)
-            {
-                case 0:
-                    return new List<GridEdge>(new GridEdge[] {
-                    new GridEdge(U, V, 0),
-                    new GridEdge(U, V, 1),
-                    new GridEdge(U, V, 2)});
-                default:
-                    return new List<GridEdge>(new GridEdge[] {
-                    new GridEdge(U, V + 1, 0),
-                    new GridEdge(U + 1, V, 1),
-                    new GridEdge(U, V, 2)});
-            }
-        }
-
+        /// <summary>
+        /// Returns the list of vertices that are corners of this face.
+        /// </summary>
+        /// <returns>A list of corner vertices.</returns>
         public List<GridVertex> Corners()
         {
-            switch (Side)
+            if (PointsUp())
             {
-                case 0:
-                    return new List<GridVertex>(new GridVertex[] {
-                    new GridVertex(U, V),
+                return new List<GridVertex>(new GridVertex[] {
                     new GridVertex(U, V + 1),
-                    new GridVertex(U + 1, V) });
-                default:
-                    return new List<GridVertex>(new GridVertex[] {
-                    new GridVertex(U + 1, V + 1),
                     new GridVertex(U + 1, V),
-                    new GridVertex(U, V + 1)});
+                    new GridVertex(U - 1, V)});
+            }
+            else
+            {
+                return new List<GridVertex>(new GridVertex[] {
+                    new GridVertex(U, V),
+                    new GridVertex(U - 1, V + 1),
+                    new GridVertex(U + 1, V + 1)});
             }
         }
 
+        /// <summary>
+        /// Wether this grid face equals an object.
+        /// </summary>
+        /// <param name="obj">The object to compare to.</param>
+        /// <returns>Wether they are equal.</returns>
+        public override bool Equals(object obj)
+        {
+            GridFace face = (GridFace)obj;
+            return face.U == U && face.V == V;
+        }
+
+        /// <summary>
+        /// Gets the hashcode of this grid vertex.
+        /// </summary>
+        /// <returns>The hashcode of this grid vertex.</returns>
+        public override int GetHashCode()
+        {
+            return U.GetHashCode() + V.GetHashCode();
+        }
     }
 }

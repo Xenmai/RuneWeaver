@@ -65,7 +65,7 @@ namespace RuneWeaver.MainGame
         /// <summary>
         /// The spawned units' faces.
         /// </summary>
-        public BasicUnitProperty[,,] UnitFaces;
+        public BasicUnitProperty[,] UnitFaces;
 
         /// <summary>
         /// The spawned units.
@@ -97,7 +97,7 @@ namespace RuneWeaver.MainGame
                 DiffuseTexture = Client.Textures.White
             };
             Client.Engine3D.SpawnEntity(Terrain).SetPosition(new Location(0, 0, 0));
-            UnitFaces = new BasicUnitProperty[Terrain.Size, Terrain.Size, 2];
+            UnitFaces = new BasicUnitProperty[Terrain.Size, Terrain.Size];
             // Units
             SpawnUnit(new GoblinUnitProperty(), new GridVertex(30, 30));
             SpawnUnit(new TrollUnitProperty(), new GridVertex(50, 50));
@@ -115,7 +115,7 @@ namespace RuneWeaver.MainGame
         {
             foreach (GridFace face in Utilities.GridHelper.Expand(pos.Touches(), (unit.Size - 1) * 2))
             {
-                if (UnitFaces[face.U, face.V, face.Side] != null)
+                if (UnitFaces[face.U, face.V] != null)
                 {
                     SysConsole.OutputCustom("Error", "Grid position already occupied by another unit!");
                     return null;

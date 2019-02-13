@@ -123,7 +123,7 @@ namespace RuneWeaver.GameProperties.GameEntities
             // Update the UnitFaces array with this unit's occupied faces
             foreach (GridFace face in Utilities.GridHelper.Expand(Coords.Touches(), (Size - 1) * 2))
             {
-                game.UnitFaces[face.U, face.V, face.Side] = this;
+                game.UnitFaces[face.U, face.V] = this;
             }
         }
 
@@ -167,7 +167,7 @@ namespace RuneWeaver.GameProperties.GameEntities
             Game game = Engine2D.Source as Game;
             foreach (GridFace face in Utilities.GridHelper.Expand(Coords.Touches(), (Size - 1) * 2))
             {
-                game.UnitFaces[face.U, face.V, face.Side] = null;
+                game.UnitFaces[face.U, face.V] = null;
             }
         }
 

@@ -100,7 +100,6 @@
     <Compile Include="GameProgram.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TriangularGrid\TerrainGridProperty.cs" />
-    <Compile Include="TriangularGrid\GridEdge.cs" />
     <Compile Include="TriangularGrid\GridMaterial.cs" />
     <Compile Include="TriangularGrid\GridVertex.cs" />
     <Compile Include="TriangularGrid\GridFace.cs" />
