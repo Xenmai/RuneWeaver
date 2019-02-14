@@ -1,15 +1,11 @@
 ﻿using BEPUphysics.BroadPhaseEntries;
 using BEPUphysics.CollisionShapes;
-using FreneticGameCore.CoreSystems;
-using FreneticGameCore.EntitySystem.PhysicsHelpers;
 using FreneticGameCore.UtilitySystems;
 using FreneticGameGraphics;
-using FreneticGameGraphics.ClientSystem.EntitySystem;
 using FreneticGameGraphics.GraphicsHelpers;
 using OpenTK;
 using RuneWeaver.GameRenderables;
 using RuneWeaver.MainGame;
-using RuneWeaver.Utilities;
 using System;
 using System.Collections.Generic;
 

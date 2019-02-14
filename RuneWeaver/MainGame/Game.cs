@@ -1,11 +1,11 @@
 ﻿using FreneticGameCore.CoreSystems;
-using FreneticGameCore.EntitySystem.PhysicsHelpers;
 using FreneticGameCore.MathHelpers;
 using FreneticGameCore.UtilitySystems;
 using FreneticGameGraphics.ClientSystem;
 using FreneticGameGraphics.ClientSystem.EntitySystem;
 using OpenTK;
 using OpenTK.Input;
+using RuneWeaver.GameControllers;
 using RuneWeaver.GameProperties.GameControllers;
 using RuneWeaver.GameProperties.GameEntities;
 using RuneWeaver.GameScreens;
@@ -42,6 +42,11 @@ namespace RuneWeaver.MainGame
         /// The main unit controller property.
         /// </summary>
         public UnitControllerProperty UnitController;
+
+        /// <summary>
+        /// The main cursor controller property.
+        /// </summary>
+        public CursorControllerProperty CursorController;
 
         /// <summary>
         /// The main camera controller property.
@@ -89,15 +94,18 @@ namespace RuneWeaver.MainGame
                 Size = 100,
                 DiffuseTexture = Client.Textures.White
             };
+            Client.Engine3D.SpawnEntity(Terrain).SetPosition(new Location(0, 0, 0));
             // Camera Controller
             CameraController = new CameraControllerProperty();
             Client.Engine3D.SpawnEntity(CameraController);
             // Unit Controller
             UnitController = new UnitControllerProperty();
             Client.Engine3D.SpawnEntity(UnitController);
-            Client.Engine3D.SpawnEntity(Terrain).SetPosition(new Location(0, 0, 0));
-            UnitFaces = new BasicUnitProperty[Terrain.Size, Terrain.Size];
+            // Cursor Controller
+            CursorController = new CursorControllerProperty();
+            Client.Engine3D.SpawnEntity(CursorController);
             // Units
+            UnitFaces = new BasicUnitProperty[Terrain.Size, Terrain.Size];
             SpawnUnit(new GoblinUnitProperty(), new GridVertex(30, 30));
             SpawnUnit(new TrollUnitProperty(), new GridVertex(50, 50));
             // Sky light

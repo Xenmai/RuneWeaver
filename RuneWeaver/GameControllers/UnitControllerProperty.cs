@@ -1,6 +1,4 @@
-﻿using FreneticGameCore;
-using FreneticGameCore.CoreSystems;
-using FreneticGameCore.MathHelpers;
+﻿using FreneticGameCore.MathHelpers;
 using FreneticGameGraphics.ClientSystem.EntitySystem;
 using OpenTK;
 using OpenTK.Input;
@@ -8,10 +6,7 @@ using RuneWeaver.GameProperties.GameEntities;
 using RuneWeaver.GameProperties.GameEntities.UnitActions;
 using RuneWeaver.MainGame;
 using RuneWeaver.TriangularGrid;
-using RuneWeaver.Utilities;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace RuneWeaver.GameProperties.GameControllers
 {
@@ -31,20 +26,15 @@ namespace RuneWeaver.GameProperties.GameControllers
         public BasicUnitAction SelectedAction;
 
         /// <summary>
-        /// The current action direction.
-        /// </summary>
-        public int Angle;
-
-        /// <summary>
         /// Fired when entity is spawned.
         /// </summary>
         public override void OnSpawn()
         {
+            Game game = Engine3D.Source as Game;
             Engine.Window.MouseDown += Window_MouseDown;
             Engine.Window.MouseUp += Window_MouseUp;
             Engine.Window.KeyDown += Window_KeyDown;
             Engine.Window.KeyUp += Window_KeyUp;
-            Entity.OnTick += Tick;
         }
 
         /// <summary>
@@ -56,7 +46,6 @@ namespace RuneWeaver.GameProperties.GameControllers
             Engine.Window.MouseUp -= Window_MouseUp;
             Engine.Window.KeyDown -= Window_KeyDown;
             Engine.Window.KeyUp -= Window_KeyUp;
-            Entity.OnTick -= Tick;
         }
 
         /// <summary>
@@ -189,16 +178,6 @@ namespace RuneWeaver.GameProperties.GameControllers
                 case Key.ControlLeft:
                     break;
             }
-        }
-
-        /// <summary>
-        /// Fired when the entity ticks.
-        /// </summary>
-        public void Tick()
-        {
-            //Vector2 distance = Engine2D.MouseCoords - SelectedUnit.Entity.LastKnownPosition.toVector2() / scaling;
-            //float degrees = (float)(Math.Atan2(distance.Y, distance.X) * 180 / Math.PI);
-            //Angle = (int)(((degrees + 390) % 360) / 60);
         }
     }
 }

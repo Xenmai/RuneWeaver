@@ -193,7 +193,7 @@ namespace RuneWeaver.GameProperties.GameEntities
             {
                 Vector3 v = MoveSteps.Current.ToCartesianCoords3D(game.Terrain.HeightMap);
                 Location target = new Location(v.X, v.Y, v.Z + Size);
-                double move = Engine.Delta * 2;
+                double move = Engine.Delta * 4;
                 if (Entity.LastKnownPosition.DistanceSquared(target) <= move * move)
                 {
                     Entity.SetPosition(target);

@@ -1,9 +1,4 @@
-﻿using BEPUphysics;
-using FreneticGameCore.CoreSystems;
-using FreneticGameCore.MathHelpers;
-using FreneticGameGraphics.ClientSystem;
-using FreneticGameGraphics.ClientSystem.EntitySystem;
-using FreneticGameGraphics.GraphicsHelpers;
+﻿using FreneticGameGraphics.GraphicsHelpers;
 using OpenTK;
 using RuneWeaver.GameRenderables;
 using RuneWeaver.MainGame;
@@ -38,7 +33,7 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
         /// <summary>
         /// The flood filled affected zone of this movement action.
         /// </summary>
-        public Dictionary<GridVertex, GridVertex> AffectedVertices = new Dictionary<GridVertex, GridVertex>();
+        public Dictionary<GridVertex, GridVertex> AffectedVertices;
 
         /// <summary>
         /// The renderable property.
@@ -51,6 +46,7 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
         public override void Prepare()
         {
             Game game = Unit.Engine3D.Source as Game;
+            AffectedVertices = new Dictionary<GridVertex, GridVertex>();
             Flood(Unit.Coords, 0);
             HashSet<GridFace> faces = new HashSet<GridFace>();
             foreach (GridVertex vert in AffectedVertices.Keys)
@@ -176,34 +172,20 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
         public override void Execute()
         {
             Game game = Unit.Engine3D.Source as Game;
-            GameEngine3D engine = Unit.Engine3D;
-            Matrix4 m = engine.MainView.PrimaryMatrix.Inverted();
-            m.Transpose();
-            float x = 2.0f * engine.Client.MouseX / engine.Window.Width - 1.0f;
-            float y = 1.0f - 2.0f * engine.Client.MouseY / engine.Window.Height;
-            Vector4 vIn = new Vector4(x, y, 1, 1);
-            Vector4 vOut = Vector4.Transform(m, vIn);
-            float mul = 1.0f / vOut.W;
-            BEPUutilities.Vector3 dir = new BEPUutilities.Vector3(vOut.X * mul, vOut.Y * mul, vOut.Z * mul);
-            if (game.Terrain.Body.RayCast(new BEPUutilities.Ray(engine.MainCamera.Position.ToBVector(), dir), 100.0, out BEPUutilities.RayHit hit))
+            GridVertex target = game.CursorController.Target;
+            if (AffectedVertices.ContainsKey(target))
             {
-                BEPUutilities.Vector3 loc = hit.Location;
-                GridVertex target = GridVertex.FromXY(loc.X, loc.Y);
-                game.Terrain.Body.GetPosition(target.U, target.V, out BEPUutilities.Vector3 v);
-                if (AffectedVertices.ContainsKey(target))
+                List<GridVertex> steps = new List<GridVertex>();
+                while (!target.Equals(Unit.Coords))
                 {
-                    List<GridVertex> steps = new List<GridVertex>();
-                    while (!target.Equals(Unit.Coords))
-                    {
-                        steps.Add(target);
-                        AffectedVertices.TryGetValue(target, out target);
-                    }
-                    Unit.MoveSteps = steps.Reverse<GridVertex>().ToList().GetEnumerator();
-                    Unit.MoveSteps.MoveNext();
-                    Unit.IsMoving = true;
-                    game.UnitController.Entity.RemoveProperty<BasicMeshRenderableProperty>();
-                    game.UnitController.SelectedAction = null;
+                    steps.Add(target);
+                    AffectedVertices.TryGetValue(target, out target);
                 }
+                Unit.MoveSteps = steps.Reverse<GridVertex>().ToList().GetEnumerator();
+                Unit.MoveSteps.MoveNext();
+                Unit.IsMoving = true;
+                game.UnitController.Entity.RemoveProperty<BasicMeshRenderableProperty>();
+                game.UnitController.SelectedAction = null;
             }
         }
     }

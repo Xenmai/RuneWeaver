@@ -123,14 +123,7 @@ namespace RuneWeaver.GameProperties.GameControllers
             }
             if (motion.LengthSquared() > 0)
             {
-                if (KeyFast)
-                {
-                    motion *= 20;
-                }
-                else
-                {
-                    motion *= 5;
-                }
+                motion *= KeyFast ? 40 : 8;
                 Engine3D.MainCamera.Position += motion * Engine.Delta;
             }
             Vector2 rot = Vector2.Zero;

@@ -83,6 +83,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GameControllers\CameraControllerProperty.cs" />
+    <Compile Include="GameControllers\CursorControllerProperty.cs" />
     <Compile Include="GameEntities\TrollUnitProperty.cs" />
     <Compile Include="GameEntities\GoblinUnitProperty.cs" />
     <Compile Include="GameEntities\UnitActions\AttackEachUnitAction.cs" />
