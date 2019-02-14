@@ -42,11 +42,6 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
         }
 
         /// <summary>
-        /// The flood filled affected zone of this attack action.
-        /// </summary>
-        public HashSet<GridVertex> AffectedVertices = new HashSet<GridVertex>();
-
-        /// <summary>
         /// The renderable property.
         /// </summary>
         public BasicMeshRenderableProperty Prop;

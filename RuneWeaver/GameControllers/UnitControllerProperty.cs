@@ -113,7 +113,7 @@ namespace RuneWeaver.GameProperties.GameControllers
         /// <param name="e">Event data.</param>
         private void Window_KeyDown(object sender, KeyboardKeyEventArgs e)
         {
-            if (SelectedUnit != null && SelectedAction == null)
+            if (SelectedUnit != null && SelectedAction == null && ! SelectedUnit.IsMoving)
             {
                 switch (e.Key)
                 {

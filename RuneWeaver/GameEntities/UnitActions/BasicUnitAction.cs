@@ -1,4 +1,6 @@
 ﻿using RuneWeaver.GameProperties.GameControllers;
+using RuneWeaver.TriangularGrid;
+using System.Collections.Generic;
 
 namespace RuneWeaver.GameProperties.GameEntities.UnitActions
 {
@@ -26,6 +28,11 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
         /// The name of this unit action.
         /// </summary>
         public string Name;
+
+        /// <summary>
+        /// The affected zone vertices of this action.
+        /// </summary>
+        public HashSet<GridVertex> AffectedVertices;
 
         /// <summary>
         /// Constructs a new basic unit action.

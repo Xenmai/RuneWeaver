@@ -30,6 +30,17 @@ namespace RuneWeaver.TriangularGrid
         /// </summary>
         public int V;
 
+        public bool IsInsideBoundaries(int size)
+        {
+            return U > 1 && U < size * 2 - 1 && V > 0 && V < size;
+        }
+
+        /// <summary>
+        /// Constructs a grid vertex from x and y world coordinates.
+        /// </summary>
+        /// <param name="x">The first world coordinate.</param>
+        /// <param name="y">The first world coordinate.</param>
+        /// <returns>The corresponding grid vertex.</returns>
         public static GridVertex FromXY(double x, double y)
         {
             int newY = (int)Math.Round(y / 0.866);

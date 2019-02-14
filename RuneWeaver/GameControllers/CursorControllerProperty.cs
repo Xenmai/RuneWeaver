@@ -1,6 +1,7 @@
 ﻿using FreneticGameCore.MathHelpers;
 using FreneticGameGraphics.ClientSystem.EntitySystem;
 using OpenTK;
+using RuneWeaver.GameProperties.GameEntities.UnitActions;
 using RuneWeaver.MainGame;
 using RuneWeaver.TriangularGrid;
 
@@ -29,7 +30,7 @@ namespace RuneWeaver.GameControllers
                 EntityModel = game.Client.Models.Cylinder,
                 Scale = new Location(0.1, 0.1, 1),
                 DiffuseTexture = game.Client.Textures.White,
-                Color = Color4F.Red,
+                Color = Color4F.Blue,
                 IsVisible = false
             };
             Entity.AddProperty(Rend);
@@ -65,6 +66,15 @@ namespace RuneWeaver.GameControllers
                 Rend.IsVisible = true;
                 Vector2 pos = Target.ToCartesianCoords2D();
                 Entity.SetPosition(new Location(pos.X, pos.Y, game.Terrain.HeightMap[Target.U, Target.V] + 0.5));
+                BasicUnitAction action = game.UnitController.SelectedAction;
+                if (action != null && action.AffectedVertices.Contains(Target))
+                {
+                    Rend.Color = Color4F.Red;
+                }
+                else
+                {
+                    Rend.Color = Color4F.Blue;
+                }
             }
             else
             {

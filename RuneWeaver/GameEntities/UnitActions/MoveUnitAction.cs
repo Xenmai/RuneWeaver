@@ -31,9 +31,9 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
         }
 
         /// <summary>
-        /// The flood filled affected zone of this movement action.
+        /// The flood filled affected zone paths of this movement action.
         /// </summary>
-        public Dictionary<GridVertex, GridVertex> AffectedVertices;
+        public Dictionary<GridVertex, GridVertex> AffectedPaths;
 
         /// <summary>
         /// The renderable property.
@@ -46,10 +46,11 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
         public override void Prepare()
         {
             Game game = Unit.Engine3D.Source as Game;
-            AffectedVertices = new Dictionary<GridVertex, GridVertex>();
+            AffectedPaths = new Dictionary<GridVertex, GridVertex>();
             Flood(Unit.Coords, 0);
+            AffectedVertices = new HashSet<GridVertex>(AffectedPaths.Keys);
             HashSet<GridFace> faces = new HashSet<GridFace>();
-            foreach (GridVertex vert in AffectedVertices.Keys)
+            foreach (GridVertex vert in AffectedVertices)
             {
                 faces.UnionWith(game.UnitController.OccupiedFaces(Unit.Size, vert));
             }
@@ -114,19 +115,22 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
             Game game = Unit.Engine3D.Source as Game;
             foreach (GridVertex target in source.Adjacent())
             {
-                double h = Math.Abs(game.Terrain.HeightMap[target.U, target.V] - game.Terrain.HeightMap[source.U, source.V]);
-                if (h <= Unit.Stability)
+                if (target.IsInsideBoundaries(game.Terrain.Size))
                 {
-                    if (!AffectedVertices.ContainsKey(target))
+                    double h = Math.Abs(game.Terrain.HeightMap[target.U, target.V] - game.Terrain.HeightMap[source.U, source.V]);
+                    if (h <= Unit.Stability)
                     {
-                        AffectedVertices.Add(target, source);
-                        Flood(target, currentSteps + 1);
-                    }
-                    else if (currentSteps < TraceSteps(target))
-                    {
-                        AffectedVertices.Remove(target);
-                        AffectedVertices.Add(target, source);
-                        Flood(target, currentSteps + 1);
+                        if (!AffectedPaths.ContainsKey(target))
+                        {
+                            AffectedPaths.Add(target, source);
+                            Flood(target, currentSteps + 1);
+                        }
+                        else if (currentSteps < TraceSteps(target))
+                        {
+                            AffectedPaths.Remove(target);
+                            AffectedPaths.Add(target, source);
+                            Flood(target, currentSteps + 1);
+                        }
                     }
                 }
             }
@@ -143,7 +147,7 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
             while (!vert.Equals(Unit.Coords))
             {
                 steps++;
-                AffectedVertices.TryGetValue(vert, out vert);
+                AffectedPaths.TryGetValue(vert, out vert);
             }
             return steps;
         }
@@ -173,13 +177,13 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
         {
             Game game = Unit.Engine3D.Source as Game;
             GridVertex target = game.CursorController.Target;
-            if (AffectedVertices.ContainsKey(target))
+            if (AffectedVertices.Contains(target))
             {
                 List<GridVertex> steps = new List<GridVertex>();
                 while (!target.Equals(Unit.Coords))
                 {
                     steps.Add(target);
-                    AffectedVertices.TryGetValue(target, out target);
+                    AffectedPaths.TryGetValue(target, out target);
                 }
                 Unit.MoveSteps = steps.Reverse<GridVertex>().ToList().GetEnumerator();
                 Unit.MoveSteps.MoveNext();
