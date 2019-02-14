@@ -53,7 +53,7 @@ namespace RuneWeaver.GameScreens
             Game game = Engine.Source as Game;
             foreach (BasicUnitProperty unit in game.Units)
             {
-                unit.UpdateEnergy(unit.MaxEnergy);
+                unit.Energy = unit.MaxEnergy;
             }
         }
 

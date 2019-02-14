@@ -95,6 +95,8 @@ namespace RuneWeaver.GameProperties.GameEntities
         /// </summary>
         public override void OnSpawn()
         {
+            Health = MaxHealth;
+            Energy = MaxEnergy;
             Game game = Engine3D.Source as Game;
             double mul = 0.866 * Size;
             // Build the renderable property
@@ -148,16 +150,6 @@ namespace RuneWeaver.GameProperties.GameEntities
         public void Heal(int amount)
         {
             Health = Math.Min(Health + amount, MaxHealth);
-        }
-
-        public void UpdateEnergy(int amount)
-        {
-            Energy = amount;
-            Game game = Engine2D.Source as Game;
-            if (game.UnitController.SelectedUnit == this)
-            {
-                game.MainUIScreen.UnitEnergyLabel.Text = "^!" + amount;
-            }
         }
 
         /// <summary>

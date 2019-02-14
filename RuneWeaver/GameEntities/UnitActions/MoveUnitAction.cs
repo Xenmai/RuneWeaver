@@ -1,4 +1,5 @@
-﻿using FreneticGameGraphics.GraphicsHelpers;
+﻿using FreneticGameCore.CoreSystems;
+using FreneticGameGraphics.GraphicsHelpers;
 using OpenTK;
 using RuneWeaver.GameRenderables;
 using RuneWeaver.MainGame;
@@ -34,17 +35,16 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
         /// The flood filled affected zone paths of this movement action.
         /// </summary>
         public Dictionary<GridVertex, GridVertex> AffectedPaths;
-
-        /// <summary>
-        /// The renderable property.
-        /// </summary>
-        public BasicMeshRenderableProperty Prop;
-
+        
         /// <summary>
         /// Prepares and renders the action's affected zone. This usually happens when the action is selected.
         /// </summary>
         public override void Prepare()
         {
+            if (!CheckEnergy())
+            {
+                return;
+            }
             Game game = Unit.Engine3D.Source as Game;
             AffectedPaths = new Dictionary<GridVertex, GridVertex>();
             Flood(Unit.Coords, 0);
@@ -55,51 +55,8 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
                 faces.UnionWith(game.UnitController.OccupiedFaces(Unit.Size, vert));
             }
             faces.ExceptWith(game.UnitController.OccupiedFaces(Unit.Size, Unit.Coords));
-            Renderable.ListBuilder builder = new Renderable.ListBuilder();
-            int n = faces.Count * 3;
-            builder.Prepare(n);
-            foreach (GridFace face in faces)
-            {
-                List<Vector3> vertices = new List<Vector3>();
-                foreach (GridVertex vert in face.Corners())
-                {
-                    vertices.Add(vert.ToCartesianCoords3D(game.Terrain.HeightMap) + new Vector3(0, 0, 0.1f));
-                    builder.AddEmptyBoneInfo();
-                }
-                builder.Vertices.AddRange(vertices);
-                Vector3[] vArray = vertices.ToArray();
-                Vector3 normal = Vector3.Cross(vArray[2] - vArray[0], vArray[1] - vArray[0]);
-                normal.Normalize();
-                builder.Normals.Add(normal);
-                builder.Normals.Add(normal);
-                builder.Normals.Add(normal);
-                builder.Colors.Add(new Vector4(1, 0, 0, 0.4f));
-                builder.Colors.Add(new Vector4(1, 0, 0, 0.4f));
-                builder.Colors.Add(new Vector4(1, 0, 0, 0.4f));
-                if (face.PointsUp())
-                {
-                    builder.TexCoords.Add(new Vector3(0, 0, 0));
-                    builder.TexCoords.Add(new Vector3(0.5f, 1, 0));
-                    builder.TexCoords.Add(new Vector3(1, 0, 0));
-                }
-                else
-                {
-                    builder.TexCoords.Add(new Vector3(1, 1, 0));
-                    builder.TexCoords.Add(new Vector3(0.5f, 0, 0));
-                    builder.TexCoords.Add(new Vector3(0, 1, 0));
-                }
-                uint count = (uint)builder.Normals.Count;
-                builder.Indices.Add(count - 3);
-                builder.Indices.Add(count - 2);
-                builder.Indices.Add(count - 1);
-            }
-            Renderable rend = builder.Generate();
-            Prop = new BasicMeshRenderableProperty()
-            {
-                DiffuseTexture = game.Client.Textures.White,
-                Rend = rend
-            };
-            game.UnitController.Entity.AddProperty(Prop);
+            GenerateRenderable(faces); ;
+            Select();
         }
 
         /// <summary>

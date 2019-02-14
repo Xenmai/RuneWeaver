@@ -121,11 +121,11 @@ namespace RuneWeaver.TriangularGrid
         /// </summary>
         public static readonly GridVertex[] Directions = new GridVertex[6] {
             new GridVertex(2, 0),
-            new GridVertex(1, -1),
-            new GridVertex(-1, -1),
-            new GridVertex(-2, 0),
+            new GridVertex(1, 1),
             new GridVertex(-1, 1),
-            new GridVertex(1, 1)
+            new GridVertex(-2, 0),
+            new GridVertex(-1, -1),
+            new GridVertex(1, -1)
         };
 
         /// <summary>

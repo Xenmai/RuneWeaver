@@ -118,12 +118,10 @@ namespace RuneWeaver.GameProperties.GameControllers
                 switch (e.Key)
                 {
                     case Key.Number1:
-                        SelectAction(1);
-                        SelectedAction.Prepare();
+                        SelectAction(1).Prepare();
                         break;
                     case Key.Number2:
-                        SelectAction(2);
-                        SelectedAction.Prepare();
+                        SelectAction(2).Prepare();
                         break;
                 }
             }
@@ -134,14 +132,14 @@ namespace RuneWeaver.GameProperties.GameControllers
         /// </summary>
         /// <param name="num"></param>
         /// <returns></returns>
-        public void SelectAction(int num)
+        public BasicUnitAction SelectAction(int num)
         {
             List<BasicUnitAction>.Enumerator e = SelectedUnit.Actions.GetEnumerator();
             for (int i = 0; i < num; i++)
             {
                 e.MoveNext();
             }
-            SelectedAction = e.Current;
+            return e.Current;
         }
 
         /// <summary>

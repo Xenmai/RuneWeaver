@@ -1,5 +1,4 @@
-﻿using FreneticGameCore.MathHelpers;
-using FreneticGameGraphics.ClientSystem.EntitySystem;
+﻿using FreneticGameCore.CoreSystems;
 using FreneticGameGraphics.GraphicsHelpers;
 using OpenTK;
 using RuneWeaver.GameProperties.GameControllers;
@@ -9,7 +8,6 @@ using RuneWeaver.MainGame;
 using RuneWeaver.TriangularGrid;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace RuneWeaver.GameProperties.GameEntities.UnitActions
 {
@@ -42,75 +40,57 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
         }
 
         /// <summary>
-        /// The renderable property.
+        /// The attack direction.
         /// </summary>
-        public BasicMeshRenderableProperty Prop;
+        public GridVertex Direction = GridVertex.Directions[0];
 
         /// <summary>
         /// Prepares and renders the action's affected zone. This usually happens when the action is selected.
         /// </summary>
         public override void Prepare()
         {
+            if(!CheckEnergy())
+            {
+                return;
+            }
+            Generate();
             Game game = Unit.Engine3D.Source as Game;
-            AffectedVertices = Hitbox.Area(Unit.Coords, GridVertex.Directions[3]);
+            Select();
+        }
+
+        /// <summary>
+        /// Generates the afftected vertices set and the action renderable.
+        /// </summary>
+        public void Generate()
+        {
+            Game game = Unit.Engine3D.Source as Game;
+            AffectedVertices = Hitbox.Area(Unit.Coords, Direction);
             HashSet<GridFace> faces = new HashSet<GridFace>();
             foreach (GridVertex vert in AffectedVertices)
             {
                 faces.UnionWith(vert.Touches());
             }
             faces.ExceptWith(game.UnitController.OccupiedFaces(Unit.Size, Unit.Coords));
-            Renderable.ListBuilder builder = new Renderable.ListBuilder();
-            int n = faces.Count * 3;
-            builder.Prepare(n);
-            foreach (GridFace face in faces)
-            {
-                List<Vector3> vertices = new List<Vector3>();
-                foreach (GridVertex vert in face.Corners())
-                {
-                    vertices.Add(vert.ToCartesianCoords3D(game.Terrain.HeightMap) + new Vector3(0, 0, 0.1f));
-                    builder.AddEmptyBoneInfo();
-                }
-                builder.Vertices.AddRange(vertices);
-                Vector3[] vArray = vertices.ToArray();
-                Vector3 normal = Vector3.Cross(vArray[2] - vArray[0], vArray[1] - vArray[0]);
-                normal.Normalize();
-                builder.Normals.Add(normal);
-                builder.Normals.Add(normal);
-                builder.Normals.Add(normal);
-                builder.Colors.Add(new Vector4(1, 0, 0, 0.4f));
-                builder.Colors.Add(new Vector4(1, 0, 0, 0.4f));
-                builder.Colors.Add(new Vector4(1, 0, 0, 0.4f));
-                if (face.PointsUp())
-                {
-                    builder.TexCoords.Add(new Vector3(0, 0, 0));
-                    builder.TexCoords.Add(new Vector3(0.5f, 1, 0));
-                    builder.TexCoords.Add(new Vector3(1, 0, 0));
-                }
-                else
-                {
-                    builder.TexCoords.Add(new Vector3(1, 1, 0));
-                    builder.TexCoords.Add(new Vector3(0.5f, 0, 0));
-                    builder.TexCoords.Add(new Vector3(0, 1, 0));
-                }
-                uint count = (uint)builder.Normals.Count;
-                builder.Indices.Add(count - 3);
-                builder.Indices.Add(count - 2);
-                builder.Indices.Add(count - 1);
-            }
-            Renderable rend = builder.Generate();
-            Prop = new BasicMeshRenderableProperty()
-            {
-                DiffuseTexture = game.Client.Textures.White,
-                Rend = rend
-            };
-            game.UnitController.Entity.AddProperty(Prop);
+            GenerateRenderable(faces);
         }
 
+        /// <summary>
+        /// Updates the action's affected zone. This usually happens when the action is selected and the cursor is moved.
+        /// </summary>
         public override void Update()
         {
-            
+            Game game = Unit.Engine3D.Source as Game;
+            Vector2 distance = game.CursorController.Target.ToCartesianCoords2D() - Unit.Coords.ToCartesianCoords2D();
+            float degrees = (float)(Math.Atan2(distance.Y, distance.X) * 180 / Math.PI);
+            int Angle = (int)(((degrees + 390) % 360) / 60);
+            Direction = GridVertex.Directions[Angle];
+            game.UnitController.Entity.RemoveProperty<BasicMeshRenderableProperty>();
+            Generate();
         }
 
+        /// <summary>
+        /// Cancels and deselects the action, without doing anything else.
+        /// </summary>
         public override void Cancel()
         {
             Game game = Unit.Engine3D.Source as Game;
@@ -118,9 +98,29 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
             game.UnitController.SelectedAction = null;
         }
 
+        /// <summary>
+        /// Executes and then deselects the action. This usually happens when right clicking after an action has been selected.
+        /// </summary>
         public override void Execute()
         {
-            
+            Game game = Unit.Engine3D.Source as Game;
+            HashSet<BasicUnitProperty> targets = new HashSet<BasicUnitProperty>();
+            foreach (GridVertex vert in Hitbox.Area(Unit.Coords, Direction))
+            {
+                foreach (GridFace face in vert.Touches())
+                {
+                    if (game.UnitFaces[face.U, face.V] != null)
+                    {
+                        targets.UnionWith(new BasicUnitProperty[] { game.UnitFaces[face.U, face.V] });
+                    }
+                }
+            }
+            foreach (BasicUnitProperty t in targets)
+            {
+                t.Hurt(Damage);
+            }
+            game.UnitController.Entity.RemoveProperty<BasicMeshRenderableProperty>();
+            game.UnitController.SelectedAction = null;
         }
     }
 }

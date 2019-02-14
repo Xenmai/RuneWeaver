@@ -67,13 +67,10 @@ namespace RuneWeaver.GameControllers
                 Vector2 pos = Target.ToCartesianCoords2D();
                 Entity.SetPosition(new Location(pos.X, pos.Y, game.Terrain.HeightMap[Target.U, Target.V] + 0.5));
                 BasicUnitAction action = game.UnitController.SelectedAction;
-                if (action != null && action.AffectedVertices.Contains(Target))
+                if (action != null)
                 {
-                    Rend.Color = Color4F.Red;
-                }
-                else
-                {
-                    Rend.Color = Color4F.Blue;
+                    action.Update();
+                    Rend.Color = action.AffectedVertices.Contains(Target) ? Color4F.Red : Color4F.Blue;
                 }
             }
             else
