@@ -125,6 +125,7 @@ namespace RuneWeaver.GameProperties.GameEntities
             {
                 game.UnitFaces[face.U, face.V] = this;
             }
+            Entity.OnTick += Tick;
         }
 
         /// <summary>
@@ -169,14 +170,44 @@ namespace RuneWeaver.GameProperties.GameEntities
             {
                 game.UnitFaces[face.U, face.V] = null;
             }
+            Entity.OnTick -= Tick;
         }
+
+        /// <summary>
+        /// The movement steps the selected unit will perform.
+        /// </summary>
+        public List<GridVertex>.Enumerator MoveSteps;
+
+        /// <summary>
+        /// Wether the selected unit is moving.
+        /// </summary>
+        public bool IsMoving;
 
         /// <summary>
         /// Fired every tick while the entity is spawned.
         /// </summary>
         public void Tick()
         {
-            
+            Game game = Engine3D.Source as Game;
+            if (IsMoving)
+            {
+                Vector3 v = MoveSteps.Current.ToCartesianCoords3D(game.Terrain.HeightMap);
+                Location target = new Location(v.X, v.Y, v.Z + Size);
+                double move = Engine.Delta * 2;
+                if (Entity.LastKnownPosition.DistanceSquared(target) <= move * move)
+                {
+                    Entity.SetPosition(target);
+                    Coords = MoveSteps.Current;
+                    if (!MoveSteps.MoveNext())
+                    {
+                        IsMoving = false;
+                    }
+                }
+                else
+                {
+                    Entity.MoveRelative((target - Entity.LastKnownPosition).Normalize() * move);
+                }
+            }
         }
     }
 }

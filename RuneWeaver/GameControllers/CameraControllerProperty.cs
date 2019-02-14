@@ -17,6 +17,8 @@ namespace RuneWeaver.GameProperties.GameControllers
         /// </summary>
         public override void OnSpawn()
         {
+            Engine3D.MainCamera.Position = new Location(0, 0, 20);
+            Engine3D.MainCamera.Direction = MathUtilities.ForwardVector_Deg(Yaw, Pitch);
             Engine.Window.KeyDown += Window_KeyDown;
             Engine.Window.KeyUp += Window_KeyUp;
             Entity.OnTick += Tick;
@@ -85,7 +87,7 @@ namespace RuneWeaver.GameProperties.GameControllers
         /// <summary>
         /// This camera's pitch angle.
         /// </summary>
-        public double Pitch = -45;
+        public double Pitch = -60;
 
         /// <summary>
         /// Ticks the entity.

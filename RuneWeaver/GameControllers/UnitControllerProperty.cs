@@ -36,16 +36,6 @@ namespace RuneWeaver.GameProperties.GameControllers
         public int Angle;
 
         /// <summary>
-        /// The movement steps the selected unit will perform.
-        /// </summary>
-        public List<GridVertex>.Enumerator MoveSteps;
-
-        /// <summary>
-        /// Wether the selected unit is moving.
-        /// </summary>
-        public bool IsMoving;
-
-        /// <summary>
         /// Fired when entity is spawned.
         /// </summary>
         public override void OnSpawn()
@@ -139,11 +129,11 @@ namespace RuneWeaver.GameProperties.GameControllers
                 switch (e.Key)
                 {
                     case Key.Number1:
-                        SelectedAction = SelectAction(1);
+                        SelectAction(1);
                         SelectedAction.Prepare();
                         break;
                     case Key.Number2:
-                        SelectedAction = SelectAction(2);
+                        SelectAction(2);
                         SelectedAction.Prepare();
                         break;
                 }
@@ -155,14 +145,14 @@ namespace RuneWeaver.GameProperties.GameControllers
         /// </summary>
         /// <param name="num"></param>
         /// <returns></returns>
-        public BasicUnitAction SelectAction(int num)
+        public void SelectAction(int num)
         {
             List<BasicUnitAction>.Enumerator e = SelectedUnit.Actions.GetEnumerator();
             for (int i = 0; i < num; i++)
             {
                 e.MoveNext();
             }
-            return e.Current;
+            SelectedAction = e.Current;
         }
 
         /// <summary>
@@ -206,30 +196,6 @@ namespace RuneWeaver.GameProperties.GameControllers
         /// </summary>
         public void Tick()
         {
-            if (SelectedUnit != null)
-            {
-                Game game = Engine3D.Source as Game;
-                if (IsMoving)
-                {
-                    ClientEntity ent = SelectedUnit.Entity;
-                    Vector3 v = MoveSteps.Current.ToCartesianCoords3D(game.Terrain.HeightMap);
-                    Location target = new Location(v.X, v.Y, v.Z + SelectedUnit.Size);
-                    double move = Engine.Delta * 2;
-                    if (ent.LastKnownPosition.DistanceSquared(target) <= move * move)
-                    {
-                        ent.SetPosition(target);
-                        SelectedUnit.Coords = MoveSteps.Current;
-                        if (!MoveSteps.MoveNext())
-                        {
-                            IsMoving = false;
-                        }
-                    }
-                    else
-                    {
-                        ent.MoveRelative((target - ent.LastKnownPosition).Normalize() * move);
-                    }
-                }
-            }
             //Vector2 distance = Engine2D.MouseCoords - SelectedUnit.Entity.LastKnownPosition.toVector2() / scaling;
             //float degrees = (float)(Math.Atan2(distance.Y, distance.X) * 180 / Math.PI);
             //Angle = (int)(((degrees + 390) % 360) / 60);

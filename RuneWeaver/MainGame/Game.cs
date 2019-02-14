@@ -1,4 +1,5 @@
 ﻿using FreneticGameCore.CoreSystems;
+using FreneticGameCore.EntitySystem.PhysicsHelpers;
 using FreneticGameCore.MathHelpers;
 using FreneticGameCore.UtilitySystems;
 using FreneticGameGraphics.ClientSystem;
@@ -82,20 +83,18 @@ namespace RuneWeaver.MainGame
             // UI Screens
             // MainUIScreen = new GameScreen(Client.MainUI);
             // Client.MainUI.CurrentScreen = MainUIScreen;
-            // Camera Controller
-            Client.Engine3D.MainCamera.Position = new Location(0, 0, 10);
-            Client.Engine3D.MainCamera.Direction = MathUtilities.ForwardVector_Deg(0, -45);
-            CameraController = new CameraControllerProperty();
-            Client.Engine3D.SpawnEntity(CameraController);
-            // Unit Controller
-            UnitController = new UnitControllerProperty();
-            Client.Engine3D.SpawnEntity(UnitController);
             // Terrain
             Terrain = new TerrainGridProperty()
             {
                 Size = 100,
                 DiffuseTexture = Client.Textures.White
             };
+            // Camera Controller
+            CameraController = new CameraControllerProperty();
+            Client.Engine3D.SpawnEntity(CameraController);
+            // Unit Controller
+            UnitController = new UnitControllerProperty();
+            Client.Engine3D.SpawnEntity(UnitController);
             Client.Engine3D.SpawnEntity(Terrain).SetPosition(new Location(0, 0, 0));
             UnitFaces = new BasicUnitProperty[Terrain.Size, Terrain.Size];
             // Units

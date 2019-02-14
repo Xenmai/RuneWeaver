@@ -30,14 +30,28 @@ namespace RuneWeaver.TriangularGrid
         /// </summary>
         public int V;
 
+        public static GridVertex FromXY(double x, double y)
+        {
+            int newY = (int)Math.Round(y / 0.866);
+            int newX;
+            if (newY % 2 == 1)
+            {
+                newX = (int)Math.Round(x + 0.5) * 2 - 1;
+            }
+            else
+            {
+                newX = (int)Math.Round(x) * 2;
+            }
+            return new GridVertex(newX, newY);
+        }
+
         /// <summary>
         /// Converts this vertex' position from triangular to 3D cartesian coords.
         /// </summary>
         /// <returns>The vertex position in cartesian coordinates.</returns>
-        public Vector3 ToCartesianCoords3D(float[,] map)
+        public Vector3 ToCartesianCoords3D(double[,] map)
         {
-            float h = map[U, V];
-            return new Vector3(U * 0.5f, V * 0.866f, h);
+            return new Vector3(U * 0.5f, V * 0.866f, (float)map[U, V]);
         }
 
         /// <summary>
