@@ -39,5 +39,10 @@ namespace RuneWeaver.TriangularGrid
         /// The rock grid material -> gray.
         /// </summary>
         public static readonly GridMaterial Rock = new GridMaterial("Rock", new Color4F(0.6f, 0.6f, 0.6f));
+
+        /// <summary>
+        /// The water grid material -> blue.
+        /// </summary>
+        public static readonly GridMaterial Water = new GridMaterial("Water", new Color4F(0.0f, 0.2f, 0.8f));
     }
 }

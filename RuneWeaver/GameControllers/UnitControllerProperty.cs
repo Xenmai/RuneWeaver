@@ -55,24 +55,26 @@ namespace RuneWeaver.GameProperties.GameControllers
         /// <param name="e">Event data.</param>
         private void Window_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            if (e.Button == MouseButton.Left)
+            switch (e.Button)
             {
-                if (SelectedUnit != null)
-                {
-                    SelectedUnit.Renderable.Color = Color4F.Blue;
-                    SelectedUnit = null;
-                    if (SelectedAction != null)
+                case MouseButton.Left:
+                    if (SelectedUnit != null)
                     {
-                        SelectedAction.Cancel();
+                        SelectedUnit.Renderable.Color = Color4F.Blue;
+                        SelectedUnit = null;
+                        if (SelectedAction != null)
+                        {
+                            SelectedAction.Cancel();
+                        }
                     }
-                }
-            }
-            else if (e.Button == MouseButton.Right)
-            {
-                if (SelectedUnit != null && SelectedAction != null)
-                {
-                    SelectedAction.Execute();
-                }
+                    break;
+
+                case MouseButton.Right:
+                    if (SelectedUnit != null && SelectedAction != null)
+                    {
+                        SelectedAction.Execute();
+                    }
+                    break;
             }
         }
 
@@ -83,26 +85,27 @@ namespace RuneWeaver.GameProperties.GameControllers
         /// <param name="e">Event data.</param>
         private void Window_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            if (e.Button == MouseButton.Left)
+            switch (e.Button)
             {
-                Matrix4 m = Engine3D.MainView.PrimaryMatrix.Inverted();
-                m.Transpose();
-                float x = 2.0f * Engine3D.Client.MouseX / Engine3D.Window.Width - 1.0f;
-                float y = 1.0f - 2.0f * Engine3D.Client.MouseY / Engine3D.Window.Height;
-                Vector4 vIn = new Vector4(x, y, 1, 1);
-                Vector4 vOut = Vector4.Transform(m, vIn);
-                float mul = 1.0f / vOut.W;
-                Location dir = new Location(vOut.X * mul, vOut.Y * mul, vOut.Z * mul);
-                ClientEntity ent = Engine3D.PhysicsWorld.RayTraceSingle(Engine3D.MainCamera.Position, dir, 100);
-                if (ent != null)
-                {
-                    SelectedUnit = ent.GetFirstSubType<BasicUnitProperty>();
-                    SelectedUnit.Renderable.Color = Color4F.Red;
-                }
-            }
-            else if (e.Button == MouseButton.Right)
-            {
+                case MouseButton.Left:
+                    Matrix4 m = Engine3D.MainView.PrimaryMatrix.Inverted();
+                    m.Transpose();
+                    float x = 2.0f * Engine3D.Client.MouseX / Engine3D.Window.Width - 1.0f;
+                    float y = 1.0f - 2.0f * Engine3D.Client.MouseY / Engine3D.Window.Height;
+                    Vector4 vIn = new Vector4(x, y, 1, 1);
+                    Vector4 vOut = Vector4.Transform(m, vIn);
+                    float mul = 1.0f / vOut.W;
+                    Location dir = new Location(vOut.X * mul, vOut.Y * mul, vOut.Z * mul);
+                    ClientEntity ent = Engine3D.PhysicsWorld.RayTraceSingle(Engine3D.MainCamera.Position, dir, 100);
+                    if (ent != null)
+                    {
+                        SelectedUnit = ent.GetFirstSubType<BasicUnitProperty>();
+                        SelectedUnit.Renderable.Color = Color4F.Red;
+                    }
+                    break;
 
+                case MouseButton.Right:
+                    break;
             }
         }
 
@@ -113,18 +116,17 @@ namespace RuneWeaver.GameProperties.GameControllers
         /// <param name="e">Event data.</param>
         private void Window_KeyDown(object sender, KeyboardKeyEventArgs e)
         {
-            if (SelectedUnit != null && SelectedAction == null && ! SelectedUnit.IsMoving)
+            switch (e.Key)
             {
-                switch (e.Key)
-                {
-                    case Key.Number1:
-                        SelectAction(1).Prepare();
-                        break;
-                    case Key.Number2:
-                        SelectAction(2).Prepare();
-                        break;
-                }
+                case Key.Number1:
+                    SelectAction(1);
+                    break;
+
+                case Key.Number2:
+                    SelectAction(2);
+                    break;
             }
+
         }
 
         /// <summary>
@@ -132,14 +134,18 @@ namespace RuneWeaver.GameProperties.GameControllers
         /// </summary>
         /// <param name="num"></param>
         /// <returns></returns>
-        public BasicUnitAction SelectAction(int num)
+        public void SelectAction(int num)
         {
-            List<BasicUnitAction>.Enumerator e = SelectedUnit.Actions.GetEnumerator();
-            for (int i = 0; i < num; i++)
+            if (SelectedUnit != null && !SelectedUnit.IsMoving)
             {
-                e.MoveNext();
+                SelectedAction?.Cancel();
+                List<BasicUnitAction>.Enumerator e = SelectedUnit.Actions.GetEnumerator();
+                for (int i = 0; i < num; i++)
+                {
+                    e.MoveNext();
+                }
+                e.Current?.Prepare();
             }
-            return e.Current;
         }
 
         /// <summary>
@@ -152,6 +158,7 @@ namespace RuneWeaver.GameProperties.GameControllers
             {
                 case 1:
                     return pos.Touches();
+
                 case 2:
                     HashSet<GridFace> faces = new HashSet<GridFace>();
                     foreach (GridVertex vert in pos.Adjacent())
@@ -159,6 +166,7 @@ namespace RuneWeaver.GameProperties.GameControllers
                         faces.UnionWith(vert.Touches());
                     }
                     return faces;
+
                 default:
                     return null;
             }

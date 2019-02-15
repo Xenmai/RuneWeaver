@@ -1,7 +1,4 @@
-﻿using FreneticGameCore.CoreSystems;
-using FreneticGameGraphics.GraphicsHelpers;
-using OpenTK;
-using RuneWeaver.GameRenderables;
+﻿using RuneWeaver.GameRenderables;
 using RuneWeaver.MainGame;
 using RuneWeaver.TriangularGrid;
 using System;
@@ -132,6 +129,7 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
         /// </summary>
         public override void Execute()
         {
+            Unit.Energy -= Cost;
             Game game = Unit.Engine3D.Source as Game;
             GridVertex target = game.CursorController.Target;
             if (AffectedVertices.Contains(target))

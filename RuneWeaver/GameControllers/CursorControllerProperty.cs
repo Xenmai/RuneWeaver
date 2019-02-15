@@ -63,7 +63,6 @@ namespace RuneWeaver.GameControllers
             {
                 BEPUutilities.Vector3 loc = hit.Location;
                 Target = GridVertex.FromXY(loc.X, loc.Y);
-                Rend.IsVisible = true;
                 Vector2 pos = Target.ToCartesianCoords2D();
                 Entity.SetPosition(new Location(pos.X, pos.Y, game.Terrain.HeightMap[Target.U, Target.V] + 0.5));
                 BasicUnitAction action = game.UnitController.SelectedAction;
@@ -72,6 +71,7 @@ namespace RuneWeaver.GameControllers
                     action.Update();
                     Rend.Color = action.AffectedVertices.Contains(Target) ? Color4F.Red : Color4F.Blue;
                 }
+                Rend.IsVisible = true;
             }
             else
             {

@@ -1,7 +1,4 @@
-﻿using FreneticGameCore.CoreSystems;
-using FreneticGameGraphics.GraphicsHelpers;
-using OpenTK;
-using RuneWeaver.GameProperties.GameControllers;
+﻿using OpenTK;
 using RuneWeaver.GameProperties.GameEntities.UnitActions.Hitboxes;
 using RuneWeaver.GameRenderables;
 using RuneWeaver.MainGame;
@@ -24,7 +21,7 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
         /// <summary>
         /// The hitbox of this attack action.
         /// </summary>
-        public LineHitbox Hitbox;
+        public BasicHitbox Hitbox;
 
         /// <summary>
         /// Constructs a new attack unit action.
@@ -33,7 +30,7 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
         /// <param name="cost">The energy cost of this action.</param>
         /// <param name="damage">The damage amount of this action.</param>
         /// <param name="hitbox">The damage hitbox of this action.</param>
-        public AttackUnitAction(BasicUnitProperty unit, int cost, int damage, LineHitbox hitbox) : base(unit, cost)
+        public AttackUnitAction(BasicUnitProperty unit, int cost, int damage, BasicHitbox hitbox) : base(unit, cost)
         {
             this.Damage = damage;
             this.Hitbox = hitbox;
@@ -54,7 +51,6 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
                 return;
             }
             Generate();
-            Game game = Unit.Engine3D.Source as Game;
             Select();
         }
 
@@ -103,9 +99,10 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
         /// </summary>
         public override void Execute()
         {
+            Unit.Energy -= Cost;
             Game game = Unit.Engine3D.Source as Game;
             HashSet<BasicUnitProperty> targets = new HashSet<BasicUnitProperty>();
-            foreach (GridVertex vert in Hitbox.Area(Unit.Coords, Direction))
+            foreach (GridVertex vert in AffectedVertices)
             {
                 foreach (GridFace face in vert.Touches())
                 {

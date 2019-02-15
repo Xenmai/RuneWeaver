@@ -1,6 +1,5 @@
 ﻿using FreneticGameGraphics.GraphicsHelpers;
 using OpenTK;
-using RuneWeaver.GameProperties.GameControllers;
 using RuneWeaver.GameRenderables;
 using RuneWeaver.MainGame;
 using RuneWeaver.TriangularGrid;
@@ -60,12 +59,7 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
         /// <param name="amount">The new energy amount.</param>
         public bool CheckEnergy()
         {
-            if (Unit.Energy < Cost)
-            {
-                return false;
-            }
-            Unit.Energy -= Cost;
-            return true;
+            return Unit.Energy < Cost ? false : true;
         }
 
         public void GenerateRenderable(HashSet<GridFace> faces)

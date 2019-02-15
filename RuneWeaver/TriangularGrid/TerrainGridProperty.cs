@@ -29,7 +29,7 @@ namespace RuneWeaver.TriangularGrid
         /// <summary>
         /// The amount of grid layers that will be applied.
         /// </summary>
-        public int Layers = 5;
+        public int Layers = 10;
 
         // <summary>
         /// The X and Y seeds used for applying grid layers.
@@ -59,12 +59,14 @@ namespace RuneWeaver.TriangularGrid
             {
                 Seeds[i] = new Vector2((float)game.Random.NextDouble(), (float)game.Random.NextDouble());
             }
-            HeightMap = new double[s2 + 2, Size + 1];
-            ApplyClampedHeightMap(5, 0.025f, 0.75f, Seeds[0]);
-            ApplyHeightMap(0.5f, 0.25f, Seeds[1]);
+            GenerateHeightMap(2.0f);
+            ApplyClampedHeightMap(10.0f, 0.025f, 0.0f, 0.6f, Seeds[0]);
+            ApplyHeightMap(0.5f, 0.25f, 0.5f, Seeds[1]);
+            ApplyHighHeightMap(2.0f, 0.15f, 0.5f, 7.0f, Seeds[2]);
             GenerateMaterialLayer(GridMaterial.Grass);
-            ApplyMaterialLayer(GridMaterial.Dirt, 0.1f, Seeds[2], 0.3f);
-            ApplyHighMaterialLayer(GridMaterial.Rock, 0.05f, Seeds[3], 0.05f);
+            ApplyHighMaterialLayer(GridMaterial.Dirt, 0.05f, Seeds[3], 7.0f, 3.0f);
+            ApplyHighMaterialLayer(GridMaterial.Rock, 0.025f, Seeds[4], 9.0f, 1.0f);
+            ApplyLowMaterialLayer(GridMaterial.Water, 0.1f, Seeds[5], 3.0f, 0.5f);
             // Generate the terrain grid mesh: Vertices, Normals and Indices
             Renderable.ListBuilder builder = new Renderable.ListBuilder();
             int n = s2 * Size * 3;
@@ -123,13 +125,14 @@ namespace RuneWeaver.TriangularGrid
         /// <summary>
         /// Applies a random height distribution to the terrain grid.
         /// </summary>
-        public void ApplyHeightMap(double h, float scale, Vector2 seed)
+        public void GenerateHeightMap(double h)
         {
+            HeightMap = new double[Size * 2 + 2, Size + 1];
             for (int j = 0; j <= Size; j++)
             {
                 int x = j % 2;
                 Vector2 pos = new GridVertex(x, j).ToCartesianCoords2D();
-                HeightMap[x, j] += SimplexNoise.Generate(seed.X + pos.X * scale, seed.Y + pos.Y * scale) * h;
+                HeightMap[x, j] = h;
             }
             for (int i = 1; i <= Size; i++)
             {
@@ -137,7 +140,30 @@ namespace RuneWeaver.TriangularGrid
                 {
                     int x = i * 2 + (j % 2);
                     Vector2 pos = new GridVertex(x, j).ToCartesianCoords2D();
-                    HeightMap[x, j] += SimplexNoise.Generate(seed.X + pos.X * scale, seed.Y + pos.Y * scale) * h;
+                    HeightMap[x, j] += h;
+                    HeightMap[x - 1, j] = h;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Applies a random height distribution to the terrain grid.
+        /// </summary>
+        public void ApplyHeightMap(double h, float scale, float offset, Vector2 seed)
+        {
+            for (int j = 0; j <= Size; j++)
+            {
+                int x = j % 2;
+                Vector2 pos = new GridVertex(x, j).ToCartesianCoords2D();
+                HeightMap[x, j] += (SimplexNoise.Generate(seed.X + pos.X * scale, seed.Y + pos.Y * scale) - offset) * h;
+            }
+            for (int i = 1; i <= Size; i++)
+            {
+                for (int j = 0; j <= Size; j++)
+                {
+                    int x = i * 2 + (j % 2);
+                    Vector2 pos = new GridVertex(x, j).ToCartesianCoords2D();
+                    HeightMap[x, j] += (SimplexNoise.Generate(seed.X + pos.X * scale, seed.Y + pos.Y * scale) - offset) * h;
                     HeightMap[x - 1, j] = (HeightMap[x, j] + HeightMap[x - 2, j]) / 2;
                 }
             }
@@ -146,13 +172,13 @@ namespace RuneWeaver.TriangularGrid
         /// <summary>
         /// Applies a random height distribution to the terrain grid.
         /// </summary>
-        public void ApplyClampedHeightMap(float h, float scale, float clamp, Vector2 seed)
+        public void ApplyClampedHeightMap(float h, float scale, float offset, float clamp, Vector2 seed)
         {
             for (int j = 0; j <= Size; j++)
             {
                 int x = j % 2;
                 Vector2 pos = new GridVertex(x, j).ToCartesianCoords2D();
-                HeightMap[x, j] += Math.Min(SimplexNoise.Generate(seed.X + pos.X * scale, seed.Y + pos.Y * scale), clamp) * h;
+                HeightMap[x, j] += (Math.Min(SimplexNoise.Generate(seed.X + pos.X * scale, seed.Y + pos.Y * scale), clamp) - offset) * h;
             }
             for (int i = 1; i <= Size; i++)
             {
@@ -160,8 +186,39 @@ namespace RuneWeaver.TriangularGrid
                 {
                     int x = i * 2 + (j % 2);
                     Vector2 pos = new GridVertex(x, j).ToCartesianCoords2D();
-                    HeightMap[x, j] += Math.Min(SimplexNoise.Generate(seed.X + pos.X * scale, seed.Y + pos.Y * scale), clamp) * h;
+                    HeightMap[x, j] += (Math.Min(SimplexNoise.Generate(seed.X + pos.X * scale, seed.Y + pos.Y * scale), clamp) - offset) * h;
                     HeightMap[x - 1, j] = (HeightMap[x, j] + HeightMap[x - 2, j]) / 2;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Applies a random height distribution to the terrain grid.
+        /// </summary>
+        public void ApplyHighHeightMap(float h, float scale, float offset, float limit, Vector2 seed)
+        {
+            for (int j = 0; j <= Size; j++)
+            {
+                int x = j % 2;
+                GridVertex vert = new GridVertex(x, j);
+                if (HeightMap[vert.U, vert.V] > limit)
+                {
+                    Vector2 pos = vert.ToCartesianCoords2D();
+                    HeightMap[x, j] += (SimplexNoise.Generate(seed.X + pos.X * scale, seed.Y + pos.Y * scale) - offset) * h;
+                }
+            }
+            for (int i = 1; i <= Size; i++)
+            {
+                for (int j = 0; j <= Size; j++)
+                {
+                    int x = i * 2 + (j % 2);
+                    GridVertex vert = new GridVertex(x, j);
+                    if (HeightMap[vert.U, vert.V] > limit)
+                    {
+                        Vector2 pos = vert.ToCartesianCoords2D();
+                        HeightMap[x, j] += (SimplexNoise.Generate(seed.X + pos.X * scale, seed.Y + pos.Y * scale) - offset) * h;
+                        HeightMap[x - 1, j] = (HeightMap[x, j] + HeightMap[x - 2, j]) / 2;
+                    }
                 }
             }
         }
@@ -194,14 +251,7 @@ namespace RuneWeaver.TriangularGrid
                 {
                     GridFace face = new GridFace(i, j);
                     Vector2 pos = face.ToCartesianCoords2D();
-                    if (face.PointsUp())
-                    {
-                        pos += new Vector2(0f, 0.333f);
-                    }
-                    else
-                    {
-                        pos += new Vector2(0f, 0.667f);
-                    }
+                    // pos += face.PointsUp() ? new Vector2(0f, 0.333f * 0.866f) : pos += new Vector2(0f, 0.667f * 0.866f);
                     if (SimplexNoise.Generate(seed.X + pos.X * scale, seed.Y + pos.Y * scale) < chance)
                     {
                         Materials[i, j] = mat;
@@ -211,9 +261,9 @@ namespace RuneWeaver.TriangularGrid
         }
 
         /// <summary>
-        /// Applies a weighted material distribution to the terrain grid, based on height.
+        /// Applies a material distribution to the terrain grid, based on height.
         /// </summary>
-        public void ApplyHighMaterialLayer(GridMaterial mat, float scale, Vector2 seed, float chance)
+        public void ApplyHighMaterialLayer(GridMaterial mat, float scale, Vector2 seed, float clamp, float mul)
         {
             int s2 = Size * 2;
             for (int i = 1; i < s2; i++)
@@ -228,15 +278,35 @@ namespace RuneWeaver.TriangularGrid
                     }
                     h *= 0.333f;
                     Vector2 pos = face.ToCartesianCoords2D();
-                    if (face.PointsUp())
+                    // pos += face.PointsUp() ? new Vector2(0f, 0.333f * 0.866f) : pos += new Vector2(0f, 0.667f * 0.866f);
+                    if ((SimplexNoise.Generate(seed.X + pos.X * scale, seed.Y + pos.Y * scale) - 0.5) * mul + h > clamp)
                     {
-                        pos += new Vector2(0f, 0.333f);
+                        Materials[i, j] = mat;
                     }
-                    else
+                }
+            }
+        }
+
+        /// <summary>
+        /// Applies a material distribution to the terrain grid, based on height.
+        /// </summary>
+        public void ApplyLowMaterialLayer(GridMaterial mat, float scale, Vector2 seed, float clamp, float mul)
+        {
+            int s2 = Size * 2;
+            for (int i = 1; i < s2; i++)
+            {
+                for (int j = 0; j < Size; j++)
+                {
+                    GridFace face = new GridFace(i, j);
+                    double h = 0;
+                    foreach (GridVertex vert in face.Corners())
                     {
-                        pos += new Vector2(0f, 0.667f);
+                        h += HeightMap[vert.U, vert.V];
                     }
-                    if (SimplexNoise.Generate(seed.X + pos.X * scale, seed.Y + pos.Y * scale) / h < chance)
+                    h *= 0.333f;
+                    Vector2 pos = face.ToCartesianCoords2D();
+                    // pos += face.PointsUp() ? new Vector2(0f, 0.333f * 0.866f) : pos += new Vector2(0f, 0.667f * 0.866f);
+                    if ((SimplexNoise.Generate(seed.X + pos.X * scale, seed.Y + pos.Y * scale) - 0.5) * mul + h < clamp)
                     {
                         Materials[i, j] = mat;
                     }
