@@ -39,9 +39,12 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
             }
             Game game = Unit.Engine3D.Source as Game;
             AffectedVertices = new HashSet<GridVertex>();
-            foreach (GridVertex target in Unit.Coords.Adjacent())
+            foreach (GridVertex t1 in Unit.Coords.Adjacent())
             {
-                AffectedVertices.UnionWith(target.Adjacent());
+                foreach (GridVertex t2 in t1.Adjacent())
+                {
+                    AffectedVertices.UnionWith(t2.Adjacent());
+                }
             }
             AffectedVertices.ExceptWith(Unit.Coords.Adjacent());
             AffectedVertices.Remove(Unit.Coords);
@@ -82,7 +85,7 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
             GridVertex target = game.CursorController.Target;
             if (AffectedVertices.Contains(target))
             {
-                game.Terrain.AdjustVertexHeight(target, -Amount * 0.1f);
+                game.Terrain.AdjustVertexHeight(target, -Amount * 0.25f);
                 game.UnitController.Entity.RemoveProperty<BasicMeshRenderableProperty>();
                 game.UnitController.SelectedAction = null;
             }

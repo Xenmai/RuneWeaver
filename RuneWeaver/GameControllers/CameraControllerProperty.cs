@@ -1,4 +1,5 @@
-﻿using FreneticGameCore.MathHelpers;
+﻿using System;
+using FreneticGameCore.MathHelpers;
 using FreneticGameGraphics.ClientSystem.EntitySystem;
 using OpenTK;
 using OpenTK.Input;
@@ -94,7 +95,7 @@ namespace RuneWeaver.GameProperties.GameControllers
         /// </summary>
         public void Tick()
         {
-            float x = Engine3D.Client.MouseX / (float)Engine3D.Window.Width;
+            float x = Engine3D.Client.MouseX / (float)(Engine3D.Window.Width * 0.75);
             float y = Engine3D.Client.MouseY / (float)Engine3D.Window.Height;
             Location motion = Location.Zero;
             if (y < 0.075f)
@@ -109,7 +110,7 @@ namespace RuneWeaver.GameProperties.GameControllers
             {
                 motion -= new Location(Engine3D.MainCamera.Side.X, Engine3D.MainCamera.Side.Y, 0).Normalize();
             }
-            else if (x > 0.925f)
+            else if (x > 0.925f && x < 1)
             {
                 motion += new Location(Engine3D.MainCamera.Side.X, Engine3D.MainCamera.Side.Y, 0).Normalize();
             }
@@ -150,6 +151,11 @@ namespace RuneWeaver.GameProperties.GameControllers
             }
         }
 
+        /// <summary>
+        /// Rotates the controller and updates the main camera rotation.
+        /// </summary>
+        /// <param name="addYaw">The added yaw rotation.</param>
+        /// <param name="addPitch">The added pitch rotation.</param>
         public void RotateAndUpdate(double addYaw, double addPitch)
         {
             Yaw += addYaw;

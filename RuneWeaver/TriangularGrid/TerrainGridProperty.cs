@@ -47,6 +47,11 @@ namespace RuneWeaver.TriangularGrid
         public Terrain Body;
 
         /// <summary>
+        /// The terrain mesh renderable builder.
+        /// </summary>
+        public Renderable.ListBuilder Builder;
+
+        /// <summary>
         /// Fired when entity is spawned.
         /// </summary>
         public override void OnSpawn()
@@ -68,9 +73,9 @@ namespace RuneWeaver.TriangularGrid
             ApplyHighMaterialLayer(GridMaterial.Rock, 0.025f, Seeds[4], 9.0f, 1.0f);
             ApplyLowMaterialLayer(GridMaterial.Water, 0.1f, Seeds[5], 3.0f, 0.5f);
             // Generate the terrain grid mesh: Vertices, Normals and Indices
-            Renderable.ListBuilder builder = new Renderable.ListBuilder();
+            Builder = new Renderable.ListBuilder();
             int n = s2 * Size * 3;
-            builder.Prepare(n);
+            Builder.Prepare(n);
             for (int i = 1; i < s2; i++)
             {
                 for (int j = 0; j < Size; j++)
@@ -80,39 +85,39 @@ namespace RuneWeaver.TriangularGrid
                     foreach (GridVertex vert in face.Corners())
                     {
                         vertices.Add(vert.ToCartesianCoords3D(HeightMap));
-                        builder.AddEmptyBoneInfo();
+                        Builder.AddEmptyBoneInfo();
                     }
-                    builder.Vertices.AddRange(vertices);
+                    Builder.Vertices.AddRange(vertices);
                     Vector3[] vArray = vertices.ToArray();
                     Vector3 normal = Vector3.Cross(vArray[2] - vArray[0], vArray[1] - vArray[0]);
                     normal.Normalize();
-                    builder.Normals.Add(normal);
-                    builder.Normals.Add(normal);
-                    builder.Normals.Add(normal);
+                    Builder.Normals.Add(normal);
+                    Builder.Normals.Add(normal);
+                    Builder.Normals.Add(normal);
                     Vector4 c = Materials[i, j].Color.ToOpenTK();
-                    builder.Colors.Add(c);
-                    builder.Colors.Add(c);
-                    builder.Colors.Add(c);
+                    Builder.Colors.Add(c);
+                    Builder.Colors.Add(c);
+                    Builder.Colors.Add(c);
                     if (face.PointsUp())
                     {
-                        builder.TexCoords.Add(new Vector3(0, 0, 0));
-                        builder.TexCoords.Add(new Vector3(0.5f, 1, 0));
-                        builder.TexCoords.Add(new Vector3(1, 0, 0));
+                        Builder.TexCoords.Add(new Vector3(0, 0, 0));
+                        Builder.TexCoords.Add(new Vector3(0.5f, 1, 0));
+                        Builder.TexCoords.Add(new Vector3(1, 0, 0));
                     }
                     else
                     {
-                        builder.TexCoords.Add(new Vector3(1, 1, 0));
-                        builder.TexCoords.Add(new Vector3(0.5f, 0, 0));
-                        builder.TexCoords.Add(new Vector3(0, 1, 0));
+                        Builder.TexCoords.Add(new Vector3(1, 1, 0));
+                        Builder.TexCoords.Add(new Vector3(0.5f, 0, 0));
+                        Builder.TexCoords.Add(new Vector3(0, 1, 0));
                     }
                 }
             }
-            int count = builder.Vertices.Count;
+            int count = Builder.Vertices.Count;
             for (uint k = 0; k < count; k++)
             {
-                builder.Indices.Add(k);
+                Builder.Indices.Add(k);
             }
-            Rend = builder.Generate();
+            Rend = Builder.Generate();
             BEPUutilities.Vector3 scaling = new BEPUutilities.Vector3(0.5, 1, -0.866);
             BEPUutilities.Quaternion rotation = BEPUutilities.Quaternion.CreateFromAxisAngle(BEPUutilities.Vector3.UnitX, MathHelper.PiOver2);
             BEPUutilities.Vector3 translation = BEPUutilities.Vector3.Zero;
@@ -323,7 +328,16 @@ namespace RuneWeaver.TriangularGrid
         {
             HeightMap[vert.U, vert.V] += h;
             Body.Shape.Heights[vert.U, vert.V] += h;
-            // Update Renderable Mesh
+            int index = ((vert.U - 1) * Size + vert.V) * 3;
+            int s3 = Size * 3;
+            Vector3 point = vert.ToCartesianCoords3D(HeightMap);
+            Builder.Vertices[index - s3 - 1] = point;
+            Builder.Vertices[index - 3] = point;
+            Builder.Vertices[index + s3 - 2] = point;
+            Builder.Vertices[index - s3 + 1] = point;
+            Builder.Vertices[index] = point;
+            Builder.Vertices[index + s3 + 2] = point;
+            Rend.GenerateVBO(Builder);
         }
     }
 }

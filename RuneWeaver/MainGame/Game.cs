@@ -86,8 +86,8 @@ namespace RuneWeaver.MainGame
             // Events
             Client.Window.KeyDown += Window_KeyDown;
             // UI Screens
-            // MainUIScreen = new GameScreen(Client.MainUI);
-            // Client.MainUI.CurrentScreen = MainUIScreen;
+            MainUIScreen = new GameScreen(Client.MainUI);
+            Client.MainUI.CurrentScreen = MainUIScreen;
             // Terrain
             Terrain = new TerrainGridProperty()
             {

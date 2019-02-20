@@ -1,10 +1,7 @@
 ﻿using FreneticGameGraphics.ClientSystem;
 using FreneticGameGraphics.UISystem;
-using FreneticGameGraphics.ClientSystem.EntitySystem;
 using RuneWeaver.GameProperties.GameEntities;
 using RuneWeaver.MainGame;
-using System.Linq;
-using FreneticGameCore.CoreSystems;
 
 namespace RuneWeaver.GameScreens
 {
@@ -13,6 +10,11 @@ namespace RuneWeaver.GameScreens
     /// </summary>
     public class GameScreen : UIScreen
     {
+        /// <summary>
+        /// The main GUI container box.
+        /// </summary>
+        public UIColoredBox Box;
+
         /// <summary>
         /// The "Reset Turn" button.
         /// </summary>
@@ -35,14 +37,18 @@ namespace RuneWeaver.GameScreens
         public GameScreen(ViewUI2D view) : base(view)
         {
             Game game = Engine.Source as Game;
-            int height = game.Client.WindowHeight;
-            int width = game.Client.WindowWidth - height;
-            ResetButton = new UIButton("White", "^!Reset Turn", Client.FontSets.SlightlyBigger, ResetEnergy, new UIPositionHelper(view).Anchor(UIAnchor.BOTTOM_RIGHT).ConstantWidthHeight(width, 70));
-            UnitNameLabel = new UIButton("White", string.Empty, Client.FontSets.SlightlyBigger, Nothing, new UIPositionHelper(view).Anchor(UIAnchor.TOP_RIGHT).ConstantWidthHeight(width, 70));
-            UnitEnergyLabel = new UILabel(string.Empty, Client.FontSets.SlightlyBigger, new UIPositionHelper(view).Anchor(UIAnchor.CENTER_RIGHT).ConstantWidthHeight(width, 70));
-            AddChild(ResetButton);
-            AddChild(UnitNameLabel);
-            AddChild(UnitEnergyLabel);
+            Box = new UIColoredBox(new OpenTK.Vector4(0.3f, 0.3f, 0.8f, 1.0f),
+                new UIPositionHelper(view).Anchor(UIAnchor.CENTER_RIGHT).GetterWidthHeight(() => (int)(game.Client.WindowWidth * 0.25), () => game.Client.WindowHeight));
+            ResetButton = new UIButton("White", "^!Reset Turn", Client.FontSets.SlightlyBigger, ResetEnergy,
+                new UIPositionHelper(view).Anchor(UIAnchor.BOTTOM_CENTER).GetterWidthHeight(() => (int)(game.Client.WindowWidth * 0.25), () => (int)(game.Client.WindowHeight * 0.15)));
+            UnitNameLabel = new UIButton("White", string.Empty, Client.FontSets.SlightlyBigger, Nothing,
+                new UIPositionHelper(view).Anchor(UIAnchor.TOP_CENTER).GetterWidthHeight(() => (int)(game.Client.WindowWidth * 0.25), () => (int)(game.Client.WindowHeight * 0.15)));
+            UnitEnergyLabel = new UILabel(string.Empty, Client.FontSets.SlightlyBigger,
+                new UIPositionHelper(view).Anchor(UIAnchor.CENTER).GetterWidthHeight(() => (int)(game.Client.WindowWidth * 0.25), () => (int)(game.Client.WindowHeight * 0.15)));
+            Box.AddChild(ResetButton);
+            Box.AddChild(UnitNameLabel);
+            Box.AddChild(UnitEnergyLabel);
+            AddChild(Box);
         }
 
         /// <summary>

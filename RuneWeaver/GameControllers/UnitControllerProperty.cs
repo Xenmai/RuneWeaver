@@ -55,6 +55,10 @@ namespace RuneWeaver.GameProperties.GameControllers
         /// <param name="e">Event data.</param>
         private void Window_MouseDown(object sender, MouseButtonEventArgs e)
         {
+            if (Engine3D.Client.MouseX > Engine3D.Window.Width * 0.75)
+            {
+                return;
+            }
             switch (e.Button)
             {
                 case MouseButton.Left:
@@ -85,6 +89,10 @@ namespace RuneWeaver.GameProperties.GameControllers
         /// <param name="e">Event data.</param>
         private void Window_MouseUp(object sender, MouseButtonEventArgs e)
         {
+            if (Engine3D.Client.MouseX > Engine3D.Window.Width * 0.75)
+            {
+                return;
+            }
             switch (e.Button)
             {
                 case MouseButton.Left:
