@@ -1,10 +1,8 @@
-﻿using FreneticGameCore.CoreSystems;
-using FreneticGameCore.MathHelpers;
+﻿using FreneticGameCore.MathHelpers;
 using FreneticGameGraphics.ClientSystem.EntitySystem;
 using OpenTK;
 using OpenTK.Input;
 using RuneWeaver.MainGame;
-using System;
 
 namespace RuneWeaver.GameProperties.GameControllers
 {
@@ -19,7 +17,7 @@ namespace RuneWeaver.GameProperties.GameControllers
         public override void OnSpawn()
         {
             Game game = Engine3D.Source as Game;
-            Engine3D.MainCamera.Position = new Location(0, game.Terrain.Size * 0.433, 40);
+            Engine3D.MainCamera.Position = new Location(0, game.Terrain.Size * 0.433, 50);
             Engine3D.MainCamera.Direction = MathUtilities.ForwardVector_Deg(Yaw, Pitch);
             Engine.Window.KeyDown += Window_KeyDown;
             Engine.Window.KeyUp += Window_KeyUp;

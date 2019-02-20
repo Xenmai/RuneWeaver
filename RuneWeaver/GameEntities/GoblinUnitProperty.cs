@@ -29,7 +29,16 @@ namespace RuneWeaver.GameProperties.GameEntities
                 Name = "Stab",
                 Icon = "Sword_Icon"
             });
-            Actions.Add(new MoveUnitAction(this, 2, 6));
+            Actions.Add(new MoveUnitAction(this, 2, 6)
+            {
+                Name = "March",
+                Icon = "Walk_Icon"
+            });
+            Actions.Add(new DigUnitAction(this, 2, 2)
+            {
+                Name = "Dig",
+                Icon = "Shovel_Icon"
+            });
             base.OnSpawn();
         }
     }

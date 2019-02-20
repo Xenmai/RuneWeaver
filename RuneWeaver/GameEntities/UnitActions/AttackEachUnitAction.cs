@@ -27,6 +27,11 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
         public BasicHitbox Hitbox;
 
         /// <summary>
+        /// The affected zone faces of this action.
+        /// </summary>
+        public HashSet<GridFace> AffectedFaces;
+
+        /// <summary>
         /// Constructs a new attack unit action.
         /// </summary>
         /// <param name="unit">The unit that owns this action.</param>
@@ -64,13 +69,13 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
         {
             Game game = Unit.Engine3D.Source as Game;
             AffectedVertices = Hitbox.Area(Unit.Coords, Direction);
-            HashSet<GridFace> faces = new HashSet<GridFace>();
+            AffectedFaces = new HashSet<GridFace>();
             foreach (GridVertex vert in AffectedVertices)
             {
-                faces.UnionWith(vert.Touches());
+                AffectedFaces.UnionWith(vert.Touches());
             }
-            faces.ExceptWith(game.UnitController.OccupiedFaces(Unit.Size, Unit.Coords));
-            GenerateRenderable(faces);
+            AffectedFaces.ExceptWith(game.UnitController.OccupiedFaces(Unit.Size, Unit.Coords));
+            GenerateRenderable(AffectedFaces);
         }
 
         /// <summary>
@@ -104,12 +109,9 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
         {
             Unit.Energy -= Cost;
             Game game = Unit.Engine3D.Source as Game;
-            foreach (GridVertex vert in AffectedVertices)
+            foreach (GridFace face in AffectedFaces)
             {
-                foreach (GridFace face in vert.Touches())
-                {
-                    game.UnitFaces[face.U, face.V]?.Hurt(Damage);
-                }
+                game.UnitFaces[face.U, face.V]?.Hurt(Damage);
             }
             game.UnitController.Entity.RemoveProperty<BasicMeshRenderableProperty>();
             game.UnitController.SelectedAction = null;

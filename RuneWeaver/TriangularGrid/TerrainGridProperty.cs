@@ -60,7 +60,7 @@ namespace RuneWeaver.TriangularGrid
                 Seeds[i] = new Vector2((float)game.Random.NextDouble(), (float)game.Random.NextDouble());
             }
             GenerateHeightMap(2.0f);
-            ApplyClampedHeightMap(10.0f, 0.025f, 0.0f, 0.6f, Seeds[0]);
+            ApplyClampedHeightMap(8.0f, 0.025f, 0.0f, 0.75f, Seeds[0]);
             ApplyHeightMap(0.5f, 0.25f, 0.5f, Seeds[1]);
             ApplyHighHeightMap(2.0f, 0.15f, 0.5f, 7.0f, Seeds[2]);
             GenerateMaterialLayer(GridMaterial.Grass);
@@ -140,7 +140,7 @@ namespace RuneWeaver.TriangularGrid
                 {
                     int x = i * 2 + (j % 2);
                     Vector2 pos = new GridVertex(x, j).ToCartesianCoords2D();
-                    HeightMap[x, j] += h;
+                    HeightMap[x, j] = h;
                     HeightMap[x - 1, j] = h;
                 }
             }
@@ -312,6 +312,18 @@ namespace RuneWeaver.TriangularGrid
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Adjusts the height of the specified vertex, updating the terrain.
+        /// </summary>
+        /// <param name="vert">The adjusted vertex.</param>
+        /// <param name="h">The height that will be added.</param>
+        public void AdjustVertexHeight(GridVertex vert, float h)
+        {
+            HeightMap[vert.U, vert.V] += h;
+            Body.Shape.Heights[vert.U, vert.V] += h;
+            // Update Renderable Mesh
         }
     }
 }

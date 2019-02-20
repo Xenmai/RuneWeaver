@@ -46,13 +46,13 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
             AffectedPaths = new Dictionary<GridVertex, GridVertex>();
             Flood(Unit.Coords, 0);
             AffectedVertices = new HashSet<GridVertex>(AffectedPaths.Keys);
+            AffectedVertices.Remove(Unit.Coords);
             HashSet<GridFace> faces = new HashSet<GridFace>();
             foreach (GridVertex vert in AffectedVertices)
             {
                 faces.UnionWith(game.UnitController.OccupiedFaces(Unit.Size, vert));
             }
-            faces.ExceptWith(game.UnitController.OccupiedFaces(Unit.Size, Unit.Coords));
-            GenerateRenderable(faces); ;
+            GenerateRenderable(faces);
             Select();
         }
 

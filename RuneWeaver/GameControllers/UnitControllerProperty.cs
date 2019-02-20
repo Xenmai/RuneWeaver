@@ -125,6 +125,18 @@ namespace RuneWeaver.GameProperties.GameControllers
                 case Key.Number2:
                     SelectAction(2);
                     break;
+
+                case Key.Number3:
+                    SelectAction(3);
+                    break;
+
+                case Key.Number4:
+                    SelectAction(4);
+                    break;
+
+                case Key.Number5:
+                    SelectAction(5);
+                    break;
             }
 
         }

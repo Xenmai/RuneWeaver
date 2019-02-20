@@ -87,6 +87,7 @@
     <Compile Include="GameEntities\TrollUnitProperty.cs" />
     <Compile Include="GameEntities\GoblinUnitProperty.cs" />
     <Compile Include="GameEntities\UnitActions\AttackEachUnitAction.cs" />
+    <Compile Include="GameEntities\UnitActions\DigUnitAction.cs" />
     <Compile Include="GameEntities\UnitActions\MoveUnitAction.cs" />
     <Compile Include="GameEntities\UnitActions\BasicUnitAction.cs" />
     <Compile Include="GameEntities\UnitActions\AttackUnitAction.cs" />
