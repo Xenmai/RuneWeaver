@@ -153,6 +153,30 @@ namespace RuneWeaver.GameProperties.GameEntities
         }
 
         /// <summary>
+        /// Selects this entity, adjusting the renderable color.
+        /// </summary>
+        public void Select()
+        {
+            Game game = Engine3D.Source as Game;
+            game.UnitController.SelectedUnit = this;
+            Renderable.Color = Color4F.Red;
+            game.MainUIScreen.UnitNameLabel.Text = "^!" + Name;
+            game.MainUIScreen.UnitEnergyLabel.Text = "^!" + Energy;
+        }
+
+        /// <summary>
+        /// Selects this entity, adjusting the renderable color.
+        /// </summary>
+        public void Deselect()
+        {
+            Game game = Engine3D.Source as Game;
+            game.UnitController.SelectedUnit = null;
+            Renderable.Color = Color4F.Blue;
+            game.MainUIScreen.UnitNameLabel.Text = string.Empty;
+            game.MainUIScreen.UnitEnergyLabel.Text = string.Empty;
+        }
+
+        /// <summary>
         /// Fires when entity is despawned.
         /// </summary>
         public override void OnDespawn()

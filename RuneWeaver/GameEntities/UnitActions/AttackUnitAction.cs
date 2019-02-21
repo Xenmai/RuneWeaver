@@ -104,7 +104,7 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
         /// </summary>
         public override void Execute()
         {
-            Unit.Energy -= Cost;
+            SubtractEnergy();
             Game game = Unit.Engine3D.Source as Game;
             HashSet<BasicUnitProperty> targets = new HashSet<BasicUnitProperty>();
             foreach (GridFace face in AffectedFaces)

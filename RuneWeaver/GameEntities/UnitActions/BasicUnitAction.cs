@@ -54,7 +54,7 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
         }
 
         /// <summary>
-        /// Adjusts the unit's current energy.
+        /// Checks if the unit has enough energy for this action.
         /// </summary>
         /// <param name="amount">The new energy amount.</param>
         public bool CheckEnergy()
@@ -62,6 +62,20 @@ namespace RuneWeaver.GameProperties.GameEntities.UnitActions
             return Unit.Energy < Cost ? false : true;
         }
 
+        /// <summary>
+        /// Adjusts the unit's current energy after using this action.
+        /// </summary>
+        public void SubtractEnergy()
+        {
+            Unit.Energy -= Cost;
+            Game game = Unit.Engine3D.Source as Game;
+            game.MainUIScreen.UnitEnergyLabel.Text = "^!" + Unit.Energy;
+        }
+
+        /// <summary>
+        /// Generates the zone renderable.
+        /// </summary>
+        /// <param name="faces">The grid faces of the renderable.</param>
         public void GenerateRenderable(HashSet<GridFace> faces)
         {
             Game game = Unit.Engine3D.Source as Game;

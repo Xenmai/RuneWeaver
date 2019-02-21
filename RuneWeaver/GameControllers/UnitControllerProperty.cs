@@ -62,21 +62,14 @@ namespace RuneWeaver.GameProperties.GameControllers
             switch (e.Button)
             {
                 case MouseButton.Left:
-                    if (SelectedUnit != null)
-                    {
-                        SelectedUnit.Renderable.Color = Color4F.Blue;
-                        SelectedUnit = null;
-                        if (SelectedAction != null)
-                        {
-                            SelectedAction.Cancel();
-                        }
-                    }
+                    SelectedUnit?.Deselect();
+                    SelectedAction?.Cancel();
                     break;
 
                 case MouseButton.Right:
-                    if (SelectedUnit != null && SelectedAction != null)
+                    if (SelectedUnit != null)
                     {
-                        SelectedAction.Execute();
+                        SelectedAction?.Execute();
                     }
                     break;
             }
@@ -93,6 +86,7 @@ namespace RuneWeaver.GameProperties.GameControllers
             {
                 return;
             }
+            Game game = Engine.Source as Game;
             switch (e.Button)
             {
                 case MouseButton.Left:
@@ -105,11 +99,7 @@ namespace RuneWeaver.GameProperties.GameControllers
                     float mul = 1.0f / vOut.W;
                     Location dir = new Location(vOut.X * mul, vOut.Y * mul, vOut.Z * mul);
                     ClientEntity ent = Engine3D.PhysicsWorld.RayTraceSingle(Engine3D.MainCamera.Position, dir, 100);
-                    if (ent != null)
-                    {
-                        SelectedUnit = ent.GetFirstSubType<BasicUnitProperty>();
-                        SelectedUnit.Renderable.Color = Color4F.Red;
-                    }
+                    ent?.GetFirstSubType<BasicUnitProperty>()?.Select();                    
                     break;
 
                 case MouseButton.Right:
