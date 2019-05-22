@@ -1,4 +1,4 @@
-﻿using FreneticGameCore.MathHelpers;
+﻿using FGECore.MathHelpers;
 
 namespace RuneWeaver.TriangularGrid
 {

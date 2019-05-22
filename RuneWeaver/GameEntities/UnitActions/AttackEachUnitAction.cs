@@ -1,5 +1,5 @@
-﻿using FreneticGameCore.MathHelpers;
-using FreneticGameGraphics.ClientSystem.EntitySystem;
+﻿using FGECore.MathHelpers;
+using FGEGraphics.ClientSystem.EntitySystem;
 using OpenTK;
 using RuneWeaver.GameProperties.GameControllers;
 using RuneWeaver.GameProperties.GameEntities.UnitActions.Hitboxes;

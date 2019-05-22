@@ -1,8 +1,8 @@
-﻿using FreneticGameCore.CoreSystems;
-using FreneticGameCore.MathHelpers;
-using FreneticGameCore.UtilitySystems;
-using FreneticGameGraphics.ClientSystem;
-using FreneticGameGraphics.ClientSystem.EntitySystem;
+﻿using FGECore.CoreSystems;
+using FGECore.MathHelpers;
+using FGECore.UtilitySystems;
+using FGEGraphics.ClientSystem;
+using FGEGraphics.ClientSystem.EntitySystem;
 using OpenTK;
 using OpenTK.Input;
 using RuneWeaver.GameControllers;

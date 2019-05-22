@@ -1,6 +1,6 @@
 ﻿using System;
-using FreneticGameCore.MathHelpers;
-using FreneticGameGraphics.ClientSystem.EntitySystem;
+using FGECore.MathHelpers;
+using FGEGraphics.ClientSystem.EntitySystem;
 using OpenTK;
 using OpenTK.Input;
 using RuneWeaver.MainGame;
@@ -83,7 +83,7 @@ namespace RuneWeaver.GameProperties.GameControllers
         /// <summary>
         /// This camera's yaw angle.
         /// </summary>
-        public double Yaw = 0;
+        public double Yaw = 180;
 
         /// <summary>
         /// This camera's pitch angle.

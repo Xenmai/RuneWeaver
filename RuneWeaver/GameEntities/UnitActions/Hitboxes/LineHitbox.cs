@@ -1,4 +1,4 @@
-﻿using FreneticGameCore;
+﻿using FGECore;
 using OpenTK;
 using RuneWeaver.TriangularGrid;
 using System.Collections.Generic;

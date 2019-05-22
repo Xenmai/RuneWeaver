@@ -1,4 +1,4 @@
-﻿using FreneticGameGraphics.GraphicsHelpers;
+﻿using FGEGraphics.GraphicsHelpers;
 using OpenTK;
 using RuneWeaver.GameRenderables;
 using RuneWeaver.MainGame;

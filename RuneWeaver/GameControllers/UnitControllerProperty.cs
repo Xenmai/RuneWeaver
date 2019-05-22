@@ -1,5 +1,5 @@
-﻿using FreneticGameCore.MathHelpers;
-using FreneticGameGraphics.ClientSystem.EntitySystem;
+﻿using FGECore.MathHelpers;
+using FGEGraphics.ClientSystem.EntitySystem;
 using OpenTK;
 using OpenTK.Input;
 using RuneWeaver.GameProperties.GameEntities;

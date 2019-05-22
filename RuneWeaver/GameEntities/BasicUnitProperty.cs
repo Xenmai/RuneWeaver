@@ -1,6 +1,6 @@
-﻿using FreneticGameCore.EntitySystem.PhysicsHelpers;
-using FreneticGameCore.MathHelpers;
-using FreneticGameGraphics.ClientSystem.EntitySystem;
+﻿using FGECore.EntitySystem.PhysicsHelpers;
+using FGECore.MathHelpers;
+using FGEGraphics.ClientSystem.EntitySystem;
 using OpenTK;
 using RuneWeaver.GameProperties.GameEntities.UnitActions;
 using RuneWeaver.MainGame;

@@ -1,4 +1,4 @@
-﻿using FreneticGameCore.MathHelpers;
+﻿using FGECore.MathHelpers;
 using OpenTK;
 
 namespace RuneWeaver.Utilities

@@ -1,5 +1,5 @@
-﻿using FreneticGameGraphics.ClientSystem;
-using FreneticGameGraphics.UISystem;
+﻿using FGEGraphics.ClientSystem;
+using FGEGraphics.UISystem;
 using RuneWeaver.GameProperties.GameEntities;
 using RuneWeaver.MainGame;
 

@@ -1,12 +1,12 @@
-﻿using FreneticGameGraphics.ClientSystem;
-using FreneticGameGraphics.ClientSystem.EntitySystem;
-using FreneticGameCore.MathHelpers;
-using FreneticGameGraphics;
-using FreneticGameGraphics.GraphicsHelpers;
+﻿using FGEGraphics.ClientSystem;
+using FGEGraphics.ClientSystem.EntitySystem;
+using FGECore.MathHelpers;
+using FGEGraphics;
+using FGEGraphics.GraphicsHelpers;
 using OpenTK;
 using OpenTK.Graphics.OpenGL4;
 using System;
-using FreneticGameCore.CoreSystems;
+using FGECore.CoreSystems;
 
 namespace RuneWeaver.GameRenderables
 {

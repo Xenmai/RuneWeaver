@@ -1,8 +1,8 @@
 ﻿using BEPUphysics.BroadPhaseEntries;
 using BEPUphysics.CollisionShapes;
-using FreneticGameCore.UtilitySystems;
-using FreneticGameGraphics;
-using FreneticGameGraphics.GraphicsHelpers;
+using FGECore.UtilitySystems;
+using FGEGraphics;
+using FGEGraphics.GraphicsHelpers;
 using OpenTK;
 using RuneWeaver.GameRenderables;
 using RuneWeaver.MainGame;
